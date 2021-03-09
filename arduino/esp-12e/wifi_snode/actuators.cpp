@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2019-2020 Manuel Bottini
+* Copyright (c) 2021 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -33,9 +33,7 @@ struct Vibration_struct {
 
 void initActuators(){
   pinMode(HAPTIC_MOTOR_PIN_P, OUTPUT); 
-  pinMode(HAPTIC_MOTOR_PIN_M, OUTPUT); 
-  analogWrite( HAPTIC_MOTOR_PIN_P , 0 );
-  analogWrite( HAPTIC_MOTOR_PIN_M , 0 );
+  digitalWrite(HAPTIC_MOTOR_PIN_P, LOW);
   Vibration.startTime_ms = 0;
   Vibration.duration_ms = 0;
 }
@@ -52,8 +50,9 @@ void setAction(Action action){
 
 void makeActions(){
   if(millis()-Vibration.startTime_ms < Vibration.duration_ms  ){
-    analogWrite( HAPTIC_MOTOR_PIN_P , Vibration.strength );
+    DEBUG_PRINTLN("Doing something");
+    digitalWrite(HAPTIC_MOTOR_PIN_P, HIGH);
   } else {
-    analogWrite( HAPTIC_MOTOR_PIN_P , 0 );
+    digitalWrite(HAPTIC_MOTOR_PIN_P, LOW);
   }
 }

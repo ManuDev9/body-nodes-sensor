@@ -1,28 +1,28 @@
 /**
-* MIT License
-* 
-* Copyright (c) 2019 Manuel Bottini
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
+  MIT License
 
-* The above copyright notice and this permission notice shall be included in all
-* copies or substantial portions of the Software.
+  Copyright (c) 2019-2021 Manuel Bottini
 
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-* SOFTWARE.
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in all
+  copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  SOFTWARE.
 */
 
-#include <Arduino.h> 
+#include <Arduino.h>
 #include <ArduinoJson.h>
 
 #ifndef __WIFI_NODE_BASIC_H
@@ -61,8 +61,10 @@ struct Action {
 #define BODY_FOOT_RIGHT_INT       14
 #define BODY_UNTAGGED_INT         15
 #define BODY_KATANA_INT           16
+#define BODY_UPPERBODY_INT        17
+#define BODY_LOWERBODY_INT        18
 
-#define NODE_BODY_PART BODY_UPPERARM_LEFT_INT
+#define NODE_BODY_PART BODY_UPPERLEG_LEFT_INT
 
 #define BODY_HEAD_TAG             "head"
 #define BODY_HAND_LEFT_TAG        "hand_left"
@@ -80,6 +82,8 @@ struct Action {
 #define BODY_FOOT_RIGHT_TAG       "shoe_right"
 #define BODY_UNTAGGED_TAG         "untagged"
 #define BODY_KATANA_TAG           "katana"
+#define BODY_UPPERBODY_TAG        "upperbody"
+#define BODY_LOWERBODY_TAG        "lowerbody"
 
 //Action
 #define ACTION_ACTION_TAG            "action"
@@ -92,61 +96,81 @@ struct Action {
 
 #define DEBUG_M
 #ifdef DEBUG_M
- #define DEBUG_PRINT(x)  Serial.print (x)
- #define DEBUG_PRINT_HEX(x)  Serial.print (x,HEX)
- #define DEBUG_PRINT_DEC(x)  Serial.print (x,DEC)
- #define DEBUG_PRINTLN(x)  Serial.println (x)
- #define DEBUG_PRINTLN_HEX(x)  Serial.println (x,HEX)
- #define DEBUG_PRINTLN_DEC(x)  Serial.println (x,DEC)
+#define DEBUG_PRINT(x)  Serial.print (x)
+#define DEBUG_PRINT_HEX(x)  Serial.print (x,HEX)
+#define DEBUG_PRINT_DEC(x)  Serial.print (x,DEC)
+#define DEBUG_PRINTLN(x)  Serial.println (x)
+#define DEBUG_PRINTLN_HEX(x)  Serial.println (x,HEX)
+#define DEBUG_PRINTLN_DEC(x)  Serial.println (x,DEC)
 #else
- #define DEBUG_PRINT(x)
- #define DEBUG_PRINT_HEX(x)
- #define DEBUG_PRINT_DEC(x)
- #define DEBUG_PRINTLN(x)
- #define DEBUG_PRINTLN_HEX(x)
- #define DEBUG_PRINTLN_DEC(x)
+#define DEBUG_PRINT(x)
+#define DEBUG_PRINT_HEX(x)
+#define DEBUG_PRINT_DEC(x)
+#define DEBUG_PRINTLN(x)
+#define DEBUG_PRINTLN_HEX(x)
+#define DEBUG_PRINTLN_DEC(x)
 #endif
 
-#define WIFI_SSID "BodyNodesHotspot"
 #define WIFI_PASS "bodynodes1"
 
-#define SERVER_PORT 12345 
+#define SERVER_PORT 12345
 
 #define WIFI_NODE_DEVICE_NAME_TAG "WIFI_node"
 
-
 #if NODE_BODY_PART == BODY_HEAD_INT
-  #define NODE_BODY_PART_TAG BODY_HEAD_TAG
+#define WIFI_SSID "BodyNodesHotspot"
+#define NODE_BODY_PART_TAG BODY_HEAD_TAG
 #elif NODE_BODY_PART == BODY_HAND_LEFT_INT
-  #define NODE_BODY_PART_TAG BODY_HAND_LEFT_TAG
+#define WIFI_SSID "head"
+#define NODE_BODY_PART_TAG BODY_HAND_LEFT_TAG
 #elif NODE_BODY_PART == BODY_FOREARM_LEFT_INT
-  #define NODE_BODY_PART_TAG BODY_FOREARM_LEFT_TAG
+#define WIFI_SSID "upperbody"
+#define NODE_BODY_PART_TAG BODY_FOREARM_LEFT_TAG
 #elif NODE_BODY_PART == BODY_UPPERARM_LEFT_INT
-  #define NODE_BODY_PART_TAG BODY_UPPERARM_LEFT_TAG
+#define WIFI_SSID "upperbody"
+#define NODE_BODY_PART_TAG BODY_UPPERARM_LEFT_TAG
 #elif NODE_BODY_PART == BODY_BODY_INT
-  #define NODE_BODY_PART_TAG BODY_BODY_TAG
+#define WIFI_SSID "BodyNodesHotspot"
+#define NODE_BODY_PART_TAG BODY_BODY_TAG
 #elif NODE_BODY_PART == BODY_FOREARM_RIGHT_INT
-  #define NODE_BODY_PART_TAG BODY_FOREARM_RIGHT_TAG
+#define WIFI_SSID "upperbody"
+#define NODE_BODY_PART_TAG BODY_FOREARM_RIGHT_TAG
 #elif NODE_BODY_PART == BODY_UPPERARM_RIGHT_INT
-  #define NODE_BODY_PART_TAG BODY_UPPERARM_RIGHT_TAG
+#define WIFI_SSID "upperbody"
+#define NODE_BODY_PART_TAG BODY_UPPERARM_RIGHT_TAG
 #elif NODE_BODY_PART == BODY_HAND_RIGHT_INT
-  #define NODE_BODY_PART_TAG BODY_HAND_RIGHT_TAG
+#define WIFI_SSID "head"
+#define NODE_BODY_PART_TAG BODY_HAND_RIGHT_TAG
 #elif NODE_BODY_PART == BODY_LOWERLEG_LEFT_INT
-  #define NODE_BODY_PART_TAG BODY_LOWERLEG_LEFT_TAG
+#define WIFI_SSID "lowerbody"
+#define NODE_BODY_PART_TAG BODY_LOWERLEG_LEFT_TAG
 #elif NODE_BODY_PART == BODY_UPPERLEG_LEFT_INT
-  #define NODE_BODY_PART_TAG BODY_UPPERLEG_LEFT_TAG
+#define WIFI_SSID "lowerbody"
+#define NODE_BODY_PART_TAG BODY_UPPERLEG_LEFT_TAG
 #elif NODE_BODY_PART == BODY_FOOT_LEFT_INT
-  #define NODE_BODY_PART_TAG BODY_FOOT_LEFT_TAG
+#define WIFI_SSID "head"
+#define NODE_BODY_PART_TAG BODY_FOOT_LEFT_TAG
 #elif NODE_BODY_PART == BODY_LOWERLEG_RIGHT_INT
-  #define NODE_BODY_PART_TAG BODY_LOWERLEG_RIGHT_TAG
+#define WIFI_SSID "lowerbody"
+#define NODE_BODY_PART_TAG BODY_LOWERLEG_RIGHT_TAG
 #elif NODE_BODY_PART == BODY_UPPERLEG_RIGHT_INT
-  #define NODE_BODY_PART_TAG BODY_UPPERLEG_RIGHT_TAG
+#define WIFI_SSID "lowerbody"
+#define NODE_BODY_PART_TAG BODY_UPPERLEG_RIGHT_TAG
 #elif NODE_BODY_PART == BODY_FOOT_RIGHT_INT
-  #define NODE_BODY_PART_TAG BODY_FOOT_RIGHT_TAG
+#define WIFI_SSID "head"
+#define NODE_BODY_PART_TAG BODY_FOOT_RIGHT_TAG
 #elif NODE_BODY_PART == BODY_UNTAGGED_INT
-  #define NODE_BODY_PART_TAG BODY_UNTAGGED_INT
+#define WIFI_SSID "BodyNodesHotspot"
+#define NODE_BODY_PART_TAG BODY_UNTAGGED_INT
 #elif NODE_BODY_PART == BODY_KATANA_INT
-  #define NODE_BODY_PART_TAG BODY_KATANA_TAG  
+#define WIFI_SSID "BodyNodesHotspot"
+#define NODE_BODY_PART_TAG BODY_KATANA_TAG
+#elif NODE_BODY_PART == BODY_UPPERBODY_INT
+#define WIFI_SSID "BodyNodesHotspot"
+#define NODE_BODY_PART_TAG BODY_UPPERBODY_TAG
+#elif NODE_BODY_PART == BODY_LOWERBODY_INT
+#define WIFI_SSID "BodyNodesHotspot"
+#define NODE_BODY_PART_TAG BODY_LOWERBODY_TAG
 #endif //NODE_BODY_PART
 
 #endif //__WIFI_NODE_BASIC_H

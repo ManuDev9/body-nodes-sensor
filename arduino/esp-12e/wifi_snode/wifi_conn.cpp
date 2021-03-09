@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2019-2020 Manuel Bottini
+* Copyright (c) 2021 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -24,11 +24,19 @@
 
 #include "wifi_conn.h"
 
+extern "C" {
+    #include "user_interface.h"  // Required for wifi_station_connect() to work
+}
+#define FPM_SLEEP_MAX_TIME 0xFFFFFFF
+
 int mWifiStatus;
 
 char ssid[] = WIFI_SSID;
 char password[] = WIFI_PASS;
 uint16_t port = SERVER_PORT;     // port number of the server
+
+byte packetBuffer[MAX_BUFF_LENGTH]; 
+char messagesBuffer[MAX_BUFF_LENGTH]; 
 
 struct StatusConnLED {
   bool on;
@@ -37,13 +45,11 @@ struct StatusConnLED {
 
 StatusConnLED mStatusConnLED;
 IPAddress mServer;
-UDP mUdpConnection;
+WiFiUDP mUdpConnection;
 
 void initStatusConnectionHMI(){
   pinMode(STATUS_CONNECTION_HMI_LED_P, OUTPUT);
-  pinMode(STATUS_CONNECTION_HMI_LED_M, OUTPUT);
   digitalWrite(STATUS_CONNECTION_HMI_LED_P, LOW);
-  digitalWrite(STATUS_CONNECTION_HMI_LED_M, LOW);
   mStatusConnLED.on = false;
   mStatusConnLED.lastToggle = millis();
 }
@@ -120,12 +126,18 @@ bool isWaitingACK(){
   }
 }
 
-
+void sendACK(IPAddress remote_ip, uint16_t remote_port){
+  byte buf_udp [4] = {'A','C','K', '\0'};
+  mUdpConnection.beginPacket(remote_ip, remote_port);
+  mUdpConnection.write(buf_udp, 4);
+  mUdpConnection.endPacket();
+}
 
 void checkWifiAndServer(){
-  if(!WiFi.ready()){
+  if (WiFi.status() != WL_CONNECTED){
     DEBUG_PRINTLN("Wifi is not ready");  
     setWifiNotConnected();
+    tryConnectWifi();
   } else {
     if(isWaitingACK()){
       setStatusConnectionHMI_BLINK();
@@ -133,23 +145,14 @@ void checkWifiAndServer(){
         setServerConnected();
         DEBUG_PRINTLN("Connected to Server");      
       } else {
-        tryContactServer();
+          sendACK(mServer, port);
       }
     }else if(!isServerConnected()){
-      tryContactServer();
+      sendACK(mServer, port);
       setWaitingACK();
     } else {
     }  
   }
-}
-
-//This in the future will become a way for the node to identify himself with the library
-void tryContactServer(){
-  //DEBUG_PRINTLN("Trying to contact Server");
-  byte buf_udp [4] = {'A','C','K', '\0'};
-  mUdpConnection.beginPacket(mServer, port);
-  mUdpConnection.write(buf_udp, 4);
-  mUdpConnection.endPacket();
 }
 
 bool checkForACK(){
@@ -159,7 +162,7 @@ bool checkForACK(){
     mUdpConnection.read((byte*)buf_udp, 3);
     String buf_udp_str = buf_udp;
     DEBUG_PRINTLN("Received from Server = "+buf_udp_str);
-    if(strstr (buf_udp_str,"ACK")!=NULL){
+    if(strstr (buf_udp_str.c_str(),"ACK")!=NULL){
       //DEBUG_PRINTLN("No ACK from Server");
       return true;
     } else {
@@ -196,15 +199,18 @@ Action checkActionWifi(){
       return action;
     }
     buf_udp_str = buf_udp_str.substring(indexOpen, indexClose+1);
-    DEBUG_PRINTLN("Received from Server clean = "+buf_udp_str);
+    DEBUG_PRINTLN("Received from Server = "+buf_udp_str);
     DynamicJsonDocument actionJson(JSON_OBJECT_SIZE(3) +MAX_BUFF_LENGTH);
+
     // Deserialize the JSON document
     DeserializationError error = deserializeJson(actionJson, buf_udp_str);
+    // Test if parsing succeeds.
     if (error) {
       DEBUG_PRINTLN("No possible to parse the json, error =");
       DEBUG_PRINTLN(error.c_str());
       return action;
     }
+    deserializeJson(actionJson, buf_udp_str);
     DEBUG_PRINTLN("actionJson =");
     serializeJson(actionJson, Serial);
     DEBUG_PRINTLN("");
@@ -224,7 +230,10 @@ Action checkActionWifi(){
   return action;
 }
 
-void initWifi(){  
+void initWifi_BothMode(){
+  WiFi.mode(WIFI_AP_STA);
+  WiFi.softAP(AP_SSID, AP_PASS);
+
   if(tryConnectWifi()){
     DEBUG_PRINTLN("Connected to Wifi");
     printWifiStatus();
@@ -232,6 +241,24 @@ void initWifi(){
   }
 }
 
+void WiFiOff(){
+  DEBUG_PRINTLN("diconnecting client and wifi");
+  wifi_station_disconnect();
+  wifi_set_opmode(NULL_MODE);
+  wifi_set_sleep_type(MODEM_SLEEP_T);
+  wifi_fpm_open();
+  wifi_fpm_do_sleep(FPM_SLEEP_MAX_TIME);
+}
+
+
+void WiFiOn(){
+  wifi_fpm_do_wakeup();
+  wifi_fpm_close();
+
+  DEBUG_PRINTLN("Reconnecting");
+  wifi_set_opmode(STATION_MODE);
+  wifi_station_connect();
+}
 
 bool tryConnectWifi(){
   // attempt to connect to Wifi network:
@@ -239,19 +266,17 @@ bool tryConnectWifi(){
   // print the network name (SSID);
   DEBUG_PRINTLN(ssid); 
   // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
-  WiFi.off();
-  WiFi.on();
-  WiFi.clearCredentials();
+  //WiFiOff();
+  //WiFiOn();
+  //WiFi.begin("", "");
+  WiFi.begin(ssid, password);
 
-  WiFi.setCredentials(ssid, password);
-  WiFi.connect();
-
-  while (WiFi.connecting()) {
+  while (WiFi.status() != WL_CONNECTED && WiFi.status() != WL_CONNECT_FAILED) {
     // print dots while we wait to connect
     DEBUG_PRINT(".");
-    delay(300);
+    delay(500);
   }
-  bool conn = WiFi.ready();
+  bool conn = WiFi.status() == WL_CONNECTED;
 
   if(conn){
     DEBUG_PRINTLN("Waiting for an IP address");
@@ -266,98 +291,22 @@ bool tryConnectWifi(){
     mUdpConnection.begin(port);
     return true;
   } else {
-    WiFiAccessPoint aps[20];
-    int found = WiFi.scan(aps, 20);
+    WiFi.disconnect();
+    delay(1000);
+    int found = WiFi.scanNetworks();
     for (int i=0; i<found; i++) {
-        WiFiAccessPoint& ap = aps[i];
         DEBUG_PRINT("SSID: ");
-        DEBUG_PRINT(ap.ssid);
+        DEBUG_PRINT(WiFi.SSID(i));
         DEBUG_PRINT(" | Security: ");
-        DEBUG_PRINT(ap.security);
+        DEBUG_PRINT(WiFi.encryptionType(i) == ENC_TYPE_NONE ? "open" : "something");
         DEBUG_PRINT(" | Channel: ");
-        DEBUG_PRINT(ap.channel);
+        DEBUG_PRINT(WiFi.channel(i));
         DEBUG_PRINT(" | RSSI: ");
-        DEBUG_PRINTLN(ap.rssi);
+        DEBUG_PRINTLN(WiFi.RSSI(i));
     }
     return false;
   }  
 }
-
-void insertInOrientationStringQuat(char buf[], int startPos, int prec,double quatVal){
-  if(quatVal>=0){
-    buf[startPos] = '+';
-  } else {
-    buf[startPos] = '-';
-    quatVal=-quatVal;
-  }
-  
-  for(int i=0; i<=prec+1;i++){
-    if(i==1){
-      buf[startPos+1+i]= '.';
-    } else {
-      int val = quatVal;
-      buf[startPos+1+i]= val+'0';
-      quatVal = quatVal-val;
-      quatVal*=10;
-    }
-  }
-  buf[startPos+3+prec]= '|';
-}
-
-void sendOrientationValueQuat(imu::Quaternion quat){
-  double valW = quat.w();
-  double valX = quat.x();
-  double valY = quat.y();
-  double valZ = quat.z();
-
-  int prec = 3;
-  int chars_per_val = prec+4;
-  /*
-  char buf [chars_per_val*4]={
-    '+','0','.','0','0','0','0','|',
-    '+','0','.','0','0','0','0','|',
-    '+','0','.','0','0','0','0','|',
-    '+','0','.','0','0','0','0','\0'};
-    */
-  char buf [chars_per_val*4];
-  DEBUG_PRINT("w = ");
-  DEBUG_PRINT(valW);
-  DEBUG_PRINT(" | x = ");
-  DEBUG_PRINT(valX);
-  DEBUG_PRINT(" | y = ");
-  DEBUG_PRINTLN(valY);
-  DEBUG_PRINT(" | z = ");
-  DEBUG_PRINTLN(valZ);
-
-  insertInOrientationStringQuat(buf,0,prec,valW);
-  insertInOrientationStringQuat(buf,chars_per_val,prec,valX);
-  insertInOrientationStringQuat(buf,chars_per_val*2,prec,valY);
-  insertInOrientationStringQuat(buf,chars_per_val*3,prec,valZ);
-
-  buf[chars_per_val*4-1] = '\0';
-  DEBUG_PRINT("buf = ");
-  DEBUG_PRINTLN(buf);
-
-  //characteristicOrientation.setValue(buf);
-  DEBUG_PRINT("w|x|y|z: ");
-  DEBUG_PRINTLN(buf);
-
-  String bodyNodeString ="[{\"bodypart\":\"";
-  bodyNodeString +=NODE_BODY_PART_TAG;
-  bodyNodeString +="\",\"type\":\"orientation\",\"value\":\"";
-  bodyNodeString += buf;
-  bodyNodeString += "\"}]";
-  DEBUG_PRINTLN(bodyNodeString);
-
-  int buf_size = bodyNodeString.length()+1;
-  byte buf_udp [buf_size];
-
-  bodyNodeString.getBytes(buf_udp, buf_size);
-  mUdpConnection.beginPacket(mServer, port);
-  mUdpConnection.write(buf_udp, buf_size);
-  mUdpConnection.endPacket(); 
-}
-
 
 void printWifiStatus() {
   // print the SSID of the network you're attached to:
@@ -374,4 +323,44 @@ void printWifiStatus() {
   DEBUG_PRINT("signal strength (RSSI):");
   DEBUG_PRINT(rssi);
   DEBUG_PRINTLN(" dBm");
+}
+
+void get_ap_udp_packets(JsonArray &jsonArray) {
+  int noBytes = mUdpConnection.parsePacket();
+  String received_command = "";
+  if ( noBytes > 0 ) {
+    int len = mUdpConnection.read(packetBuffer, MAX_BUFF_LENGTH); // read the packet into the buffer
+    unsigned int i = 0;
+    for(; i < len; ++i) {
+      messagesBuffer[i] = packetBuffer[i];
+    }
+    messagesBuffer[i] = '\0';
+    if(strstr(messagesBuffer, "ACK")  != NULL){
+      IPAddress remote_ip = mUdpConnection.remoteIP();
+      uint16_t remote_port = mUdpConnection.remotePort();
+      sendACK(remote_ip, remote_port);
+    } else {
+      Serial.println(messagesBuffer);
+      DynamicJsonDocument messagesJson(JSON_ARRAY_SIZE(3) + MAX_BUFF_LENGTH);
+  
+      // Deserialize the JSON document
+      DeserializationError error = deserializeJson(messagesJson, messagesBuffer);
+      // Test if parsing succeeds.
+      if (error) {
+        return;
+      }
+      jsonArray = messagesJson.as<JsonArray>();
+    }
+  }
+}
+
+void sendToWifi(String messages){
+  int buf_size = messages.length()+1;
+  byte buf_udp [buf_size];
+
+  messages.getBytes(buf_udp, buf_size);
+  mUdpConnection.beginPacket(mServer, port);
+  mUdpConnection.write(buf_udp, buf_size);
+  mUdpConnection.endPacket(); 
+
 }

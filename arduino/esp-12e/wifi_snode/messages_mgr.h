@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2019-2020 Manuel Bottini
+* Copyright (c) 2021 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -22,38 +22,18 @@
 * SOFTWARE.
 */
 
-#include "actuators.h"
+#include "basics.h"
+#include <Adafruit_BNO055.h>
 
-//Since there is only one actuator new actions will override old ones.
-struct Vibration_struct {
-  unsigned long startTime_ms;
-  unsigned long duration_ms;
-  char strength;
-} Vibration;
+#ifndef __WIFI_INTERMEDIATE_NODE_MESSAGESMGR_H__
+#define __WIFI_INTERMEDIATE_NODE_MESSAGESMGR_H__
 
-void initActuators(){
-  pinMode(HAPTIC_MOTOR_PIN_P, OUTPUT); 
-  pinMode(HAPTIC_MOTOR_PIN_M, OUTPUT); 
-  analogWrite( HAPTIC_MOTOR_PIN_P , 0 );
-  analogWrite( HAPTIC_MOTOR_PIN_M , 0 );
-  Vibration.startTime_ms = 0;
-  Vibration.duration_ms = 0;
-}
+// Serial is always connected
 
-void setAction(Action action){
-  if(action.type == ACTION_HAPTIC_INT){
-    DEBUG_PRINT("Haptic triggered with duration = ");
-    DEBUG_PRINTLN(action.duration_ms);
-    Vibration.startTime_ms = millis();
-    Vibration.duration_ms = action.duration_ms;
-    Vibration.strength = action.strength;
-  }
-}
+void initMessages();
+int get_index_bodypart(const char *bodypart);
+void store_message_quat(int index_bodypart, const char *mtype, imu::Quaternion quat);
+void store_message(int index_bodypart, const char *mtype, const char *mvalue);
+String getAllMessages();
 
-void makeActions(){
-  if(millis()-Vibration.startTime_ms < Vibration.duration_ms  ){
-    analogWrite( HAPTIC_MOTOR_PIN_P , Vibration.strength );
-  } else {
-    analogWrite( HAPTIC_MOTOR_PIN_P , 0 );
-  }
-}
+#endif //__WIFI_INTERMEDIATE_NODE_MESSAGESMGR_H__

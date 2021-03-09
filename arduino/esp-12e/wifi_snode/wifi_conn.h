@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2019-2020 Manuel Bottini
+* Copyright (c) 2021 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -23,10 +23,11 @@
 */
 
 #include "basics.h"
-#include <utility/imumaths.h>
+#include <ESP8266WiFi.h> 
+#include <WiFiUdp.h>
 
-#ifndef __WIFI_NODE_WIFICONN_H__
-#define __WIFI_NODE_WIFICONN_H__
+#ifndef __WIFI_INTERMEDIATE_NODE_WIFICONN_H__
+#define __WIFI_INTERMEDIATE_NODE_WIFICONN_H__
 
 #define WIFI_NOT_CONNECTED 0
 #define WIFI_SERVER_WAITING_ACK 1
@@ -34,6 +35,7 @@
 #define WIFI_SERVER_CONNECTED_OK 3
 
 #define MAX_BUFF_LENGTH 100
+
 
 void printWifiStatus();
 bool tryConnectWifi();
@@ -52,13 +54,14 @@ bool isWifiConnected();
 bool isServerConnected();
 bool isWaitingACK();
 void checkWifiAndServer();
-void initWifi();
+void initWifi_BothMode();
 bool tryConnectWifi();
 void insertInOrientationStringQuat(char buf[], int startPos, int prec,double quatVal);
-void sendOrientationValueQuat(imu::Quaternion quat);
 void printWifiStatus();
 void tryContactServer();
 bool checkForACK();
 Action checkActionWifi();
+void get_ap_udp_packets(JsonArray &jsonArray);
+void sendToWifi(String messages);
 
-#endif //__WIFI_NODE_WIFICONN_H__
+#endif //__WIFI_INTERMEDIATE_NODE_WIFICONN_H__

@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2019 Manuel Bottini
+* Copyright (c) 2019-2020 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -59,6 +59,8 @@ struct Action {
 #define BODY_FOOT_RIGHT_INT       14
 #define BODY_UNTAGGED_INT         15
 #define BODY_KATANA_INT           16
+#define BODY_UPPERBODY_INT        17
+#define BODY_LOWERBODY_INT        18
 
 #define NODE_BODY_PART BODY_UPPERARM_LEFT_INT
 
@@ -78,6 +80,8 @@ struct Action {
 #define BODY_FOOT_RIGHT_TAG       "shoe_right"
 #define BODY_UNTAGGED_TAG         "untagged"
 #define BODY_KATANA_TAG           "katana"
+#define BODY_UPPERBODY_TAG        "upperbody"
+#define BODY_LOWERBODY_TAG        "lowerbody"
 
 //Action
 #define ACTION_ACTION_TAG            "action"
@@ -105,46 +109,65 @@ struct Action {
  #define DEBUG_PRINTLN_DEC(x)
 #endif
 
-#define WIFI_SSID "BodyNodesHotspot"
 #define WIFI_PASS "bodynodes1"
-
 #define SERVER_PORT 12345 
 
 #define WIFI_NODE_DEVICE_NAME_TAG "WIFI_node"
 
-
 #if NODE_BODY_PART == BODY_HEAD_INT
+  #define WIFI_SSID "BodyNodesHotspot"
   #define NODE_BODY_PART_TAG BODY_HEAD_TAG
 #elif NODE_BODY_PART == BODY_HAND_LEFT_INT
+  #define WIFI_SSID "head"
   #define NODE_BODY_PART_TAG BODY_HAND_LEFT_TAG
 #elif NODE_BODY_PART == BODY_FOREARM_LEFT_INT
+  #define WIFI_SSID "upperbody"
   #define NODE_BODY_PART_TAG BODY_FOREARM_LEFT_TAG
 #elif NODE_BODY_PART == BODY_UPPERARM_LEFT_INT
+  #define WIFI_SSID "upperbody"
   #define NODE_BODY_PART_TAG BODY_UPPERARM_LEFT_TAG
 #elif NODE_BODY_PART == BODY_BODY_INT
+  #define WIFI_SSID "BodyNodesHotspot"
   #define NODE_BODY_PART_TAG BODY_BODY_TAG
 #elif NODE_BODY_PART == BODY_FOREARM_RIGHT_INT
+  #define WIFI_SSID "upperbody"
   #define NODE_BODY_PART_TAG BODY_FOREARM_RIGHT_TAG
 #elif NODE_BODY_PART == BODY_UPPERARM_RIGHT_INT
+  #define WIFI_SSID "upperbody"
   #define NODE_BODY_PART_TAG BODY_UPPERARM_RIGHT_TAG
 #elif NODE_BODY_PART == BODY_HAND_RIGHT_INT
+  #define WIFI_SSID "head"
   #define NODE_BODY_PART_TAG BODY_HAND_RIGHT_TAG
 #elif NODE_BODY_PART == BODY_LOWERLEG_LEFT_INT
+  #define WIFI_SSID "lowerbody"
   #define NODE_BODY_PART_TAG BODY_LOWERLEG_LEFT_TAG
 #elif NODE_BODY_PART == BODY_UPPERLEG_LEFT_INT
+  #define WIFI_SSID "lowerbody"
   #define NODE_BODY_PART_TAG BODY_UPPERLEG_LEFT_TAG
 #elif NODE_BODY_PART == BODY_FOOT_LEFT_INT
+  #define WIFI_SSID "head"
   #define NODE_BODY_PART_TAG BODY_FOOT_LEFT_TAG
 #elif NODE_BODY_PART == BODY_LOWERLEG_RIGHT_INT
+  #define WIFI_SSID "lowerbody"
   #define NODE_BODY_PART_TAG BODY_LOWERLEG_RIGHT_TAG
 #elif NODE_BODY_PART == BODY_UPPERLEG_RIGHT_INT
+  #define WIFI_SSID "lowerbody"
   #define NODE_BODY_PART_TAG BODY_UPPERLEG_RIGHT_TAG
 #elif NODE_BODY_PART == BODY_FOOT_RIGHT_INT
+  #define WIFI_SSID "head"
   #define NODE_BODY_PART_TAG BODY_FOOT_RIGHT_TAG
 #elif NODE_BODY_PART == BODY_UNTAGGED_INT
+  #define WIFI_SSID "BodyNodesHotspot"
   #define NODE_BODY_PART_TAG BODY_UNTAGGED_INT
 #elif NODE_BODY_PART == BODY_KATANA_INT
-  #define NODE_BODY_PART_TAG BODY_KATANA_TAG  
+  #define WIFI_SSID "BodyNodesHotspot"
+  #define NODE_BODY_PART_TAG BODY_KATANA_TAG
+#elif NODE_BODY_PART == BODY_UPPERBODY_INT
+  #define WIFI_SSID "BodyNodesHotspot"
+  #define NODE_BODY_PART_TAG BODY_UPPERBODY_TAG
+#elif NODE_BODY_PART == BODY_LOWERBODY_INT
+  #define WIFI_SSID "BodyNodesHotspot"
+  #define NODE_BODY_PART_TAG BODY_LOWERBODY_TAG
 #endif //NODE_BODY_PART
 
 #endif //__WIFI_NODE_BASIC_H

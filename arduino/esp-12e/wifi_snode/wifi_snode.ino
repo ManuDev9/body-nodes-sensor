@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2019-2020 Manuel Bottini
+* Copyright (c) 2021 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,9 @@
 #include "sensor.h"
 #include "wifi_conn.h"
 #include "actuators.h"
+#include "messages_mgr.h"
 
+unsigned long lastSendMessage;
 
 void initStatusHMI(){
   initStatusSensorHMI();
@@ -41,7 +43,9 @@ void setup() {
   initActuators();
   initStatusHMI();
   initSensor();
-  initWifi();
+  initWifi_BothMode();
+  initMessages();
+  lastSendMessage = 0;
 }
 
 void loop() {
@@ -53,10 +57,30 @@ void loop() {
   checkWifiAndServer();
   if(isServerConnected()){
     if(checkReadFromSensor()){
-      sendOrientationValueQuat(getReadQuat());
+      const char* mtype = "orientation";
+      const char* mbodypart = NODE_BODY_PART_TAG;
+      const int index_bp = get_index_bodypart(mbodypart);
+      store_message_quat(index_bp, mtype, getReadQuat());
     }
-    Action action = checkActionWifi();
-    setAction(action);
+    // Action action = checkActionWifi(); // TODO fix the action for the other nodes
+    // setAction(action);
   }
   makeActions();
+
+  JsonArray jsonArray;
+  get_ap_udp_packets(jsonArray);
+  for(JsonVariant elem : jsonArray) {
+    JsonObject message = elem.as<JsonObject>();
+    const char* mtype = message["type"];
+    const char* mvalue = message["value"];
+    const char* mbodypart = message["bodypart"];
+    const int index_bp = get_index_bodypart(mbodypart);
+    store_message(index_bp, mtype, mvalue);
+  }
+
+  // Messages will be sent every 30 milliseconds
+  if(millis() - lastSendMessage > MESSAGES_SEND_PERIOD_MS){
+    lastSendMessage = millis();
+    sendToWifi(getAllMessages());
+  }  
 }
