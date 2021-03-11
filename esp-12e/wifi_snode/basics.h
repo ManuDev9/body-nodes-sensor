@@ -24,16 +24,38 @@
 
 #include <Arduino.h> 
 #include <ArduinoJson.h>
+#include <ESP8266WiFi.h> 
 
 #ifndef __WIFI_INTERMEDIATE_NODE_BASIC_H
 #define __WIFI_INTERMEDIATE_NODE_BASIC_H
 
+/*
+ * A Full body suit is 11 nodes
+ * We will take this as max numbers a number of nodes that is higher
+ */
+#define MAX_BODYNODES_NUMBER 15
+#define MAX_BODYPART_LENGTH 20
+#define MAX_TYPE_LENGTH 20
+#define MAX_VALUE_LENGTH 100
 #define MAX_BUFF_LENGTH 100
+
 
 struct Action {
   int type;
   int strength;
   int duration_ms;
+  char bodypart[MAX_BODYPART_LENGTH];
+  String message;
+};
+
+struct Connection {
+  IPAddress remote_ip;
+  uint16_t remote_port;
+};
+
+struct Connections {
+  Connection bodypart[MAX_BODYNODES_NUMBER];
+  unsigned int num_connections;
 };
 
 //ESP-12E
@@ -56,9 +78,10 @@ struct Action {
 #define BODY_LOWERBODY_TAG        "lowerbody"
 
 //Action
-#define ACTION_ACTION_TAG            "action"
-#define ACTION_HAPTIC_DURATIONMS_TAG "duration_ms"
-#define ACTION_HAPTIC_STRENGTH_TAG   "strength"
+#define ACTION_ACTION_TAG       "action"
+#define ACTION_DURATIONMS_TAG   "duration_ms"
+#define ACTION_STRENGTH_TAG     "strength"
+#define ACTION_BODYPART_TAG     "bodypart"
 
 #define ACTION_NOPE_INT              0
 #define ACTION_HAPTIC_INT            1
@@ -84,9 +107,10 @@ struct Action {
 #define WIFI_SSID "BodyNodesHotspot"
 #define WIFI_PASS "bodynodes1"
 
-#define SERVER_PORT 12345 
+#define SERVER_PORT_WITH_NODE 12345
+#define SERVER_PORT_WITH_AP 12344
 
-#define WIFI_NODE_DEVICE_NAME_TAG "WIFI_node"
+#define WIFI_NODE_DEVICE_NAME_TAG "WIFI_snode"
 
 #if NODE_BODY_PART == BODY_HEAD_INT
   #define NODE_BODY_PART_TAG BODY_HEAD_TAG

@@ -231,7 +231,10 @@ Action checkActionWifi(){
   return action;
 }
 
-void initWifi(){  
+void initWifi(){
+  WiFi.disconnect(true);
+  WiFi.softAPdisconnect(false);
+  WiFi.enableAP(false);
   if(tryConnectWifi()){
     DEBUG_PRINTLN("Connected to Wifi");
     printWifiStatus();
@@ -392,6 +395,9 @@ void printWifiStatus() {
   IPAddress ip = WiFi.localIP();
   DEBUG_PRINT("IP Address: ");
   DEBUG_PRINTLN(ip);
+  
+  DEBUG_PRINT("Gateway IP address for network ");
+  DEBUG_PRINTLN(WiFi.gatewayIP());
 
   // print the received signal strength:
   long rssi = WiFi.RSSI();

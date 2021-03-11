@@ -23,7 +23,6 @@
 */
 
 #include "basics.h"
-#include <ESP8266WiFi.h> 
 #include <WiFiUdp.h>
 
 #ifndef __WIFI_INTERMEDIATE_NODE_WIFICONN_H__
@@ -56,12 +55,13 @@ bool isWaitingACK();
 void checkWifiAndServer();
 void initWifi_BothMode();
 bool tryConnectWifi();
-void insertInOrientationStringQuat(char buf[], int startPos, int prec,double quatVal);
 void printWifiStatus();
 void tryContactServer();
 bool checkForACK();
 Action checkActionWifi();
-void get_ap_udp_packets(JsonArray &jsonArray);
-void sendToWifi(String messages);
+Connection get_nodes_udp_packets(JsonArray &jsonArray);
+void sendMessagesToAP(String messages);
+void sendActionToNode(Connection connection, String actionMessage);
+void sendActionToAllNodes(Connections connections, String actionMessage);
 
 #endif //__WIFI_INTERMEDIATE_NODE_WIFICONN_H__

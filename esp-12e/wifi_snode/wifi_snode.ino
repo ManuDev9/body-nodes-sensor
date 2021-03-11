@@ -59,28 +59,37 @@ void loop() {
     if(checkReadFromSensor()){
       const char* mtype = "orientation";
       const char* mbodypart = NODE_BODY_PART_TAG;
-      const int index_bp = get_index_bodypart(mbodypart);
+      const int index_bp = get_index_bodypart(Connection(), mbodypart); // Empty connection, since it is the node itself
       store_message_quat(index_bp, mtype, getReadQuat());
     }
-    // Action action = checkActionWifi(); // TODO fix the action for the other nodes
-    // setAction(action);
+    Action action = checkActionWifi(); 
+    if(action.bodypart[0] == '\0'){ // An empty bodypart action is basically a broadcast
+      setAction(action);
+      Connections connections_send = get_all_connections();
+      sendActionToAllNodes(connections_send, action.message);
+    } else if(strstr (action.bodypart, NODE_BODY_PART_TAG)!=NULL) {
+      setAction(action);
+    } else {
+      Connection connection_send = get_connection_bodypart(action.bodypart);
+      sendActionToNode(connection_send, action.message);
+    }
   }
   makeActions();
 
   JsonArray jsonArray;
-  get_ap_udp_packets(jsonArray);
+  Connection connection_rec = get_nodes_udp_packets(jsonArray);
   for(JsonVariant elem : jsonArray) {
     JsonObject message = elem.as<JsonObject>();
     const char* mtype = message["type"];
     const char* mvalue = message["value"];
     const char* mbodypart = message["bodypart"];
-    const int index_bp = get_index_bodypart(mbodypart);
+    const int index_bp = get_index_bodypart(connection_rec, mbodypart);
     store_message(index_bp, mtype, mvalue);
   }
 
   // Messages will be sent every 30 milliseconds
   if(millis() - lastSendMessage > MESSAGES_SEND_PERIOD_MS){
     lastSendMessage = millis();
-    sendToWifi(getAllMessages());
+    sendMessagesToAP(getAllMessages());
   }  
 }

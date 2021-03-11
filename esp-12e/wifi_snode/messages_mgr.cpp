@@ -25,20 +25,13 @@
 #include "messages_mgr.h"
 #include <utility/imumaths.h>
 
-/*
- * A Full body suit is 11 nodes
- * We will take this as max numbers a number of nodes that is higher
- */
-#define MAX_BODYNODES_NUMBER 15
-#define MAX_BODYPART_LENGTH 20
-#define MAX_MESSAGE_LENGTH 100
-
+Connection mConnections[MAX_BODYNODES_NUMBER];
 char mBodyparts[MAX_BODYNODES_NUMBER][MAX_BODYPART_LENGTH];
 bool mEnabled[MAX_BODYNODES_NUMBER];
 
-// WS -> Data from Wifi to Serial
-char mMessagesWS_Type[MAX_BODYNODES_NUMBER][MAX_BODYPART_LENGTH];
-char mMessagesWS_Value[MAX_BODYNODES_NUMBER][MAX_MESSAGE_LENGTH];
+// WS -> Data from Nodes to Main Host
+char mMessagesWS_Type[MAX_BODYNODES_NUMBER][MAX_TYPE_LENGTH];
+char mMessagesWS_Value[MAX_BODYNODES_NUMBER][MAX_VALUE_LENGTH];
 bool mMessagesWS_Changed[MAX_BODYNODES_NUMBER];
 
 /*
@@ -51,15 +44,15 @@ void initMessages(){
     mMessagesWS_Type[index][0] = '\0';
     mMessagesWS_Value[index][0] = '\0';
     mMessagesWS_Changed[index] = false;
+    mConnections[index] = Connection();
   }
 }
 
 /*
  * Given a bodypart string, the bodypart index will be returned
  */
-int get_index_bodypart(const char *bodypart){
-  if(bodypart == nullptr)
-  {
+int get_index_bodypart(Connection connection, const char *bodypart){
+  if(bodypart == nullptr) {
     return -1;
   }
   unsigned int index = 0;
@@ -70,8 +63,34 @@ int get_index_bodypart(const char *bodypart){
   }
   // If not found create new one
   strcpy(mBodyparts[index], bodypart);
+  mConnections[index] = connection;
   mEnabled[index] = true;
   return index;
+}
+
+Connection get_connection_bodypart(const char *bodypart){
+  Connection connection;
+  connection.remote_port = 0;
+  if(bodypart == nullptr) {
+    return connection;
+  }
+  unsigned int index = 0;
+  for( ;index < MAX_BODYNODES_NUMBER && mEnabled[index]; ++index){
+    if(strstr(mBodyparts[index], bodypart)!=NULL){
+      return mConnections[index];
+    }
+  }
+  return connection;  
+}
+
+Connections get_all_connections(){
+  Connections connections;
+  unsigned int index = 0;
+  for(;mEnabled[index]; ++index) {
+    connections.bodypart[index] = mConnections[index];
+  }
+  connections.num_connections = index;
+  return connections;
 }
 
 void store_message(int index_bodypart, const char *mtype, const char *mvalue){
@@ -130,7 +149,6 @@ void store_message_quat(int index_bodypart, const char *mtype, imu::Quaternion q
 
   store_message(index_bodypart, mtype, buf);
 }
-
 
 String getAllMessages(){
   String fullMessage ="[";
