@@ -50,7 +50,7 @@ void setAction(Action action){
 
 void makeActions(){
   if(millis()-Vibration.startTime_ms < Vibration.duration_ms  ){
-    DEBUG_PRINTLN("Doing something");
+    //DEBUG_PRINTLN("Doing something");
     digitalWrite(HAPTIC_MOTOR_PIN_P, HIGH);
   } else {
     digitalWrite(HAPTIC_MOTOR_PIN_P, LOW);

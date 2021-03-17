@@ -39,7 +39,6 @@
 #define MAX_VALUE_LENGTH 100
 #define MAX_BUFF_LENGTH 100
 
-
 struct Action {
   int type;
   int strength;
@@ -48,18 +47,20 @@ struct Action {
   String message;
 };
 
-struct Connection {
-  IPAddress remote_ip;
-  uint16_t remote_port;
-};
-
 struct Connections {
-  Connection bodypart[MAX_BODYNODES_NUMBER];
+  IPAddress conn[MAX_BODYNODES_NUMBER];
+  Action last_action[MAX_BODYNODES_NUMBER];
+  unsigned int conn_status[MAX_BODYNODES_NUMBER];
   unsigned int num_connections;
 };
 
+#define CS_NOTHING 0
+#define CS_WAIT_INIT_ACK 1
+#define CS_WAIT_ACTION_ACK 2
+
 //ESP-12E
 #define BUZZER_FREQ 1000 //Specified in Hz
+#define LED_DT_ON 30 // Duty cicle of LED ON
 #define STATUS_SENSOR_HMI_LED_P 2
 #define STATUS_CONNECTION_HMI_LED_P 0
 #define HAPTIC_MOTOR_PIN_P 14
@@ -70,7 +71,7 @@ struct Connections {
 #define BODY_UPPERBODY_INT        17
 #define BODY_LOWERBODY_INT        18
 
-#define NODE_BODY_PART BODY_LOWERBODY_INT
+#define NODE_BODY_PART BODY_UPPERBODY_INT
 
 #define BODY_HEAD_TAG             "head"
 #define BODY_BODY_TAG             "body"

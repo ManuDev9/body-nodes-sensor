@@ -31,11 +31,13 @@
 // Serial is always connected
 
 void initMessages();
-int get_index_bodypart(Connection connection, const char *bodypart);
+int get_index_bodypart(IPAddress connection, const char *bodypart);
 void store_message_quat(int index_bodypart, const char *mtype, imu::Quaternion quat);
 void store_message(int index_bodypart, const char *mtype, const char *mvalue);
-Connection get_connection_bodypart(const char *bodypart);
-Connections get_all_connections();
 String getAllMessages();
+void parseMessage(IPAddress connection, String message);
+unsigned int manageAck(IPAddress connection);
+void setActionToNodes(Action action);
+Connections &getConnections();
 
 #endif //__WIFI_INTERMEDIATE_NODE_MESSAGESMGR_H__

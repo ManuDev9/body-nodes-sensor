@@ -34,7 +34,7 @@ int mWifiStatus;
 char ssid[] = WIFI_SSID;
 char password[] = WIFI_PASS;
 uint16_t port_wn = SERVER_PORT_WITH_NODE;     // port number of the server
-uint16_t port_wap = SERVER_PORT_WITH_AP;     // port number of the server
+uint16_t port_wap = SERVER_PORT_WITH_AP;      // port number of the server
 
 // Set IP addresses for ap
 IPAddress ap_local_IP(192,168,5,1);
@@ -56,19 +56,19 @@ WiFiUDP mUdpConnection_wap;
 
 void initStatusConnectionHMI(){
   pinMode(STATUS_CONNECTION_HMI_LED_P, OUTPUT);
-  digitalWrite(STATUS_CONNECTION_HMI_LED_P, LOW);
+  analogWrite(STATUS_CONNECTION_HMI_LED_P, 0);
   mStatusConnLED.on = false;
   mStatusConnLED.lastToggle = millis();
 }
 
 void setStatusConnectionHMI_ON(){
-  digitalWrite(STATUS_CONNECTION_HMI_LED_P, HIGH);
+  analogWrite(STATUS_CONNECTION_HMI_LED_P, LED_DT_ON);
   mStatusConnLED.on = true;
   mStatusConnLED.lastToggle = millis();
 }
 
 void setStatusConnectionHMI_OFF(){
-  digitalWrite(STATUS_CONNECTION_HMI_LED_P, LOW);
+  analogWrite(STATUS_CONNECTION_HMI_LED_P, 0);
   mStatusConnLED.on = false;
   mStatusConnLED.lastToggle = millis();
 }
@@ -78,9 +78,9 @@ void setStatusConnectionHMI_BLINK(){
     mStatusConnLED.lastToggle = millis();
     mStatusConnLED.on = !mStatusConnLED.on;
     if(mStatusConnLED.on){
-      digitalWrite(STATUS_CONNECTION_HMI_LED_P, HIGH);
+      analogWrite(STATUS_CONNECTION_HMI_LED_P, LED_DT_ON);
     } else {
-      digitalWrite(STATUS_CONNECTION_HMI_LED_P, LOW);
+      analogWrite(STATUS_CONNECTION_HMI_LED_P, 0);
     }
   }
 }
@@ -133,15 +133,16 @@ bool isWaitingACK(){
 }
 
 void sendACKtoAP(){
+  Serial.println("sendACKtoAP");
   byte buf_udp [4] = {'A','C','K', '\0'};
   mUdpConnection_wap.beginPacket(mServer, port_wap);
   mUdpConnection_wap.write(buf_udp, 4);
   mUdpConnection_wap.endPacket();
 }
 
-void sendACKtoNode(IPAddress remote_ip, uint16_t remote_port){
+void sendACKtoNode(IPAddress remote_ip){
   byte buf_udp [4] = {'A','C','K', '\0'};
-  mUdpConnection_wn.beginPacket(remote_ip, remote_port);
+  mUdpConnection_wn.beginPacket(remote_ip, port_wn);
   mUdpConnection_wn.write(buf_udp, 4);
   mUdpConnection_wn.endPacket();
 }
@@ -163,8 +164,7 @@ void checkWifiAndServer(){
     }else if(!isServerConnected()){
       sendACKtoAP();
       setWaitingACK();
-    } else {
-    }  
+    }
   }
 }
 
@@ -356,10 +356,10 @@ void printWifiStatus() {
   DEBUG_PRINTLN(WiFi.softAPIP());
 }
 
-Connection get_nodes_udp_packets(JsonArray &jsonArray) {
+IPAddress get_nodes_udp_packets(String &incomingMessage) {
   int noBytes = mUdpConnection_wn.parsePacket();
   String received_command = "";
-  Connection connection;
+  IPAddress connection;
   if ( noBytes > 0 ) {
     int len = mUdpConnection_wn.read(packetBuffer, MAX_BUFF_LENGTH); // read the packet into the buffer
     unsigned int i = 0;
@@ -367,22 +367,8 @@ Connection get_nodes_udp_packets(JsonArray &jsonArray) {
       messagesBuffer[i] = packetBuffer[i];
     }
     messagesBuffer[i] = '\0';
-    if(strstr(messagesBuffer, "ACK")  != NULL){
-      sendACKtoNode(mUdpConnection_wn.remoteIP(), mUdpConnection_wn.remotePort());
-    } else {
-      //Serial.println(messagesBuffer);
-      DynamicJsonDocument messagesJson(JSON_ARRAY_SIZE(3) + MAX_BUFF_LENGTH);
-  
-      // Deserialize the JSON document
-      DeserializationError error = deserializeJson(messagesJson, messagesBuffer);
-      // Test if parsing succeeds.
-      if (error) {
-        return connection;
-      }
-      jsonArray = messagesJson.as<JsonArray>();
-      connection.remote_ip = mUdpConnection_wn.remoteIP();
-      connection.remote_port = mUdpConnection_wn.remotePort();
-    }
+    incomingMessage = messagesBuffer;
+    connection = mUdpConnection_wn.remoteIP();
   }
   return connection;
 }
@@ -397,18 +383,20 @@ void sendMessagesToAP(String messages){
   mUdpConnection_wap.endPacket(); 
 }
 
-void sendActionToNode(Connection connection, String actionMessage){
+void sendActionToNode(IPAddress connection, String actionMessage){
   int buf_size = actionMessage.length()+1;
   byte buf_udp [buf_size];
 
   actionMessage.getBytes(buf_udp, buf_size);
-  mUdpConnection_wn.beginPacket(connection.remote_ip, connection.remote_port);
+  mUdpConnection_wn.beginPacket(connection, port_wn);
   mUdpConnection_wn.write(buf_udp, buf_size);
   mUdpConnection_wn.endPacket(); 
 }
 
-void sendActionToAllNodes(Connections connections, String actionMessage){
+void sendActions(Connections &connections){
   for(unsigned int index = 0; index < connections.num_connections; ++index){
-    sendActionToNode(connections.bodypart[index], actionMessage);
+    if( connections.conn_status[index] == CS_WAIT_ACTION_ACK ){
+      sendActionToNode(connections.conn[index], connections.last_action[index].message);
+    }
   }
 }

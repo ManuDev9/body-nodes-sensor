@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2019-2020 Manuel Bottini
+* Copyright (c) 2019-2021 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -57,7 +57,7 @@ bool tryConnectWifi();
 void insertInOrientationStringQuat(char buf[], int startPos, int prec,double quatVal);
 void sendOrientationValueQuat(imu::Quaternion quat);
 void printWifiStatus();
-void tryContactServer();
+void sendACK();
 bool checkForACK();
 Action checkActionWifi();
 

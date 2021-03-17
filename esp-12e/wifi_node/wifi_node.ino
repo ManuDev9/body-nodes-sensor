@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2019-2020 Manuel Bottini
+* Copyright (c) 2019-2021 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -56,7 +56,10 @@ void loop() {
       sendOrientationValueQuat(getReadQuat());
     }
     Action action = checkActionWifi();
-    setAction(action);
+    if(action.message.length() > 0){
+      setAction(action);
+      sendACK();
+    }
   }
   makeActions();
 }

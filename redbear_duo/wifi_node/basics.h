@@ -34,6 +34,7 @@ struct Action {
   int type;
   int strength;
   int duration_ms;
+  String message;
 };
 
 //RedBear DUO
@@ -64,7 +65,7 @@ struct Action {
 #define BODY_UPPERBODY_INT        17
 #define BODY_LOWERBODY_INT        18
 
-#define NODE_BODY_PART BODY_UPPERLEG_LEFT_INT
+#define NODE_BODY_PART BODY_UPPERLEG_RIGHT_INT
 
 #define BODY_HEAD_TAG             "head"
 #define BODY_HAND_LEFT_TAG        "hand_left"

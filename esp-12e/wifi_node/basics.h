@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2019-2020 Manuel Bottini
+* Copyright (c) 2019-2021 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -34,10 +34,12 @@ struct Action {
   int type;
   int strength;
   int duration_ms;
+  String message;
 };
 
 //ESP-12E
 #define BUZZER_FREQ 1000 //Specified in Hz
+#define LED_DT_ON 30 // Duty cicle of LED ON
 #define STATUS_SENSOR_HMI_LED_P 2
 #define STATUS_CONNECTION_HMI_LED_P 0
 #define HAPTIC_MOTOR_PIN_P 14
@@ -62,7 +64,7 @@ struct Action {
 #define BODY_UPPERBODY_INT        17
 #define BODY_LOWERBODY_INT        18
 
-#define NODE_BODY_PART BODY_UPPERARM_LEFT_INT
+#define NODE_BODY_PART BODY_UPPERARM_RIGHT_INT
 
 #define BODY_HEAD_TAG             "head"
 #define BODY_HAND_LEFT_TAG        "hand_left"

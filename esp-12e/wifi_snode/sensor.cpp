@@ -40,14 +40,14 @@ Adafruit_BNO055 mBNO;
 
 void initStatusSensorHMI(){
   pinMode(STATUS_SENSOR_HMI_LED_P, OUTPUT);
-  digitalWrite(STATUS_SENSOR_HMI_LED_P, LOW);
+  analogWrite(STATUS_SENSOR_HMI_LED_P, 0);
   mStatusSensorLED.on = false;
   mStatusSensorLED.lastToggle = millis();
 }
 
 void setStatusSensorHMI_ON(){
   mSensorInit=true;
-  digitalWrite(STATUS_SENSOR_HMI_LED_P, LOW);
+  analogWrite(STATUS_SENSOR_HMI_LED_P, 0);
   mStatusSensorLED.on = false;
   mStatusSensorLED.lastToggle = millis();
 }
@@ -55,7 +55,7 @@ void setStatusSensorHMI_ON(){
 void setStatusSensorHMI_OFF(){
   mSensorInit=false;
   DEBUG_PRINTLN("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
-  digitalWrite(STATUS_SENSOR_HMI_LED_P, HIGH);
+  analogWrite(STATUS_SENSOR_HMI_LED_P, LED_DT_ON);
   mStatusSensorLED.on = true;
   mStatusSensorLED.lastToggle = millis();
 }
@@ -65,9 +65,9 @@ void setStatusSensorHMI_BLINK_SLOW(){
     mStatusSensorLED.lastToggle = millis();
     mStatusSensorLED.on = !mStatusSensorLED.on;
     if(mStatusSensorLED.on){
-      digitalWrite(STATUS_SENSOR_HMI_LED_P, HIGH);
+      analogWrite(STATUS_SENSOR_HMI_LED_P, LED_DT_ON);
     } else {
-      digitalWrite(STATUS_SENSOR_HMI_LED_P, LOW);
+      analogWrite(STATUS_SENSOR_HMI_LED_P, 0);
     }
   }
 }
@@ -77,9 +77,9 @@ void setStatusSensorHMI_BLINK_FAST(){
     mStatusSensorLED.lastToggle = millis();
     mStatusSensorLED.on = !mStatusSensorLED.on;
     if(mStatusSensorLED.on){
-      digitalWrite(STATUS_SENSOR_HMI_LED_P, HIGH);
+      analogWrite(STATUS_SENSOR_HMI_LED_P, LED_DT_ON);
     } else {
-      digitalWrite(STATUS_SENSOR_HMI_LED_P, LOW);
+      analogWrite(STATUS_SENSOR_HMI_LED_P, 0);
     }
   }
 }

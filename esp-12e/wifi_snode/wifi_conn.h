@@ -59,9 +59,11 @@ void printWifiStatus();
 void tryContactServer();
 bool checkForACK();
 Action checkActionWifi();
-Connection get_nodes_udp_packets(JsonArray &jsonArray);
+IPAddress get_nodes_udp_packets(String &incomingMessage);
+void sendACKtoAP();
+void sendACKtoNode(IPAddress remote_ip);
 void sendMessagesToAP(String messages);
-void sendActionToNode(Connection connection, String actionMessage);
-void sendActionToAllNodes(Connections connections, String actionMessage);
+void sendACK(IPAddress remote_ip);
+void sendActions(Connections &connections);
 
 #endif //__WIFI_INTERMEDIATE_NODE_WIFICONN_H__

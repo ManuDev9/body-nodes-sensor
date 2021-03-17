@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2019 Manuel Bottini
+* Copyright (c) 2021 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -46,19 +46,19 @@ WiFiUDP mUdpConnection;
 
 void initStatusConnectionHMI(){
   pinMode(STATUS_CONNECTION_HMI_LED_P, OUTPUT);
-  digitalWrite(STATUS_CONNECTION_HMI_LED_P, LOW);
+  analogWrite(STATUS_CONNECTION_HMI_LED_P, 0);
   mStatusConnLED.on = false;
   mStatusConnLED.lastToggle = millis();
 }
 
 void setStatusConnectionHMI_ON(){
-  digitalWrite(STATUS_CONNECTION_HMI_LED_P, HIGH);
+  analogWrite(STATUS_CONNECTION_HMI_LED_P, LED_DT_ON);
   mStatusConnLED.on = true;
   mStatusConnLED.lastToggle = millis();
 }
 
 void setStatusConnectionHMI_OFF(){
-  digitalWrite(STATUS_CONNECTION_HMI_LED_P, LOW);
+  analogWrite(STATUS_CONNECTION_HMI_LED_P, 0);
   mStatusConnLED.on = false;
   mStatusConnLED.lastToggle = millis();
 }
@@ -68,13 +68,12 @@ void setStatusConnectionHMI_BLINK(){
     mStatusConnLED.lastToggle = millis();
     mStatusConnLED.on = !mStatusConnLED.on;
     if(mStatusConnLED.on){
-      digitalWrite(STATUS_CONNECTION_HMI_LED_P, HIGH);
+      analogWrite(STATUS_CONNECTION_HMI_LED_P, LED_DT_ON);
     } else {
-      digitalWrite(STATUS_CONNECTION_HMI_LED_P, LOW);
+      analogWrite(STATUS_CONNECTION_HMI_LED_P, 0);
     }
   }
 }
-
 
 void setWifiNotConnected(){
   mWifiStatus=WIFI_NOT_CONNECTED;
@@ -137,18 +136,17 @@ void checkWifiAndServer(){
         setServerConnected();
         DEBUG_PRINTLN("Connected to Server");      
       } else {
-        tryContactServer();
+        sendACK();
       }
     }else if(!isServerConnected()){
-      tryContactServer();
+      sendACK();
       setWaitingACK();
-    } else {
-    }  
+    }
   }
 }
 
 //This in the future will become a way for the node to identify himself with the library
-void tryContactServer(){
+void sendACK(){
   //DEBUG_PRINTLN("Trying to contact Server");
   byte buf_udp [4] = {'A','C','K', '\0'};
   mUdpConnection.beginPacket(mServer, port);
@@ -224,6 +222,7 @@ Action checkActionWifi(){
             action.type = ACTION_HAPTIC_INT;
             action.duration_ms = actionJson[ACTION_HAPTIC_DURATIONMS_TAG];
             action.strength = actionJson[ACTION_HAPTIC_STRENGTH_TAG];
+            action.message = buf_udp_str;
         }
       }
     }

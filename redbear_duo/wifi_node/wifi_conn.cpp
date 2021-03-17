@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2019-2020 Manuel Bottini
+* Copyright (c) 2019-2021 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -72,7 +72,6 @@ void setStatusConnectionHMI_BLINK(){
   }
 }
 
-
 void setWifiNotConnected(){
   mWifiStatus=WIFI_NOT_CONNECTED;
   setStatusConnectionHMI_OFF();
@@ -133,10 +132,10 @@ void checkWifiAndServer(){
         setServerConnected();
         DEBUG_PRINTLN("Connected to Server");      
       } else {
-        tryContactServer();
+        sendACK();
       }
     }else if(!isServerConnected()){
-      tryContactServer();
+      sendACK();
       setWaitingACK();
     } else {
     }  
@@ -144,7 +143,7 @@ void checkWifiAndServer(){
 }
 
 //This in the future will become a way for the node to identify himself with the library
-void tryContactServer(){
+void sendACK(){
   //DEBUG_PRINTLN("Trying to contact Server");
   byte buf_udp [4] = {'A','C','K', '\0'};
   mUdpConnection.beginPacket(mServer, port);
@@ -165,8 +164,6 @@ bool checkForACK(){
     } else {
       DEBUG_PRINTLN("The message was not an ACK");
     }
-  } else {
-    //DEBUG_PRINTLN("No ACK received from Server");
   }
   return false;
 }
@@ -217,6 +214,7 @@ Action checkActionWifi(){
             action.type = ACTION_HAPTIC_INT;
             action.duration_ms = actionJson[ACTION_HAPTIC_DURATIONMS_TAG];
             action.strength = actionJson[ACTION_HAPTIC_STRENGTH_TAG];
+            action.message = buf_udp_str;
         }
       }
     }
