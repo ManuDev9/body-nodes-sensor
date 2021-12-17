@@ -22,39 +22,37 @@
 * SOFTWARE.
 */
 
-#include <Adafruit_Sensor.h>
-#include <Adafruit_BNO055.h>
-#include <utility/imumaths.h>
-#include "basics.h" 
-#include "commons.h"
+#include "actuator.h"
 
-#ifndef __WIFI_NODE_SENSOR_H__
-#define __WIFI_NODE_SENSOR_H__
+void Actuator::init(){
+  pinMode(HAPTIC_MOTOR_PIN_P, OUTPUT); 
+  digitalWrite(HAPTIC_MOTOR_PIN_P, LOW);
+  a_vibration.startTime_ms = 0;
+  a_vibration.duration_ms = 0;
+}
 
-class Sensor {
-public:
-  void init();
-  bool checkAllOk();
-  bool isCalibrated();
-  void getData(float *values);
-  String getType();
-  void setEnable(bool enable_status);
-  bool isEnabled();
+void Actuator::setAction(JsonObject &action){
+  if(action["type"] == ACTION_TYPE_HAPTIC_TAG){
+    DEBUG_PRINT("Haptic triggered with duration and strenght = ");
+    uint16_t duration_ms = action["duration_ms"];
+    uint16_t strength = action["strength"];
+    DEBUG_PRINTLN(duration_ms);
+    DEBUG_PRINTLN(strength);
+    a_vibration.startTime_ms = millis();
+    a_vibration.duration_ms = duration_ms;
+  }
+}
 
-private:
-  void setStatus(int sensor_status);
-  void realignAxis(float values[], float revalues[]);
+void Actuator::performAction(){
+  if(millis()-a_vibration.startTime_ms < a_vibration.duration_ms  ){
+    DEBUG_PRINTLN("Doing something");
+    digitalWrite(HAPTIC_MOTOR_PIN_P, HIGH);
+  } else {
+    digitalWrite(HAPTIC_MOTOR_PIN_P, LOW);
+  }
+}
 
-  bool s_enabled;
-  Adafruit_BNO055 s_BNO;
-  bool s_sensorInit;
-  imu::Quaternion s_lastQuat;
-  StatusLED s_statusSensorLED;
-  unsigned long s_lastReadSensorTime;
-  unsigned long s_sensorReconnectionTime;
-  //At the beginning of each connection with the sensor it seems it returns some 0s. The first 0s are not of my interest.
-  volatile bool s_firstZeros;
-
-};
-
-#endif /*__WIFI_NODE_SENSOR_H__*/
+String Actuator::getType(){
+  // It is well known for this Bodynode
+  return ACTION_TYPE_HAPTIC_TAG;
+}

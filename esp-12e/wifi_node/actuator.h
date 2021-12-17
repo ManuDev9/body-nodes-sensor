@@ -22,39 +22,27 @@
 * SOFTWARE.
 */
 
-#include <Adafruit_Sensor.h>
-#include <Adafruit_BNO055.h>
-#include <utility/imumaths.h>
-#include "basics.h" 
+#include "basics.h"
 #include "commons.h"
 
-#ifndef __WIFI_NODE_SENSOR_H__
-#define __WIFI_NODE_SENSOR_H__
+#ifndef __WIFI_NODE_ACTUATOR_H__
+#define __WIFI_NODE_ACTUATOR_H__
 
-class Sensor {
+//Since there is only one actuator new actions will override old ones.
+struct Vibration_struct {
+  unsigned long startTime_ms;
+  unsigned long duration_ms;
+} ;
+
+class Actuator {
 public:
   void init();
-  bool checkAllOk();
-  bool isCalibrated();
-  void getData(float *values);
+  void setAction(JsonObject &action);
+  void performAction();
   String getType();
-  void setEnable(bool enable_status);
-  bool isEnabled();
 
 private:
-  void setStatus(int sensor_status);
-  void realignAxis(float values[], float revalues[]);
-
-  bool s_enabled;
-  Adafruit_BNO055 s_BNO;
-  bool s_sensorInit;
-  imu::Quaternion s_lastQuat;
-  StatusLED s_statusSensorLED;
-  unsigned long s_lastReadSensorTime;
-  unsigned long s_sensorReconnectionTime;
-  //At the beginning of each connection with the sensor it seems it returns some 0s. The first 0s are not of my interest.
-  volatile bool s_firstZeros;
-
+  Vibration_struct a_vibration;
 };
 
-#endif /*__WIFI_NODE_SENSOR_H__*/
+#endif //__WIFI_NODE_ACTUATOR_H__

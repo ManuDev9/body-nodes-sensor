@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2019-2021 Manuel Bottini
+* Copyright (c) 2021 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -26,35 +26,35 @@
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
 #include "basics.h" 
+#include "commons.h"
 
 #ifndef __WIFI_NODE_SENSOR_H__
 #define __WIFI_NODE_SENSOR_H__
 
-#define SENSOR_READ_INTERVAL_MS 30
+class Sensor {
+public:
+  void init();
+  bool checkAllOk();
+  bool isCalibrated();
+  void getData(float *values);
+  String getType();
+  void setEnable(bool enable_status);
+  bool isEnabled();
 
-#define BIG_ANGLE_DIFF 2
-#define BIG_QUAT_DIFF 0.002
+private:
+  void setStatus(int sensor_status);
+  void realignAxis(float values[], float revalues[]);
 
-struct StatusSensorLED {
-  bool on;
-  unsigned long lastToggle;
+  bool s_enabled;
+  Adafruit_BNO055 s_BNO;
+  bool s_sensorInit;
+  imu::Quaternion s_lastQuat;
+  StatusLED s_statusSensorLED;
+  unsigned long s_lastReadSensorTime;
+  unsigned long s_sensorReconnectionTime;
+  //At the beginning of each connection with the sensor it seems it returns some 0s. The first 0s are not of my interest.
+  volatile bool s_firstZeros;
+
 };
-
-bool noBigChangeQuat(imu::Quaternion quat);
-void checkConnectionSensorQuat(imu::Quaternion quat);
-void sendOrientationValueQuat(imu::Quaternion quat); 
-
-void initStatusSensorHMI();
-void setStatusSensorHMI_ON();
-void setStatusSensorHMI_OFF();
-void setStatusSensorHMI_BLINK_SLOW();
-void setStatusSensorHMI_BLINK_FAST();
-void initSensor();
-bool checkSensorInit();
-bool isFiltered();
-bool isCalibrationOK();
-bool checkReadFromSensor();
-imu::Quaternion getReadQuat();
-
 
 #endif /*__WIFI_NODE_SENSOR_H__*/

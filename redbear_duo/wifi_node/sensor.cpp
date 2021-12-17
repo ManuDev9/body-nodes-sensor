@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2019-2021 Manuel Bottini
+* Copyright (c) 2021 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -24,111 +24,85 @@
 
 #include "sensor.h"
 
-bool mSensorInit;
-
-imu::Quaternion mLastQuat;
-imu::Quaternion mReadQuat;
-
-
-StatusSensorLED mStatusSensorLED;
-unsigned long mLastReadSensorTime;
-unsigned long mSensorReconnectionTime;
-//At the beginning of each connection with the sensor it seems it returns some 0s. The first 0s are not of my interest.
-volatile bool mFirstZeros;
-
-Adafruit_BNO055 mBNO;
-
-void initStatusSensorHMI(){
+void Sensor::init(){
+  s_enabled = true;
   pinMode(STATUS_SENSOR_HMI_LED_P, OUTPUT);
   pinMode(STATUS_SENSOR_HMI_LED_M, OUTPUT);
   digitalWrite(STATUS_SENSOR_HMI_LED_P, LOW);
   digitalWrite(STATUS_SENSOR_HMI_LED_M, LOW);
-  mStatusSensorLED.on = false;
-  mStatusSensorLED.lastToggle = millis();
-}
+  s_statusSensorLED.on = false;
+  s_statusSensorLED.lastToggle = millis();
 
-void setStatusSensorHMI_ON(){
-  mSensorInit=true;
-  digitalWrite(STATUS_SENSOR_HMI_LED_P, LOW);
-  mStatusSensorLED.on = false;
-  mStatusSensorLED.lastToggle = millis();
-}
-
-void setStatusSensorHMI_OFF(){
-  mSensorInit=false;
-  DEBUG_PRINTLN("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
-  digitalWrite(STATUS_SENSOR_HMI_LED_P, HIGH);
-  mStatusSensorLED.on = true;
-  mStatusSensorLED.lastToggle = millis();
-}
-
-void setStatusSensorHMI_BLINK_SLOW(){
-  if(millis()-mStatusSensorLED.lastToggle > 500){
-    mStatusSensorLED.lastToggle = millis();
-    mStatusSensorLED.on = !mStatusSensorLED.on;
-    if(mStatusSensorLED.on){
-      digitalWrite(STATUS_SENSOR_HMI_LED_P, HIGH);
-    } else {
-      digitalWrite(STATUS_SENSOR_HMI_LED_P, LOW);
-    }
-  }
-}
-
-void setStatusSensorHMI_BLINK_FAST(){
-  if(millis()-mStatusSensorLED.lastToggle > 100){
-    mStatusSensorLED.lastToggle = millis();
-    mStatusSensorLED.on = !mStatusSensorLED.on;
-    if(mStatusSensorLED.on){
-      digitalWrite(STATUS_SENSOR_HMI_LED_P, HIGH);
-    } else {
-      digitalWrite(STATUS_SENSOR_HMI_LED_P, LOW);
-    }
-  }
-}
-
-void initSensor(){
-  mLastQuat = imu::Quaternion(-1,-1,-1,-1);
-  mBNO = Adafruit_BNO055(55,BNO055_ADDRESS_B);
-  mSensorInit=false;
-  mLastReadSensorTime=millis();
-  mSensorReconnectionTime=millis();
+  s_lastQuat = imu::Quaternion(-1,-1,-1,-1);
+  s_BNO = Adafruit_BNO055(55, BNO055_ADDRESS_B);
+  s_sensorInit=false;
+  s_lastReadSensorTime=millis();
+  s_sensorReconnectionTime=millis();
   /* Initialise the sensor */
-  if(mBNO.begin(mBNO.OPERATION_MODE_NDOF_FMC_OFF)) {
-     mFirstZeros=true;
-     setStatusSensorHMI_ON();
+  if(s_BNO.begin(s_BNO.OPERATION_MODE_NDOF_FMC_OFF)) {
+     s_firstZeros=true;
+     setStatus(SENSOR_STATUS_WORKING);
   } else {
-     setStatusSensorHMI_OFF();
+     setStatus(SENSOR_STATUS_NOT_ACCESSIBLE);
   }
-  mBNO.setExtCrystalUse(true);
-
+  s_BNO.setExtCrystalUse(true);
 }
 
-bool checkSensorInit(){
-  if(!mSensorInit){
-    if(millis()-mSensorReconnectionTime<5000){
+void Sensor::setStatus(int sensor_status){
+  if(sensor_status == SENSOR_STATUS_NOT_ACCESSIBLE){
+    s_sensorInit=false;
+    DEBUG_PRINTLN("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
+    digitalWrite(STATUS_SENSOR_HMI_LED_P, HIGH);
+    s_statusSensorLED.on = true;
+    s_statusSensorLED.lastToggle = millis();
+  } else if(sensor_status == SENSOR_STATUS_CALIBRATING) {
+    if(millis()-s_statusSensorLED.lastToggle > 500){
+      s_statusSensorLED.lastToggle = millis();
+      s_statusSensorLED.on = !s_statusSensorLED.on;
+      if(s_statusSensorLED.on){
+        digitalWrite(STATUS_SENSOR_HMI_LED_P, HIGH);
+      } else {
+        digitalWrite(STATUS_SENSOR_HMI_LED_P, LOW);
+      }
+    }
+  } else if(sensor_status == SENSOR_STATUS_WORKING) {
+    s_sensorInit=true;
+    digitalWrite(STATUS_SENSOR_HMI_LED_P, LOW);
+    s_statusSensorLED.on = false;
+    s_statusSensorLED.lastToggle = millis();
+  }
+}
+
+bool Sensor::checkAllOk(){
+  if(!s_sensorInit){
+    if(millis()-s_sensorReconnectionTime<5000){
       return false;
     }
     DEBUG_PRINTLN("Sensor not connected");
-    mSensorReconnectionTime=millis();
-    if(mBNO.begin(mBNO.OPERATION_MODE_NDOF_FMC_OFF)) {
-      setStatusSensorHMI_ON();
-      mFirstZeros=true;
+    s_sensorReconnectionTime=millis();
+    if(s_BNO.begin(s_BNO.OPERATION_MODE_NDOF_FMC_OFF)) {
+      setStatus(SENSOR_STATUS_WORKING);
+      s_firstZeros=true;
       return true;
     } else {
-      setStatusSensorHMI_OFF();
+      setStatus(SENSOR_STATUS_NOT_ACCESSIBLE);
       return false;
     }
+  }
+  if(millis()-s_lastReadSensorTime<SENSOR_READ_INTERVAL_MS){
+    return false;
   }
   return true;
 }
 
-bool isCalibrationOK(){
+bool Sensor::isCalibrated(){
   uint8_t sys;
   uint8_t gyro;
   uint8_t accel;
   uint8_t mag;
-  mBNO.getCalibration(&sys, &gyro, &accel, &mag);
+  s_BNO.getCalibration(&sys, &gyro, &accel, &mag);
   if(sys < 2){
+    /*
     DEBUG_PRINT("Calibration sys = ");
     DEBUG_PRINT_DEC(sys);
     DEBUG_PRINT(" , gyro = ");
@@ -137,77 +111,112 @@ bool isCalibrationOK(){
     DEBUG_PRINT_DEC(accel);
     DEBUG_PRINT(" , mag = ");
     DEBUG_PRINTLN_DEC(mag);
-    setStatusSensorHMI_BLINK_SLOW();
+    */
+    setStatus(SENSOR_STATUS_CALIBRATING);
     return false;
   } else {
-    setStatusSensorHMI_ON();
+    setStatus(SENSOR_STATUS_WORKING);
     return true;
   }
 }
 
-bool checkReadFromSensor(){
-    if(millis()-mLastReadSensorTime<SENSOR_READ_INTERVAL_MS){
-      return false;
-    }
-    mLastReadSensorTime=millis();
+void Sensor::getData(float *values){
+  s_lastReadSensorTime=millis();
+
+  sensors_event_t event;
+  s_BNO.getEvent(&event);
+  imu::Quaternion sensor_quat = s_BNO.getQuat();
+  float svalues[4] = { sensor_quat.w(), sensor_quat.x(), sensor_quat.y(), sensor_quat.z() };
+  float tvalues[4]; 
+  realignAxis(svalues, tvalues);
   
-    sensors_event_t event;
-    mBNO.getEvent(&event);
-    imu::Quaternion quat = mBNO.getQuat();
-    checkConnectionSensorQuat(quat);
-    if(noBigChangeQuat(quat)){
-      return false;
-    }
-    mReadQuat = quat;
-    return true;
-}
-
-
-imu::Quaternion getReadQuat(){
-  return mReadQuat;
-}
-
-//I noticed that just before after a disconnection the getEvent returns 0 0 0 and THEN blocks. So I just check before the next call to getEvent blocks everything
-void checkConnectionSensorQuat(imu::Quaternion quat){
-  if (quat.w() != 0 || quat.x()!=0 || quat.y()!=0 || quat.z()!=0) { 
-    mFirstZeros=false;
+  //I noticed that just before after a disconnection the getEvent returns 0 0 0 and THEN blocks. So I just check before the next call to getEvent blocks everything
+  if (tvalues[0] != 0 || tvalues[1]!=0 || tvalues[2]!=0 || tvalues[3]!=0) { 
+    s_firstZeros=false;
   }
   
-  if (quat.w() == 0 && quat.x()==0 && quat.y()==0 && quat.z()==0 && !mFirstZeros){
+  if (tvalues[0] == 0 && tvalues[1]==0 && tvalues[2]==0 && tvalues[3]==0 && !s_firstZeros){
     DEBUG_PRINTLN("Sensor might have gotten disconnected!");
-    setStatusSensorHMI_OFF();
+    setStatus(SENSOR_STATUS_NOT_ACCESSIBLE);
   }
+
+  values[0] = tvalues[0];
+  values[1] = tvalues[1];
+  values[2] = tvalues[2];
+  values[3] = tvalues[3];
+
+  /*
+  DEBUG_PRINT("values = ");
+  DEBUG_PRINT(values[0]);
+  DEBUG_PRINT(", ");
+  DEBUG_PRINT(values[1]);
+  DEBUG_PRINT(", ");
+  DEBUG_PRINT(values[2]);
+  DEBUG_PRINT(", ");
+  DEBUG_PRINTLN(values[3]);
+  */
 }
 
-/*
-It also updates the changing last values
-*/
-bool noBigChangeQuat(imu::Quaternion quat) {
-  bool nothingChanged=true;
+String Sensor::getType(){
+  return SENSOR_DATA_TYPE_ORIENTATION_ABS_TAG;  
+}
 
-  //w
-  if(quat.w()< mLastQuat.w()-BIG_QUAT_DIFF || mLastQuat.w()+BIG_QUAT_DIFF<quat.w()){
-    mLastQuat=quat;
-    nothingChanged=false;
-  }
-  
-  //x
-  if(quat.x()< mLastQuat.x()-BIG_QUAT_DIFF || mLastQuat.x()+BIG_QUAT_DIFF<quat.x()){
-    mLastQuat=quat;
-    nothingChanged=false;
-  }
+void Sensor::setEnable(bool enable_status){
+  s_enabled = enable_status;
+}
 
-  //y
-  if(quat.y()< mLastQuat.y()-BIG_QUAT_DIFF || mLastQuat.y()+BIG_QUAT_DIFF<quat.y()){
-    mLastQuat=quat;
-    nothingChanged=false;
-  }
+bool Sensor::isEnabled(){
+  return s_enabled;
+}
 
-  //z
-  if(quat.z()< mLastQuat.z()-BIG_QUAT_DIFF || mLastQuat.z()+BIG_QUAT_DIFF<quat.z()){
-    mLastQuat=quat;
-    nothingChanged=false;
-  }
+void Sensor::realignAxis(float values[], float revalues[]){
 
-  return nothingChanged;
+  // Axis W
+  #if OUT_AXIS_W == SENSOR_AXIS_W
+  revalues[0] = values[0];
+  #elif OUT_AXIS_W == SENSOR_AXIS_X
+  revalues[0] = values[1];
+  #elif OUT_AXIS_W == SENSOR_AXIS_Y
+  revalues[0] = values[2];
+  #elif OUT_AXIS_W == SENSOR_AXIS_Z
+  revalues[0] = values[3];
+  #endif
+
+  // Axis X
+  #if OUT_AXIS_X == SENSOR_AXIS_W
+  revalues[1] = values[0];
+  #elif OUT_AXIS_X == SENSOR_AXIS_X
+  revalues[1] = values[1];
+  #elif OUT_AXIS_X == SENSOR_AXIS_Y
+  revalues[1] = values[2];
+  #elif OUT_AXIS_X == SENSOR_AXIS_Z
+  revalues[1] = values[3];
+  #endif
+
+  // Axis Y
+  #if OUT_AXIS_Y == SENSOR_AXIS_W
+  revalues[2] = values[0];
+  #elif OUT_AXIS_Y == SENSOR_AXIS_X
+  revalues[2] = values[1];
+  #elif OUT_AXIS_Y == SENSOR_AXIS_Y
+  revalues[2] = values[2];
+  #elif OUT_AXIS_Y == SENSOR_AXIS_Z
+  revalues[2] = values[3];
+  #endif
+
+  // Axis Z
+  #if OUT_AXIS_Z == SENSOR_AXIS_W
+  revalues[3] = values[0];
+  #elif OUT_AXIS_Z == SENSOR_AXIS_X
+  revalues[3] = values[1];
+  #elif OUT_AXIS_Z == SENSOR_AXIS_Y
+  revalues[3] = values[2];
+  #elif OUT_AXIS_Z == SENSOR_AXIS_Z
+  revalues[3] = values[3];
+  #endif
+
+  revalues[0] = MUL_AXIS_W * revalues[0];
+  revalues[1] = MUL_AXIS_X * revalues[1];
+  revalues[2] = MUL_AXIS_Y * revalues[2];
+  revalues[3] = MUL_AXIS_Z * revalues[3];
 }

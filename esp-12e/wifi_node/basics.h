@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2019-2021 Manuel Bottini
+* Copyright (c) 2021 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -23,76 +23,51 @@
 */
 
 #include <Arduino.h> 
-#include <ArduinoJson.h>
+#include "constants.h"
 
-#ifndef __WIFI_NODE_BASIC_H
-#define __WIFI_NODE_BASIC_H
+// Implements Specification version 1.0
+// Sensortypes: orientation_abs
+// Player: 1
+// Board: ESP-12E
 
-#define MAX_BUFF_LENGTH 100
+#ifndef __WIFI_NODE_BASICS_H
+#define __WIFI_NODE_BASICS_H
 
-struct Action {
-  int type;
-  int strength;
-  int duration_ms;
-  String message;
-};
+#define BODYNODE_BODYPART_HEX BODYPART_KATANA_HEX
+#define BODYNODE_PLAYER_DEFAULT_TAG  "mario"
 
-//ESP-12E
+#define SENSOR_READ_INTERVAL_MS 30
+#define BIG_QUAT_DIFF 0.002
+#define CONNECTION_ACK_INTERVAL_MS 1000
+#define CONNECTION_KEEP_ALIVE_SEND_INTERVAL_MS 30000
+#define CONNECTION_KEEP_ALIVE_REC_INTERVAL_MS 60000
+
+// Device Specific Axis Configuration
+// Use the program "sensor_test" and check the "bodynodes universal orientation specs" to build your axis configuration,
+// so that your node can easily integrate with any system.
+#define SENSOR_AXIS_W 0
+#define SENSOR_AXIS_X 1
+#define SENSOR_AXIS_Y 2
+#define SENSOR_AXIS_Z 3
+
+#define OUT_AXIS_W SENSOR_AXIS_Z
+#define OUT_AXIS_X SENSOR_AXIS_Y
+#define OUT_AXIS_Y SENSOR_AXIS_X
+#define OUT_AXIS_Z SENSOR_AXIS_W
+
+#define MUL_AXIS_W -1
+#define MUL_AXIS_X 1
+#define MUL_AXIS_Y -1
+#define MUL_AXIS_Z 1
+
+// PINS
 #define BUZZER_FREQ 1000 //Specified in Hz
 #define LED_DT_ON 30 // Duty cicle of LED ON
 #define STATUS_SENSOR_HMI_LED_P 2
 #define STATUS_CONNECTION_HMI_LED_P 0
 #define HAPTIC_MOTOR_PIN_P 14
 
-//Body Part
-#define BODY_HEAD_INT             1
-#define BODY_HAND_LEFT_INT        2
-#define BODY_FOREARM_LEFT_INT     3
-#define BODY_UPPERARM_LEFT_INT    4
-#define BODY_BODY_INT             5
-#define BODY_FOREARM_RIGHT_INT    6
-#define BODY_UPPERARM_RIGHT_INT   7
-#define BODY_HAND_RIGHT_INT       8
-#define BODY_LOWERLEG_LEFT_INT    9
-#define BODY_UPPERLEG_LEFT_INT    10
-#define BODY_FOOT_LEFT_INT        11
-#define BODY_LOWERLEG_RIGHT_INT   12
-#define BODY_UPPERLEG_RIGHT_INT   13
-#define BODY_FOOT_RIGHT_INT       14
-#define BODY_UNTAGGED_INT         15
-#define BODY_KATANA_INT           16
-#define BODY_UPPERBODY_INT        17
-#define BODY_LOWERBODY_INT        18
-
-#define NODE_BODY_PART BODY_UPPERARM_RIGHT_INT
-
-#define BODY_HEAD_TAG             "head"
-#define BODY_HAND_LEFT_TAG        "hand_left"
-#define BODY_FOREARM_LEFT_TAG     "forearm_left"
-#define BODY_UPPERARM_LEFT_TAG    "upperarm_left"
-#define BODY_BODY_TAG             "body"
-#define BODY_FOREARM_RIGHT_TAG    "forearm_right"
-#define BODY_UPPERARM_RIGHT_TAG   "upperarm_right"
-#define BODY_HAND_RIGHT_TAG       "hand_right"
-#define BODY_LOWERLEG_LEFT_TAG    "lowerleg_left"
-#define BODY_UPPERLEG_LEFT_TAG    "upperleg_left"
-#define BODY_FOOT_LEFT_TAG        "shoe_left"
-#define BODY_LOWERLEG_RIGHT_TAG   "lowerleg_right"
-#define BODY_UPPERLEG_RIGHT_TAG   "upperleg_right"
-#define BODY_FOOT_RIGHT_TAG       "shoe_right"
-#define BODY_UNTAGGED_TAG         "untagged"
-#define BODY_KATANA_TAG           "katana"
-#define BODY_UPPERBODY_TAG        "upperbody"
-#define BODY_LOWERBODY_TAG        "lowerbody"
-
-//Action
-#define ACTION_ACTION_TAG            "action"
-#define ACTION_HAPTIC_DURATIONMS_TAG "duration_ms"
-#define ACTION_HAPTIC_STRENGTH_TAG   "strength"
-
-#define ACTION_NOPE_INT              0
-#define ACTION_HAPTIC_INT            1
-#define ACTION_HAPTIC_TAG            "haptic"
+#define MAX_BUFF_LENGTH 100
 
 #define DEBUG_M
 #ifdef DEBUG_M
@@ -111,65 +86,52 @@ struct Action {
  #define DEBUG_PRINTLN_DEC(x)
 #endif
 
-#define WIFI_PASS "bodynodes1"
-#define SERVER_PORT 12345 
+#define BODYNODES_PORT 12345 
 
-#define WIFI_NODE_DEVICE_NAME_TAG "WIFI_node"
+//#define BODYNODES_WIFI_SSID_DEFAULT "BodynodesHotspot"
+//#define BODYNODES_WIFI_PASS_DEFAULT "bodynodes1"
 
-#if NODE_BODY_PART == BODY_HEAD_INT
-  #define WIFI_SSID "BodyNodesHotspot"
-  #define NODE_BODY_PART_TAG BODY_HEAD_TAG
-#elif NODE_BODY_PART == BODY_HAND_LEFT_INT
-  #define WIFI_SSID "head"
-  #define NODE_BODY_PART_TAG BODY_HAND_LEFT_TAG
-#elif NODE_BODY_PART == BODY_FOREARM_LEFT_INT
-  #define WIFI_SSID "upperbody"
-  #define NODE_BODY_PART_TAG BODY_FOREARM_LEFT_TAG
-#elif NODE_BODY_PART == BODY_UPPERARM_LEFT_INT
-  #define WIFI_SSID "upperbody"
-  #define NODE_BODY_PART_TAG BODY_UPPERARM_LEFT_TAG
-#elif NODE_BODY_PART == BODY_BODY_INT
-  #define WIFI_SSID "BodyNodesHotspot"
-  #define NODE_BODY_PART_TAG BODY_BODY_TAG
-#elif NODE_BODY_PART == BODY_FOREARM_RIGHT_INT
-  #define WIFI_SSID "upperbody"
-  #define NODE_BODY_PART_TAG BODY_FOREARM_RIGHT_TAG
-#elif NODE_BODY_PART == BODY_UPPERARM_RIGHT_INT
-  #define WIFI_SSID "upperbody"
-  #define NODE_BODY_PART_TAG BODY_UPPERARM_RIGHT_TAG
-#elif NODE_BODY_PART == BODY_HAND_RIGHT_INT
-  #define WIFI_SSID "head"
-  #define NODE_BODY_PART_TAG BODY_HAND_RIGHT_TAG
-#elif NODE_BODY_PART == BODY_LOWERLEG_LEFT_INT
-  #define WIFI_SSID "lowerbody"
-  #define NODE_BODY_PART_TAG BODY_LOWERLEG_LEFT_TAG
-#elif NODE_BODY_PART == BODY_UPPERLEG_LEFT_INT
-  #define WIFI_SSID "lowerbody"
-  #define NODE_BODY_PART_TAG BODY_UPPERLEG_LEFT_TAG
-#elif NODE_BODY_PART == BODY_FOOT_LEFT_INT
-  #define WIFI_SSID "head"
-  #define NODE_BODY_PART_TAG BODY_FOOT_LEFT_TAG
-#elif NODE_BODY_PART == BODY_LOWERLEG_RIGHT_INT
-  #define WIFI_SSID "lowerbody"
-  #define NODE_BODY_PART_TAG BODY_LOWERLEG_RIGHT_TAG
-#elif NODE_BODY_PART == BODY_UPPERLEG_RIGHT_INT
-  #define WIFI_SSID "lowerbody"
-  #define NODE_BODY_PART_TAG BODY_UPPERLEG_RIGHT_TAG
-#elif NODE_BODY_PART == BODY_FOOT_RIGHT_INT
-  #define WIFI_SSID "head"
-  #define NODE_BODY_PART_TAG BODY_FOOT_RIGHT_TAG
-#elif NODE_BODY_PART == BODY_UNTAGGED_INT
-  #define WIFI_SSID "BodyNodesHotspot"
-  #define NODE_BODY_PART_TAG BODY_UNTAGGED_INT
-#elif NODE_BODY_PART == BODY_KATANA_INT
-  #define WIFI_SSID "BodyNodesHotspot"
-  #define NODE_BODY_PART_TAG BODY_KATANA_TAG
-#elif NODE_BODY_PART == BODY_UPPERBODY_INT
-  #define WIFI_SSID "BodyNodesHotspot"
-  #define NODE_BODY_PART_TAG BODY_UPPERBODY_TAG
-#elif NODE_BODY_PART == BODY_LOWERBODY_INT
-  #define WIFI_SSID "BodyNodesHotspot"
-  #define NODE_BODY_PART_TAG BODY_LOWERBODY_TAG
-#endif //NODE_BODY_PART
+#define BODYNODES_WIFI_SSID_DEFAULT "VM0285669"
+#define BODYNODES_WIFI_PASS_DEFAULT "ys2FjsfdDxxk"
+#define BODYNODES_SERVERIP_DEFAULT  "192.168.0.167"
 
-#endif //__WIFI_NODE_BASIC_H
+// Set BODYNODE_BODYPART_TAG 
+#if BODYNODE_BODYPART_HEX == BODYPART_HEAD_HEX
+  #define BODYNODE_BODYPART_TAG BODYPART_HEAD_TAG
+#elif BODYNODE_BODYPART_HEX == BODYPART_HAND_LEFT_HEX
+  #define BODYNODE_BODYPART_TAG BODYPART_HAND_LEFT_TAG
+#elif BODYNODE_BODYPART_HEX == BODYPART_LOWERARM_LEFT_HEX
+  #define BODYNODE_BODYPART_TAG BODYPART_LOWERARM_LEFT_TAG
+#elif BODYNODE_BODYPART_HEX == BODYPART_UPPERARM_LEFT_HEX
+  #define BODYNODE_BODYPART_TAG BODYPART_UPPERARM_LEFT_TAG
+#elif BODYNODE_BODYPART_HEX == BODYPART_BODY_HEX
+  #define BODYNODE_BODYPART_TAG BODYPART_BODY_TAG
+#elif BODYNODE_BODYPART_HEX == BODYPART_LOWERARM_RIGHT_HEX
+  #define BODYNODE_BODYPART_TAG BODYPART_LOWERARM_RIGHT_TAG
+#elif BODYNODE_BODYPART_HEX == BODYPART_UPPERARM_RIGHT_HEX
+  #define BODYNODE_BODYPART_TAG BODYPART_UPPERARM_RIGHT_TAG
+#elif BODYNODE_BODYPART_HEX == BODYPART_HAND_RIGHT_HEX
+  #define BODYNODE_BODYPART_TAG BODYPART_HAND_RIGHT_TAG
+#elif BODYNODE_BODYPART_HEX == BODYPART_LOWERLEG_LEFT_HEX
+  #define BODYNODE_BODYPART_TAG BODYPART_LOWERLEG_LEFT_TAG
+#elif BODYNODE_BODYPART_HEX == BODYPART_UPPERLEG_LEFT_HEX
+  #define BODYNODE_BODYPART_TAG BODYPART_UPPERLEG_LEFT_TAG
+#elif BODYNODE_BODYPART_HEX == BODYPART_FOOT_LEFT_HEX
+  #define BODYNODE_BODYPART_TAG BODYPART_FOOT_LEFT_TAG
+#elif BODYNODE_BODYPART_HEX == BODYPART_LOWERLEG_RIGHT_HEX
+  #define BODYNODE_BODYPART_TAG BODYPART_LOWERLEG_RIGHT_TAG
+#elif BODYNODE_BODYPART_HEX == BODYPART_UPPERLEG_RIGHT_HEX
+  #define BODYNODE_BODYPART_TAG BODYPART_UPPERLEG_RIGHT_TAG
+#elif BODYNODE_BODYPART_HEX == BODYPART_FOOT_RIGHT_HEX
+  #define BODYNODE_BODYPART_TAG BODYPART_FOOT_RIGHT_TAG
+#elif BODYNODE_BODYPART_HEX == BODYPART_UPPERBODY_HEX
+  #define BODYNODE_BODYPART_TAG BODYPART_UPPERBODY_TAG
+#elif BODYNODE_BODYPART_HEX == BODYPART_LOWERBODY_HEX
+  #define BODYNODE_BODYPART_TAG BODYPART_LOWERBODY_TAG
+#elif BODYNODE_BODYPART_HEX == BODYPART_KATANA_HEX
+  #define BODYNODE_BODYPART_TAG BODYPART_KATANA_TAG
+#elif BODYNODE_BODYPART_HEX == BODYPART_UNTAGGED_HEX
+  #define BODYNODE_BODYPART_TAG BODYPART_UNTAGGED_TAG
+#endif // BODYNODE_BODYPART_TAG 
+
+#endif //__WIFI_NODE_BASICS_H

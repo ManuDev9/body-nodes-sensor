@@ -22,39 +22,48 @@
 * SOFTWARE.
 */
 
-#include <Adafruit_Sensor.h>
-#include <Adafruit_BNO055.h>
+#include "basics.h"
 #include <utility/imumaths.h>
-#include "basics.h" 
 #include "commons.h"
 
-#ifndef __WIFI_NODE_SENSOR_H__
-#define __WIFI_NODE_SENSOR_H__
+#ifndef __WIFI_NODE_COMMUNICATOR_H__
+#define __WIFI_NODE_COMMUNICATOR_H__
 
-class Sensor {
+#define MAX_MESSAGES_LIST_LENGTH 20
+#define MAX_ACTIONS_LIST_LENGTH  20
+
+#define MAX_MESSAGE_BYTES 250
+#define MAX_ACTION_BYTES  250
+
+class WifiNodeCommunicator {
 public:
+  WifiNodeCommunicator() :
+    wnc_messages_doc(MAX_MESSAGES_LIST_LENGTH * MAX_MESSAGE_BYTES),
+    wnc_actions_doc(MAX_ACTIONS_LIST_LENGTH * MAX_ACTION_BYTES) {
+  }
+
+  void setConnectionParams(JsonObject &params);
   void init();
   bool checkAllOk();
-  bool isCalibrated();
-  void getData(float *values);
-  String getType();
-  void setEnable(bool enable_status);
-  bool isEnabled();
+  void addMessage(JsonObject &message);
+  void sendAllMessages();
+  void getActions(JsonArray &actions);
 
 private:
-  void setStatus(int sensor_status);
-  void realignAxis(float values[], float revalues[]);
+  void receiveBytes();
+  void sendACK();
+  bool checkForACK();
+  void checkForActions();
+  void checkStatus();
 
-  bool s_enabled;
-  Adafruit_BNO055 s_BNO;
-  bool s_sensorInit;
-  imu::Quaternion s_lastQuat;
-  StatusLED s_statusSensorLED;
-  unsigned long s_lastReadSensorTime;
-  unsigned long s_sensorReconnectionTime;
-  //At the beginning of each connection with the sensor it seems it returns some 0s. The first 0s are not of my interest.
-  volatile bool s_firstZeros;
+  UDP wnc_connector;
+  DynamicJsonDocument wnc_messages_doc;
+  JsonArray wnc_messages_list;
+  DynamicJsonDocument wnc_actions_doc;
+  JsonArray wnc_actions_list;
 
+  IPConnectionData wnc_connection_data;
+  StatusLED wnc_status_LED;
 };
 
-#endif /*__WIFI_NODE_SENSOR_H__*/
+#endif //__WIFI_NODE_COMMUNICATOR_H__

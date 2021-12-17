@@ -1,0 +1,10 @@
+{
+	"specification_version" : "1.0",
+	"project" : "node",
+	"host_communicator_type" : "udp" ,
+	"player": "1",
+	"bodyparts": [ "lowerleg_right" ],
+	"sensors_types" : [ "orientation_abs" ],
+	"actuators" : [ "haptic" ],
+	"board": "ESP-12E"
+}
