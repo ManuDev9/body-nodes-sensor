@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2021 Manuel Bottini
+* Copyright (c) 2021-2022 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -37,7 +37,7 @@ void IPConnectionData::cleanBytes(){ num_received_bytes = 0; }
 
 void PersMemory::init(){
   EEPROM.begin(512);
-  
+
   char checkkey[5];
   EEPROM.get(0, checkkey);
   if(!(checkkey[0] == pm_checkkey_0 &&
@@ -58,11 +58,14 @@ void PersMemory::init(){
     EEPROM.write(4, pm_checkkey_4);
     EEPROM.commit();
     // Sets default values
-    setValue(ACTION_PLAYER_TAG, BODYNODE_PLAYER_DEFAULT_TAG );
-    setValue(ACTION_BODYPART_TAG, BODYNODE_BODYPART_TAG);
-    setValue(ACTION_SETWIFI_SSID_TAG, BODYNODES_WIFI_SSID_DEFAULT);
-    setValue(ACTION_SETWIFI_PASSWORD_TAG, BODYNODES_WIFI_PASS_DEFAULT);
-    setValue(ACTION_SETWIFI_SERVERIP_TAG, BODYNODES_SERVERIP_DEFAULT);
+    setValue(MEMORY_PLAYER_TAG, BODYNODE_PLAYER_DEFAULT_TAG );
+    setValue(MEMORY_BODYPART_TAG, BODYNODE_BODYPART_TAG);
+#ifdef BODYNODE_GLOVE_SENSOR
+    setValue(MEMORY_BODYPART_GLOVE_TAG, BODYNODE_BODYPART_GLOVE_TAG);
+#endif /*BODYNODE_GLOVE_SENSOR*/
+    setValue(MEMORY_WIFI_SSID_TAG, BODYNODES_WIFI_SSID_DEFAULT);
+    setValue(MEMORY_WIFI_PASSWORD_TAG, BODYNODES_WIFI_PASS_DEFAULT);
+    setValue(MEMORY_WIFI_SERVERIP_TAG, BODYNODES_SERVERIP_DEFAULT);
 
   } else {
     DEBUG_PRINTLN("Already setup memory!");
@@ -80,19 +83,22 @@ void PersMemory::clean(){
 void PersMemory::setValue(String key, String value){
   uint16_t addr_nbytes = 0;
   uint16_t addr_chars = 0;
-  if(key == ACTION_PLAYER_TAG) {
+  if(key == MEMORY_PLAYER_TAG) {
     addr_nbytes = pm_player_addr_nbytes;
     addr_chars = pm_player_addr_chars;
-  } else if(key == ACTION_BODYPART_TAG) {
+  } else if(key == MEMORY_BODYPART_TAG) {
     addr_nbytes = pm_bodypart_addr_nbytes;
     addr_chars = pm_bodypart_addr_chars;
-  } else if(key == ACTION_SETWIFI_SSID_TAG) {
+  } else if(key == MEMORY_BODYPART_GLOVE_TAG) {
+    addr_nbytes = pm_bodypart_glove_addr_nbytes;
+    addr_chars = pm_bodypart_glove_addr_chars;
+  } else if(key == MEMORY_WIFI_SSID_TAG) {
     addr_nbytes = pm_ssid_addr_nbytes;
     addr_chars = pm_ssid_addr_chars;
-  } else if(key == ACTION_SETWIFI_PASSWORD_TAG) {
+  } else if(key == MEMORY_WIFI_PASSWORD_TAG) {
     addr_nbytes = pm_password_addr_nbytes;
     addr_chars = pm_password_addr_chars;
-  } else if(key == ACTION_SETWIFI_SERVERIP_TAG) {
+  } else if(key == MEMORY_WIFI_SERVERIP_TAG) {
     addr_nbytes = pm_server_ip_addr_nbytes;
     addr_chars = pm_server_ip_addr_chars;
   } else {
@@ -113,19 +119,22 @@ void PersMemory::setValue(String key, String value){
 String PersMemory::getValue(String key){
   uint16_t addr_nbytes = 0;
   uint16_t addr_chars = 0;
-  if(key == ACTION_PLAYER_TAG) {
+  if(key == MEMORY_PLAYER_TAG) {
     addr_nbytes = pm_player_addr_nbytes;
     addr_chars = pm_player_addr_chars;
-  } else if(key == ACTION_BODYPART_TAG) {
+  } else if(key == MEMORY_BODYPART_TAG) {
     addr_nbytes = pm_bodypart_addr_nbytes;
     addr_chars = pm_bodypart_addr_chars;
-  } else if(key == ACTION_SETWIFI_SSID_TAG) {
+  } else if(key == MEMORY_BODYPART_GLOVE_TAG) {
+    addr_nbytes = pm_bodypart_glove_addr_nbytes;
+    addr_chars = pm_bodypart_glove_addr_chars;
+  } else if(key == MEMORY_WIFI_SSID_TAG) {
     addr_nbytes = pm_ssid_addr_nbytes;
     addr_chars = pm_ssid_addr_chars;
-  } else if(key == ACTION_SETWIFI_PASSWORD_TAG) {
+  } else if(key == MEMORY_WIFI_PASSWORD_TAG) {
     addr_nbytes = pm_password_addr_nbytes;
     addr_chars = pm_password_addr_chars;
-  } else if(key == ACTION_SETWIFI_SERVERIP_TAG) {
+  } else if(key == MEMORY_WIFI_SERVERIP_TAG) {
     addr_nbytes = pm_server_ip_addr_nbytes;
     addr_chars = pm_server_ip_addr_chars;
   } else {

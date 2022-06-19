@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2021 Manuel Bottini
+* Copyright (c) 2021-2022 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -54,6 +54,7 @@ private:
   unsigned long s_sensorReconnectionTime;
   //At the beginning of each connection with the sensor it seems it returns some 0s. The first 0s are not of my interest.
   volatile bool s_firstZeros;
+  float s_values[4];
 
 };
 

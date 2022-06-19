@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2021 Manuel Bottini
+* Copyright (c) 2021-2022 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,7 @@
 * SOFTWARE.
 */
 
-#include <Arduino.h> 
+#include <Arduino.h>
 #include "constants.h"
 
 // Implements Specification version 1.0
@@ -33,11 +33,25 @@
 #ifndef __WIFI_NODE_BASICS_H
 #define __WIFI_NODE_BASICS_H
 
-#define BODYNODE_BODYPART_HEX BODYPART_KATANA_HEX
+#define BODYNODE_BODYPART_HEX BODYPART_LOWERARM_LEFT_HEX
 #define BODYNODE_PLAYER_DEFAULT_TAG  "mario"
+
+#define BODYNODE_GLOVE_SENSOR
+
+// If BODYNODE_GLOVE_SENSOR is defined then BODYNODE_BODYPART_GLOVE_TAG will be defined in case the node is a forearm
+// Note that only forearm nodes can have gloves, therefore BODYNODE_GLOVE_SENSOR is undefined for the other cases
+#if BODYNODE_BODYPART_HEX == BODYPART_LOWERARM_RIGHT_HEX
+  #define BODYNODE_BODYPART_GLOVE_TAG BODYPART_HAND_RIGHT_TAG
+#elif BODYNODE_BODYPART_HEX == BODYPART_LOWERARM_LEFT_HEX
+  #define BODYNODE_BODYPART_GLOVE_TAG BODYPART_HAND_LEFT_TAG
+#else
+  #undef BODYNODE_GLOVE_SENSOR
+#endif // BODYNODE_BODYPART_HEX != BODYPART_LOWERARM_RIGHT_HEX && BODYNODE_BODYPART_HEX != BODYPART_LOWERARM_LEFT_HEX
+
 
 #define SENSOR_READ_INTERVAL_MS 30
 #define BIG_QUAT_DIFF 0.002
+#define BIG_ANGLE_DIFF 6
 #define CONNECTION_ACK_INTERVAL_MS 1000
 #define CONNECTION_KEEP_ALIVE_SEND_INTERVAL_MS 30000
 #define CONNECTION_KEEP_ALIVE_REC_INTERVAL_MS 60000
@@ -86,13 +100,14 @@
  #define DEBUG_PRINTLN_DEC(x)
 #endif
 
-#define BODYNODES_PORT 12345 
+#define BODYNODES_PORT 12345
 
-#define BODYNODES_WIFI_SSID_DEFAULT "BodynodesHotspot"
+//#define BODYNODES_WIFI_SSID_DEFAULT "BodynodesHotspot"
+#define BODYNODES_WIFI_SSID_DEFAULT "upperbody"
 #define BODYNODES_WIFI_PASS_DEFAULT "bodynodes1"
 #define BODYNODES_SERVERIP_DEFAULT  "192.168.137.1"
 
-// Set BODYNODE_BODYPART_TAG 
+// Set BODYNODE_BODYPART_TAG
 #if BODYNODE_BODYPART_HEX == BODYPART_HEAD_HEX
   #define BODYNODE_BODYPART_TAG BODYPART_HEAD_TAG
 #elif BODYNODE_BODYPART_HEX == BODYPART_HAND_LEFT_HEX
@@ -129,6 +144,6 @@
   #define BODYNODE_BODYPART_TAG BODYPART_KATANA_TAG
 #elif BODYNODE_BODYPART_HEX == BODYPART_UNTAGGED_HEX
   #define BODYNODE_BODYPART_TAG BODYPART_UNTAGGED_TAG
-#endif // BODYNODE_BODYPART_TAG 
+#endif // BODYNODE_BODYPART_TAG
 
 #endif //__WIFI_NODE_BASICS_H

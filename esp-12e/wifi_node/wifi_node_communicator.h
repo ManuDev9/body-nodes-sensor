@@ -1,7 +1,7 @@
 /**
 * MIT License
-* 
-* Copyright (c) 2021 Manuel Bottini
+*
+* Copyright (c) 2021-2022 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,7 @@
 */
 
 #include "basics.h"
-#include <ESP8266WiFi.h> 
+#include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
 #include <utility/imumaths.h>
 #include "commons.h"

@@ -1,7 +1,7 @@
 /**
 * MIT License
-* 
-* Copyright (c) 2021-2022 Manuel Bottini
+*
+* Copyright (c) 2022 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -22,37 +22,35 @@
 * SOFTWARE.
 */
 
-#include "actuator.h"
+#include <ESP8266WiFi.h>
+#include "basics.h"
 
-void Actuator::init(){
-  pinMode(HAPTIC_MOTOR_PIN_P, OUTPUT); 
-  digitalWrite(HAPTIC_MOTOR_PIN_P, LOW);
-  a_vibration.startTime_ms = 0;
-  a_vibration.duration_ms = 0;
-}
+#ifdef BODYNODE_GLOVE_SENSOR
 
-void Actuator::setAction(JsonObject &action){
-  if(action["type"] == ACTION_TYPE_HAPTIC_TAG){
-    DEBUG_PRINT("Haptic triggered with duration and strenght = ");
-    uint16_t duration_ms = action["duration_ms"];
-    uint16_t strength = action["strength"];
-    DEBUG_PRINTLN(duration_ms);
-    DEBUG_PRINTLN(strength);
-    a_vibration.startTime_ms = millis();
-    a_vibration.duration_ms = duration_ms;
-  }
-}
+#ifndef __WIFI_NODE_GLOVESENSOR_SERIALREADER_H__
+#define __WIFI_NODE_GLOVESENSOR_SERIALREADER_H__
 
-void Actuator::performAction(){
-  if(millis()-a_vibration.startTime_ms < a_vibration.duration_ms  ){
-    DEBUG_PRINTLN("Doing something");
-    digitalWrite(HAPTIC_MOTOR_PIN_P, HIGH);
-  } else {
-    digitalWrite(HAPTIC_MOTOR_PIN_P, LOW);
-  }
-}
+class GloveSensorReaderSerial {
+public:
+  // Initializes the reader
+  void init();
+  // Reads from the serial. Returns true if a full read has been received, false otherwise.
+  bool checkAllOk();
+  // Returns the data read
+  void getData(int *values);
+  // Returns the type of the sensor as string
+  String getType();
+  // Enable/Disable Sensor
+  void setEnable(bool enable_status);
+  // Returns if sensor is enabled or not
+  bool isEnabled();
 
-String Actuator::getType(){
-  // It is well known for this Bodynode
-  return ACTION_TYPE_HAPTIC_TAG;
-}
+private:
+  boolean grs_lineDone;
+  String grs_lineToPrint;
+  bool grs_enabled;
+};
+
+#endif /*__WIFI_NODE_GLOVESENSOR_SERIALREADER_H__*/
+
+#endif /*BODYNODE_GLOVE_SENSOR*/

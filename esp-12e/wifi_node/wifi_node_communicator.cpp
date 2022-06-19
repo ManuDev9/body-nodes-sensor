@@ -1,7 +1,7 @@
 /**
 * MIT License
-* 
-* Copyright (c) 2021 Manuel Bottini
+*
+* Copyright (c) 2021-2022 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -44,11 +44,10 @@ void WifiNodeCommunicator::init(){
   wnc_actions_list = wnc_actions_doc.to<JsonArray>();
 }
 
-
 void WifiNodeCommunicator::setConnectionParams(JsonObject &params){
-  PersMemory::setValue(ACTION_SETWIFI_SSID_TAG, params[ACTION_SETWIFI_SSID_TAG].as<String>());
-  PersMemory::setValue(ACTION_SETWIFI_PASSWORD_TAG, params[ACTION_SETWIFI_PASSWORD_TAG].as<String>());
-  PersMemory::setValue(ACTION_SETWIFI_SERVERIP_TAG, params[ACTION_SETWIFI_SERVERIP_TAG].as<String>());  
+  PersMemory::setValue(MEMORY_WIFI_SSID_TAG, params[ACTION_SETWIFI_SSID_TAG].as<String>());
+  PersMemory::setValue(MEMORY_WIFI_PASSWORD_TAG, params[ACTION_SETWIFI_PASSWORD_TAG].as<String>());
+  PersMemory::setValue(MEMORY_WIFI_SERVERIP_TAG, params[ACTION_SETWIFI_SERVERIP_TAG].as<String>());
 }
 
 void WifiNodeCommunicator::receiveBytes(){
@@ -62,8 +61,8 @@ bool WifiNodeCommunicator::checkAllOk(){
   bool allok = false;
   checkStatus();
   if (wnc_connection_data.isDisconnected()){
-    String ssid = PersMemory::getValue(ACTION_SETWIFI_SSID_TAG);
-    String password = PersMemory::getValue(ACTION_SETWIFI_PASSWORD_TAG);
+    String ssid = PersMemory::getValue(MEMORY_WIFI_SSID_TAG);
+    String password = PersMemory::getValue(MEMORY_WIFI_PASSWORD_TAG);
     if (!tryConnectWifi(ssid, password)){
       DEBUG_PRINTLN("Not connected to the Wifi");
       wnc_connection_data.setDisconnected();
@@ -73,7 +72,7 @@ bool WifiNodeCommunicator::checkAllOk(){
       DEBUG_PRINTLN("Connected to the Wifi");
       //wnc_connection_data.ip_address = WiFi.gatewayIP();
 
-      String server_ip = PersMemory::getValue(ACTION_SETWIFI_SERVERIP_TAG);
+      String server_ip = PersMemory::getValue(MEMORY_WIFI_SERVERIP_TAG);
       IPAddress server_ipa;
       server_ipa.fromString(server_ip);
       wnc_connection_data.ip_address = server_ipa;
@@ -82,7 +81,7 @@ bool WifiNodeCommunicator::checkAllOk(){
     }
     wnc_connection_data.setWaitingACK();
   }
-  
+
   receiveBytes();
   //unsigned long time_prev = millis();
   //unsigned long time_diff = millis() - time_prev;
@@ -122,6 +121,9 @@ void WifiNodeCommunicator::addMessage(JsonObject &message){
 }
 
 void WifiNodeCommunicator::sendAllMessages(){
+  if(wnc_messages_list.size() == 0) {
+    return;
+  }
   uint16_t tot_bytes = wnc_messages_doc.memoryUsage()+1;
   char buf_udp[tot_bytes];
 
@@ -170,7 +172,7 @@ void WifiNodeCommunicator::checkForActions(){
       DEBUG_PRINTLN(error.c_str());
       return;
     }
-    wnc_actions_list.add(actionDoc);    
+    wnc_actions_list.add(actionDoc);
   }
 }
 
@@ -200,7 +202,7 @@ void WifiNodeCommunicator::checkStatus(){
 void WifiNodeCommunicator::sendACK(){
   if(millis() - wnc_connection_data.last_sent_time < CONNECTION_ACK_INTERVAL_MS){
     return;
-  }  
+  }
   byte buf_udp [4] = {'A','C','K', '\0'};
   wnc_connector.beginPacket(wnc_connection_data.ip_address, BODYNODES_PORT);
   wnc_connector.write(buf_udp, 4);
@@ -228,7 +230,7 @@ bool tryConnectWifi(String ssid, String password){
   // attempt to connect to Wifi network:
   DEBUG_PRINT("Attempting to connect to Network named: ");
   // print the network name (SSID);
-  DEBUG_PRINTLN(ssid); 
+  DEBUG_PRINTLN(ssid);
   WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED && WiFi.status() != WL_CONNECT_FAILED) {
@@ -264,7 +266,7 @@ bool tryConnectWifi(String ssid, String password){
         DEBUG_PRINTLN(WiFi.RSSI(i));
     }
     return false;
-  }  
+  }
 }
 
 void printWifiStatus() {
@@ -276,7 +278,7 @@ void printWifiStatus() {
   IPAddress ip = WiFi.localIP();
   DEBUG_PRINT("IP Address: ");
   DEBUG_PRINTLN(ip);
-  
+
   DEBUG_PRINT("Gateway IP address for network ");
   DEBUG_PRINTLN(WiFi.gatewayIP());
 
