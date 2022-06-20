@@ -54,6 +54,7 @@
 #define CONNECTION_ACK_INTERVAL_MS 1000
 #define CONNECTION_KEEP_ALIVE_SEND_INTERVAL_MS 30000
 #define CONNECTION_KEEP_ALIVE_REC_INTERVAL_MS 60000
+#define MULTICAST_KEEP_ALIVE_REC_INTERVAL_MS 30000
 
 // Device Specific Axis Configuration
 // Use the program "sensor_test" and check the "bodynodes universal orientation specs" to build your axis configuration,
@@ -102,9 +103,10 @@
 #define BODYNODES_PORT 12345
 #define BODYNODES_MULTICAST_PORT 12346
 
-//#define BODYNODES_WIFI_SSID_DEFAULT "BodynodesHotspot"
-#define BODYNODES_WIFI_SSID_DEFAULT "upperbody"
-#define BODYNODES_WIFI_PASS_DEFAULT "bodynodes1"
+//#define BODYNODES_WIFI_SSID_DEFAULT "upperbody"
+//#define BODYNODES_WIFI_PASS_DEFAULT "bodynodes1"
+#define BODYNODES_WIFI_SSID_DEFAULT "BTHub6-X87G"
+#define BODYNODES_WIFI_PASS_DEFAULT "CGHpVUCfALn4"
 #define BODYNODES_MULTICASTIP_DEFAULT  "239.192.1.99"
 
 // Set BODYNODE_BODYPART_TAG

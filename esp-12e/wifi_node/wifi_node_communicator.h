@@ -57,14 +57,19 @@ private:
   bool checkForACKH();
   void checkForActions();
   void checkStatus();
+  bool checkForMulticastBN();
+  void saveHostInfo();
+  bool hasHostInfo();
 
   WiFiUDP wnc_connector;
+  WiFiUDP wnc_multicast_connector;
   DynamicJsonDocument wnc_messages_doc;
   JsonArray wnc_messages_list;
   DynamicJsonDocument wnc_actions_doc;
   JsonArray wnc_actions_list;
 
   IPConnectionData wnc_connection_data;
+  IPConnectionData wnc_multicast_data;
   StatusLED wnc_status_LED;
 };
 

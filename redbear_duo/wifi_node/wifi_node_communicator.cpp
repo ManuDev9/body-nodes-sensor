@@ -42,6 +42,12 @@ void WifiNodeCommunicator::init(){
   wnc_connection_data.setDisconnected();
   wnc_connection_data.last_sent_time = 0;
   wnc_connection_data.last_rec_time = 0;
+  wnc_connection_data.has_ip_address = false;
+
+  wnc_multicast_data.setDisconnected();
+  wnc_multicast_data.last_sent_time = 0;
+  wnc_multicast_data.last_rec_time = 0;
+
   wnc_messages_list = wnc_messages_doc.to<JsonArray>();
   wnc_actions_list = wnc_actions_doc.to<JsonArray>();
 }
@@ -56,6 +62,15 @@ void WifiNodeCommunicator::receiveBytes(){
   if(size_>0){
     wnc_connection_data.num_received_bytes = wnc_connector.read(wnc_connection_data.received_bytes, MAX_RECEIVED_BYTES_LENGTH);
   }
+
+  int size_m = wnc_multicast_connector.parsePacket();
+  //DEBUG_PRINTLN(WiFi.gatewayIP());
+  if(size_m>0){
+    //DEBUG_PRINT("I received some packets of size =  ");
+    //DEBUG_PRINTLN(size_m);
+    wnc_multicast_data.num_received_bytes = wnc_multicast_connector.read(wnc_multicast_data.received_bytes, MAX_RECEIVED_BYTES_LENGTH);
+  }
+
 }
 
 bool WifiNodeCommunicator::checkAllOk(){
@@ -77,8 +92,9 @@ bool WifiNodeCommunicator::checkAllOk(){
       //wnc_connection_data.ip_address = WiFi.gatewayIP();      
       wnc_connector.begin(BODYNODES_PORT);
       IPAddress multicastIP = getIPAdressFromStr(BODYNODES_MULTICASTIP_DEFAULT);
-      wnc_connector.begin(BODYNODES_MULTICAST_PORT);
-      wnc_connector.joinMulticast(multicastIP); // Listen to the Multicast 
+      wnc_multicast_connector.begin(BODYNODES_MULTICAST_PORT);
+      wnc_multicast_connector.joinMulticast(multicastIP); // Listen to the Multicast 
+      wnc_multicast_data.setConnected();
       printWifiStatus();
     }
     wnc_connection_data.setWaitingACK();
@@ -92,12 +108,15 @@ bool WifiNodeCommunicator::checkAllOk(){
 
   if(wnc_connection_data.isWaitingACK()){
     //DEBUG_PRINTLN("isWaitingACK");
-    if(checkForACKH()){
-      IPAddress server_ipa = wnc_connector.remoteIP();
-      wnc_connection_data.ip_address = server_ipa;
+    if(checkForMulticastBN()){
+      saveHostInfo();
+    }
+    if(hasHostInfo()) {
       sendACKN();
-      wnc_connection_data.setConnected();
-      DEBUG_PRINTLN("Connected to Host via Wifi");
+      if(checkForACKH()){
+        wnc_connection_data.setConnected();
+        DEBUG_PRINTLN("Connected to Host via Wifi");
+      }
     }
   } else {
     // Connected to wifi and server
@@ -227,6 +246,35 @@ bool WifiNodeCommunicator::checkForACKH(){
     //DEBUG_PRINTLN("No ACK received from Server");
   }
   return false;
+}
+
+bool WifiNodeCommunicator::checkForMulticastBN() {
+  if(wnc_multicast_data.num_received_bytes >= 2){
+    for(uint16_t index = 0; index<wnc_multicast_data.num_received_bytes-1; ++index){
+      if( wnc_multicast_data.received_bytes[index] == 'B' && wnc_multicast_data.received_bytes[index+1] == 'N') {
+        wnc_multicast_data.last_rec_time = millis();
+        wnc_multicast_data.cleanBytes();
+        return true;
+      }
+    }
+    //DEBUG_PRINTLN("The message was not an BN mutlicast");
+  } else {
+    //DEBUG_PRINTLN("No BN received from Host");
+  }
+  wnc_multicast_data.cleanBytes();
+  return false;
+}
+
+void WifiNodeCommunicator::saveHostInfo(){
+  wnc_connection_data.has_ip_address = true;
+  IPAddress server_ipa = wnc_multicast_connector.remoteIP();
+  wnc_connection_data.ip_address = server_ipa;
+}
+
+bool WifiNodeCommunicator::hasHostInfo(){
+  //DEBUG_PRINT("hasHostInfo = ");
+  //DEBUG_PRINTLN(wnc_connection_data.has_ip_address);
+  return wnc_connection_data.has_ip_address;
 }
 
 bool tryConnectWifi(String ssid, String password){

@@ -32,6 +32,7 @@ void IPConnectionData::setWaitingACK(){ conn_status = CONNECTION_STATUS_WAITING_
 void IPConnectionData::setConnected(){ conn_status = CONNECTION_STATUS_CONNECTED; }
 bool IPConnectionData::isWaitingACK(){ return conn_status == CONNECTION_STATUS_WAITING_ACK; }
 bool IPConnectionData::isDisconnected(){ return conn_status == CONNECTION_STATUS_NOT_CONNECTED; }
+bool IPConnectionData::isConnected(){ return conn_status == CONNECTION_STATUS_CONNECTED; }
 void IPConnectionData::cleanBytes(){ num_received_bytes = 0; }
 
 

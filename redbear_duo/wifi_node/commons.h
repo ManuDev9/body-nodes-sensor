@@ -49,10 +49,12 @@ public:
   void setConnected();
   bool isWaitingACK();
   bool isDisconnected();
+  bool isConnected();
   void cleanBytes();
   
   uint8_t conn_status = CONNECTION_STATUS_NOT_CONNECTED;
   IPAddress ip_address;
+  bool has_ip_address;
   
   byte received_bytes[MAX_RECEIVED_BYTES_LENGTH];
   uint16_t num_received_bytes = 0;
@@ -74,7 +76,7 @@ private:
   static constexpr char pm_checkkey_1 = 0x00;
   static constexpr char pm_checkkey_2 = 0x00;
   static constexpr char pm_checkkey_3 = 0x00;
-  static constexpr char pm_checkkey_4 = 0x02;
+  static constexpr char pm_checkkey_4 = 0x01;
 
   static constexpr uint16_t pm_player_addr_nbytes = 50;
   static constexpr uint16_t pm_player_addr_chars = 51;
