@@ -1,7 +1,7 @@
 /**
 * MIT License
-* 
-* Copyright (c) 2021 Manuel Bottini
+*
+* Copyright (c) 2022 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -23,47 +23,33 @@
 */
 
 #include "basics.h"
-#include <utility/imumaths.h>
-#include "commons.h"
 
-#ifndef __WIFI_NODE_COMMUNICATOR_H__
-#define __WIFI_NODE_COMMUNICATOR_H__
+#ifdef BODYNODE_GLOVE_SENSOR
 
-#define MAX_MESSAGES_LIST_LENGTH 20
-#define MAX_ACTIONS_LIST_LENGTH  20
+#ifndef __WIFI_NODE_GLOVESENSOR_SERIALREADER_H__
+#define __WIFI_NODE_GLOVESENSOR_SERIALREADER_H__
 
-#define MAX_MESSAGE_BYTES 250
-#define MAX_ACTION_BYTES  250
-
-class WifiNodeCommunicator {
+class GloveSensorReaderSerial {
 public:
-  WifiNodeCommunicator() :
-    wnc_messages_doc(MAX_MESSAGES_LIST_LENGTH * MAX_MESSAGE_BYTES),
-    wnc_actions_doc(MAX_ACTIONS_LIST_LENGTH * MAX_ACTION_BYTES) {
-  }
-
-  void setConnectionParams(JsonObject &params);
+  // Initializes the reader
   void init();
+  // Reads from the serial. Returns true if a full read has been received, false otherwise.
   bool checkAllOk();
-  void addMessage(JsonObject &message);
-  void sendAllMessages();
-  void getActions(JsonArray &actions);
+  // Returns the data read
+  void getData(int *values);
+  // Returns the type of the sensor as string
+  String getType();
+  // Enable/Disable Sensor
+  void setEnable(bool enable_status);
+  // Returns if sensor is enabled or not
+  bool isEnabled();
 
 private:
-  void receiveBytes();
-  void sendACKN();
-  bool checkForACKH();
-  void checkForActions();
-  void checkStatus();
-
-  UDP wnc_connector;
-  DynamicJsonDocument wnc_messages_doc;
-  JsonArray wnc_messages_list;
-  DynamicJsonDocument wnc_actions_doc;
-  JsonArray wnc_actions_list;
-
-  IPConnectionData wnc_connection_data;
-  StatusLED wnc_status_LED;
+  boolean grs_lineDone;
+  String grs_lineToPrint;
+  bool grs_enabled;
 };
 
-#endif //__WIFI_NODE_COMMUNICATOR_H__
+#endif /*__WIFI_NODE_GLOVESENSOR_SERIALREADER_H__*/
+
+#endif /*BODYNODE_GLOVE_SENSOR*/

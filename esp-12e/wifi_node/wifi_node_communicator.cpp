@@ -37,6 +37,7 @@ void WifiNodeCommunicator::init(){
   WiFi.disconnect(true);
   WiFi.softAPdisconnect(false);
   WiFi.enableAP(false);
+  //wifi_set_sleep_type(NONE_SLEEP_T);
   wnc_connection_data.setDisconnected();
   wnc_connection_data.last_sent_time = 0;
   wnc_connection_data.last_rec_time = 0;
@@ -47,12 +48,14 @@ void WifiNodeCommunicator::init(){
 void WifiNodeCommunicator::setConnectionParams(JsonObject &params){
   PersMemory::setValue(MEMORY_WIFI_SSID_TAG, params[ACTION_SETWIFI_SSID_TAG].as<String>());
   PersMemory::setValue(MEMORY_WIFI_PASSWORD_TAG, params[ACTION_SETWIFI_PASSWORD_TAG].as<String>());
-  PersMemory::setValue(MEMORY_WIFI_SERVERIP_TAG, params[ACTION_SETWIFI_SERVERIP_TAG].as<String>());
 }
 
 void WifiNodeCommunicator::receiveBytes(){
   int size_ = wnc_connector.parsePacket();
+  //DEBUG_PRINTLN(WiFi.gatewayIP());
   if(size_>0){
+    //DEBUG_PRINT("I received some packets of size =  ");
+    //DEBUG_PRINTLN(size_);
     wnc_connection_data.num_received_bytes = wnc_connector.read(wnc_connection_data.received_bytes, MAX_RECEIVED_BYTES_LENGTH);
   }
 }
@@ -71,12 +74,11 @@ bool WifiNodeCommunicator::checkAllOk(){
     } else {
       DEBUG_PRINTLN("Connected to the Wifi");
       //wnc_connection_data.ip_address = WiFi.gatewayIP();
-
-      String server_ip = PersMemory::getValue(MEMORY_WIFI_SERVERIP_TAG);
-      IPAddress server_ipa;
-      server_ipa.fromString(server_ip);
-      wnc_connection_data.ip_address = server_ipa;
       wnc_connector.begin(BODYNODES_PORT);
+      //wnc_connector.begin(BODYNODES_MULTICAST_PORT);
+      IPAddress multicastIP;
+      multicastIP.fromString(BODYNODES_MULTICASTIP_DEFAULT);
+      wnc_connector.beginMulticast(WiFi.localIP(), multicastIP, BODYNODES_MULTICAST_PORT); // Listen to the Multicast
       printWifiStatus();
     }
     wnc_connection_data.setWaitingACK();
@@ -90,20 +92,22 @@ bool WifiNodeCommunicator::checkAllOk(){
 
   if(wnc_connection_data.isWaitingACK()){
     //DEBUG_PRINTLN("isWaitingACK");
-    sendACK();
-    if(checkForACK()){
+    if(checkForACKH()){
+      IPAddress server_ipa = wnc_connector.remoteIP();
+      wnc_connection_data.ip_address = server_ipa;
+      sendACKN();
       wnc_connection_data.setConnected();
       DEBUG_PRINTLN("Connected to Host via Wifi");
     }
   } else {
     // Connected to wifi and server
     if(millis() - wnc_connection_data.last_sent_time > CONNECTION_KEEP_ALIVE_SEND_INTERVAL_MS){
-      sendACK();
+      sendACKN();
     }
     if(millis() - wnc_connection_data.last_rec_time > CONNECTION_KEEP_ALIVE_REC_INTERVAL_MS){
       wnc_connection_data.setDisconnected();
     }
-    if(!checkForACK()) {
+    if(!checkForACKH()) {
       checkForActions();
     }
     wnc_connection_data.cleanBytes();
@@ -199,29 +203,30 @@ void WifiNodeCommunicator::checkStatus(){
 }
 
 //This in the future will become a way for the node to identify himself with the library
-void WifiNodeCommunicator::sendACK(){
+void WifiNodeCommunicator::sendACKN(){
   if(millis() - wnc_connection_data.last_sent_time < CONNECTION_ACK_INTERVAL_MS){
     return;
   }
-  byte buf_udp [4] = {'A','C','K', '\0'};
+  byte buf_udp [5] = {'A','C','K','N', '\0'};
   wnc_connector.beginPacket(wnc_connection_data.ip_address, BODYNODES_PORT);
-  wnc_connector.write(buf_udp, 4);
+  wnc_connector.write(buf_udp, 5);
   wnc_connector.endPacket();
   wnc_connection_data.last_sent_time = millis();
 }
 
-bool WifiNodeCommunicator::checkForACK(){
-  if(wnc_connection_data.num_received_bytes >= 3){
-    for(uint16_t index = 0; index<wnc_connection_data.num_received_bytes-2; ++index){
-      if( wnc_connection_data.received_bytes[index] == 'A' && wnc_connection_data.received_bytes[index+1] == 'C' && wnc_connection_data.received_bytes[index+2] == 'K') {
-        //DEBUG_PRINTLN("ACK from Server");
+bool WifiNodeCommunicator::checkForACKH(){
+  if(wnc_connection_data.num_received_bytes >= 4){
+    for(uint16_t index = 0; index<wnc_connection_data.num_received_bytes-3; ++index){
+      if( wnc_connection_data.received_bytes[index] == 'A' && wnc_connection_data.received_bytes[index+1] == 'C'
+        && wnc_connection_data.received_bytes[index+2] == 'K' && wnc_connection_data.received_bytes[index+3] == 'H') {
+        //DEBUG_PRINTLN("ACKH from Host");
         wnc_connection_data.last_rec_time = millis();
         return true;
       }
     }
-    DEBUG_PRINTLN("The message was not an ACK");
+    DEBUG_PRINTLN("The message was not an ACKH");
   } else {
-    //DEBUG_PRINTLN("No ACK received from Server");
+    //DEBUG_PRINTLN("No ACKH received from Server");
   }
   return false;
 }

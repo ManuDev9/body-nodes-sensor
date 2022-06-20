@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2021 Manuel Bottini
+* Copyright (c) 2021-2022 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -87,9 +87,6 @@ private:
 
   static constexpr uint16_t pm_password_addr_nbytes = 200;
   static constexpr uint16_t pm_password_addr_chars = 201;
-
-  static constexpr uint16_t pm_server_ip_addr_nbytes = 250;
-  static constexpr uint16_t pm_server_ip_addr_chars = 251;
 };
 
 typedef union

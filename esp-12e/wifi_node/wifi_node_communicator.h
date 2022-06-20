@@ -53,8 +53,8 @@ public:
 
 private:
   void receiveBytes();
-  void sendACK();
-  bool checkForACK();
+  void sendACKN();
+  bool checkForACKH();
   void checkForActions();
   void checkStatus();
 

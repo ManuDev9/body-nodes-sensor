@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2021 Manuel Bottini
+* Copyright (c) 2021-2022 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -60,7 +60,6 @@ void PersMemory::init(){
     setValue(ACTION_BODYPART_TAG, BODYNODE_BODYPART_TAG);
     setValue(ACTION_SETWIFI_SSID_TAG, BODYNODES_WIFI_SSID_DEFAULT);
     setValue(ACTION_SETWIFI_PASSWORD_TAG, BODYNODES_WIFI_PASS_DEFAULT);
-    setValue(ACTION_SETWIFI_SERVERIP_TAG, BODYNODES_SERVERIP_DEFAULT);
 
   } else {
     DEBUG_PRINTLN("Already setup memory!");
@@ -89,9 +88,6 @@ void PersMemory::setValue(String key, String value){
   } else if(key == ACTION_SETWIFI_PASSWORD_TAG) {
     addr_nbytes = pm_password_addr_nbytes;
     addr_chars = pm_password_addr_chars;
-  } else if(key == ACTION_SETWIFI_SERVERIP_TAG) {
-    addr_nbytes = pm_server_ip_addr_nbytes;
-    addr_chars = pm_server_ip_addr_chars;
   } else {
     DEBUG_PRINT("Cannot find in memory key = ");
     DEBUG_PRINTLN(key);
@@ -121,9 +117,6 @@ String PersMemory::getValue(String key){
   } else if(key == ACTION_SETWIFI_PASSWORD_TAG) {
     addr_nbytes = pm_password_addr_nbytes;
     addr_chars = pm_password_addr_chars;
-  } else if(key == ACTION_SETWIFI_SERVERIP_TAG) {
-    addr_nbytes = pm_server_ip_addr_nbytes;
-    addr_chars = pm_server_ip_addr_chars;
   } else {
     DEBUG_PRINT("Cannot find in memory key = ");
     DEBUG_PRINTLN(key);

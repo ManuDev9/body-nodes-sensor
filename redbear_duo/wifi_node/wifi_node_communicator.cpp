@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2021 Manuel Bottini
+* Copyright (c) 2021-2022 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,7 @@
 // UTILITY FUNCTIONS
 void printWifiStatus();
 bool tryConnectWifi(String ssid, String password);
-IPAddress getIPAdressFromStr(String server_ip);
+IPAddress getIPAdressFromStr(String ip_address);
 
 void WifiNodeCommunicator::init(){
   WiFi.disconnect();
@@ -46,11 +46,9 @@ void WifiNodeCommunicator::init(){
   wnc_actions_list = wnc_actions_doc.to<JsonArray>();
 }
 
-
 void WifiNodeCommunicator::setConnectionParams(JsonObject &params){
   PersMemory::setValue(ACTION_SETWIFI_SSID_TAG, params[ACTION_SETWIFI_SSID_TAG].as<String>());
   PersMemory::setValue(ACTION_SETWIFI_PASSWORD_TAG, params[ACTION_SETWIFI_PASSWORD_TAG].as<String>());
-  PersMemory::setValue(ACTION_SETWIFI_SERVERIP_TAG, params[ACTION_SETWIFI_SERVERIP_TAG].as<String>());  
 }
 
 void WifiNodeCommunicator::receiveBytes(){
@@ -76,14 +74,11 @@ bool WifiNodeCommunicator::checkAllOk(){
       return false;
     } else {
       DEBUG_PRINTLN("Connected to the Wifi");
-      //wnc_connection_data.ip_address = WiFi.gatewayIP();
-
-      String server_ip = PersMemory::getValue(ACTION_SETWIFI_SERVERIP_TAG);
-      
-      IPAddress server_ipa = getIPAdressFromStr(server_ip);
-      //server_ipa.fromString(server_ip);
-      wnc_connection_data.ip_address = server_ipa;
+      //wnc_connection_data.ip_address = WiFi.gatewayIP();      
       wnc_connector.begin(BODYNODES_PORT);
+      IPAddress multicastIP = getIPAdressFromStr(BODYNODES_MULTICASTIP_DEFAULT);
+      wnc_connector.begin(BODYNODES_MULTICAST_PORT);
+      wnc_connector.joinMulticast(multicastIP); // Listen to the Multicast 
       printWifiStatus();
     }
     wnc_connection_data.setWaitingACK();
@@ -97,20 +92,22 @@ bool WifiNodeCommunicator::checkAllOk(){
 
   if(wnc_connection_data.isWaitingACK()){
     //DEBUG_PRINTLN("isWaitingACK");
-    sendACK();
-    if(checkForACK()){
+    if(checkForACKH()){
+      IPAddress server_ipa = wnc_connector.remoteIP();
+      wnc_connection_data.ip_address = server_ipa;
+      sendACKN();
       wnc_connection_data.setConnected();
       DEBUG_PRINTLN("Connected to Host via Wifi");
     }
   } else {
     // Connected to wifi and server
     if(millis() - wnc_connection_data.last_sent_time > CONNECTION_KEEP_ALIVE_SEND_INTERVAL_MS){
-      sendACK();
+      sendACKN();
     }
     if(millis() - wnc_connection_data.last_rec_time > CONNECTION_KEEP_ALIVE_REC_INTERVAL_MS){
       wnc_connection_data.setDisconnected();
     }
-    if(!checkForACK()) {
+    if(!checkForACKH()) {
       checkForActions();
     }
     wnc_connection_data.cleanBytes();
@@ -128,6 +125,9 @@ void WifiNodeCommunicator::addMessage(JsonObject &message){
 }
 
 void WifiNodeCommunicator::sendAllMessages(){
+  if(wnc_messages_list.size() == 0) {
+    return;
+  }
   uint16_t tot_bytes = wnc_messages_doc.memoryUsage()+1;
   uint8_t buf_udp[tot_bytes];
 
@@ -201,27 +201,28 @@ void WifiNodeCommunicator::checkStatus(){
 }
 
 //This in the future will become a way for the node to identify himself with the library
-void WifiNodeCommunicator::sendACK(){
+void WifiNodeCommunicator::sendACKN(){
   if(millis() - wnc_connection_data.last_sent_time < CONNECTION_ACK_INTERVAL_MS){
     return;
   }  
-  byte buf_udp [4] = {'A','C','K', '\0'};
+  byte buf_udp [5] = {'A','C','K','N', '\0'};
   wnc_connector.beginPacket(wnc_connection_data.ip_address, BODYNODES_PORT);
-  wnc_connector.write(buf_udp, 4);
+  wnc_connector.write(buf_udp, 5);
   wnc_connector.endPacket();
   wnc_connection_data.last_sent_time = millis();
 }
 
-bool WifiNodeCommunicator::checkForACK(){
-  if(wnc_connection_data.num_received_bytes >= 3){
-    for(uint16_t index = 0; index<wnc_connection_data.num_received_bytes-2; ++index){
-      if( wnc_connection_data.received_bytes[index] == 'A' && wnc_connection_data.received_bytes[index+1] == 'C' && wnc_connection_data.received_bytes[index+2] == 'K') {
-        //DEBUG_PRINTLN("ACK from Server");
+bool WifiNodeCommunicator::checkForACKH(){
+  if(wnc_connection_data.num_received_bytes >= 4){
+    for(uint16_t index = 0; index<wnc_connection_data.num_received_bytes-3; ++index){
+      if( wnc_connection_data.received_bytes[index] == 'A' && wnc_connection_data.received_bytes[index+1] == 'C'
+        && wnc_connection_data.received_bytes[index+2] == 'K' && wnc_connection_data.received_bytes[index+3] == 'H') {
+        //DEBUG_PRINTLN("ACKH from Host");
         wnc_connection_data.last_rec_time = millis();
         return true;
       }
     }
-    DEBUG_PRINTLN("The message was not an ACK");
+    DEBUG_PRINTLN("The message was not an ACKH");
   } else {
     //DEBUG_PRINTLN("No ACK received from Server");
   }
@@ -307,11 +308,11 @@ void printWifiStatus() {
 }
 
 
-IPAddress getIPAdressFromStr(String server_ip) {
-  uint8_t len = server_ip.length()+1;
+IPAddress getIPAdressFromStr(String ip_address) {
+  uint8_t len = ip_address.length()+1;
   char tmp_buf[len];
   char * tmp_p;
-  server_ip.toCharArray(tmp_buf, len);
+  ip_address.toCharArray(tmp_buf, len);
 
   tmp_p = strtok ( tmp_buf, "." );
   uint8_t ip_address_0 = atoi(tmp_p);

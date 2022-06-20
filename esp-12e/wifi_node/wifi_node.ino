@@ -43,8 +43,10 @@ GloveSensorReaderSerial mGloveSensorReaderSerial;
 float mLastSensorData_OA[4] = {0 ,0 ,0 ,0};
 float mBigDiff_OA[4] = {BIG_QUAT_DIFF ,BIG_QUAT_DIFF ,BIG_QUAT_DIFF ,BIG_QUAT_DIFF};
 
+#ifdef BODYNODE_GLOVE_SENSOR
 int mLastSensorData_G[9] = {0 ,0 ,0 ,0, 0, 0 ,0 ,0 ,0};
 int mBigDiff_G[9] = {BIG_ANGLE_DIFF ,BIG_ANGLE_DIFF ,BIG_ANGLE_DIFF ,BIG_ANGLE_DIFF, BIG_ANGLE_DIFF, 0, 0, 0, 0};
+#endif /*BODYNODE_GLOVE_SENSOR*/
 
 template<typename T>
 bool bigChanges(T values[], T prev_values[], uint8_t num_values, T big_difference[]) {
@@ -156,8 +158,10 @@ void loop() {
           //DEBUG_PRINT("Setting enabled = ");
           //DEBUG_PRINTLN(action[ACTION_ENABLESENSOR_ENABLE_TAG].as<bool>());
           mSensor.setEnable(action[ACTION_ENABLESENSOR_ENABLE_TAG].as<bool>());
+#ifdef BODYNODE_GLOVE_SENSOR
         } else if(actionSensorType == mGloveSensorReaderSerial.getType()) {
           mGloveSensorReaderSerial.setEnable(action[ACTION_ENABLESENSOR_ENABLE_TAG].as<bool>());
+#endif /*BODYNODE_GLOVE_SENSOR*/
         }
       } else if(actionType == ACTION_TYPE_SETPLAYER_TAG) {
         mPlayerName = action[ACTION_SETPLAYER_NEWPLAYER_TAG].as<String>();

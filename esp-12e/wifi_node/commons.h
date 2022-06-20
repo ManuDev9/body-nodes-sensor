@@ -75,7 +75,7 @@ private:
   static constexpr char pm_checkkey_1 = 0x00;
   static constexpr char pm_checkkey_2 = 0x00;
   static constexpr char pm_checkkey_3 = 0x00;
-  static constexpr char pm_checkkey_4 = 0x01;
+  static constexpr char pm_checkkey_4 = 0x02;
 
   static constexpr uint16_t pm_player_addr_nbytes = 50;
   static constexpr uint16_t pm_player_addr_chars = 51;
@@ -91,9 +91,6 @@ private:
 
   static constexpr uint16_t pm_password_addr_nbytes = 250;
   static constexpr uint16_t pm_password_addr_chars = 251;
-
-  static constexpr uint16_t pm_server_ip_addr_nbytes = 300;
-  static constexpr uint16_t pm_server_ip_addr_chars = 301;
 
 };
 

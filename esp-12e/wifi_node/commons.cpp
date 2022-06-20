@@ -65,7 +65,6 @@ void PersMemory::init(){
 #endif /*BODYNODE_GLOVE_SENSOR*/
     setValue(MEMORY_WIFI_SSID_TAG, BODYNODES_WIFI_SSID_DEFAULT);
     setValue(MEMORY_WIFI_PASSWORD_TAG, BODYNODES_WIFI_PASS_DEFAULT);
-    setValue(MEMORY_WIFI_SERVERIP_TAG, BODYNODES_SERVERIP_DEFAULT);
 
   } else {
     DEBUG_PRINTLN("Already setup memory!");
@@ -98,9 +97,6 @@ void PersMemory::setValue(String key, String value){
   } else if(key == MEMORY_WIFI_PASSWORD_TAG) {
     addr_nbytes = pm_password_addr_nbytes;
     addr_chars = pm_password_addr_chars;
-  } else if(key == MEMORY_WIFI_SERVERIP_TAG) {
-    addr_nbytes = pm_server_ip_addr_nbytes;
-    addr_chars = pm_server_ip_addr_chars;
   } else {
     DEBUG_PRINT("Cannot find in memory key = ");
     DEBUG_PRINTLN(key);
@@ -134,9 +130,6 @@ String PersMemory::getValue(String key){
   } else if(key == MEMORY_WIFI_PASSWORD_TAG) {
     addr_nbytes = pm_password_addr_nbytes;
     addr_chars = pm_password_addr_chars;
-  } else if(key == MEMORY_WIFI_SERVERIP_TAG) {
-    addr_nbytes = pm_server_ip_addr_nbytes;
-    addr_chars = pm_server_ip_addr_chars;
   } else {
     DEBUG_PRINT("Cannot find in memory key = ");
     DEBUG_PRINTLN(key);

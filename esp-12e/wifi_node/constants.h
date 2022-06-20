@@ -87,7 +87,6 @@
 #define ACTION_ENABLESENSOR_ENABLE_TAG      "enable"
 #define ACTION_SETWIFI_SSID_TAG             "ssid"
 #define ACTION_SETWIFI_PASSWORD_TAG         "password"
-#define ACTION_SETWIFI_SERVERIP_TAG         "server_ip"
 
 // MEMORY
 #define MEMORY_BODYPART_TAG           "bodypart"
@@ -95,7 +94,6 @@
 #define MEMORY_PLAYER_TAG             "player"
 #define MEMORY_WIFI_SSID_TAG          "wifi_ssid"
 #define MEMORY_WIFI_PASSWORD_TAG      "wifi_password"
-#define MEMORY_WIFI_SERVERIP_TAG      "wifi_serverip"
 
 // SENSOR DATA TYPES 
 #define SENSOR_DATA_TYPE_NONE_TAG               "none"

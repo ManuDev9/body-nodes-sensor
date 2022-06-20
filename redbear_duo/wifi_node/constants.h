@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2019-2021 Manuel Bottini
+* Copyright (c) 2019-2022 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -87,12 +87,19 @@
 #define ACTION_ENABLESENSOR_ENABLE_TAG      "enable"
 #define ACTION_SETWIFI_SSID_TAG             "ssid"
 #define ACTION_SETWIFI_PASSWORD_TAG         "password"
-#define ACTION_SETWIFI_SERVERIP_TAG         "server_ip"
+
+// MEMORY
+#define MEMORY_BODYPART_TAG           "bodypart"
+#define MEMORY_BODYPART_GLOVE_TAG     "bodypart_glove"
+#define MEMORY_PLAYER_TAG             "player"
+#define MEMORY_WIFI_SSID_TAG          "wifi_ssid"
+#define MEMORY_WIFI_PASSWORD_TAG      "wifi_password"
 
 // SENSOR DATA TYPES 
 #define SENSOR_DATA_TYPE_NONE_TAG               "none"
 #define SENSOR_DATA_TYPE_ORIENTATION_ABS_TAG    "orientation_abs"
 #define SENSOR_DATA_TYPE_ACCELERATION_REL_TAG   "acceleration_rel"
+#define SENSOR_DATA_TYPE_GLOVE_TAG              "glove"
 
 // SENSOR STATUS
 #define SENSOR_STATUS_NOT_ACCESSIBLE  1
