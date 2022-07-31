@@ -1,6 +1,6 @@
 /**
 * MIT License
-* 
+*
 * Copyright (c) 2021 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,7 +22,7 @@
 * SOFTWARE.
 */
 
-#include <Arduino.h> 
+#include <Arduino.h>
 #include "constants.h"
 
 // Implements Specification version 1.0
@@ -104,14 +104,11 @@
 #define BODYNODES_PORT 12345
 #define BODYNODES_MULTICAST_PORT 12346
 
-#define BODYNODES_WIFI_SSID_DEFAULT "BTHub6-X87G"
-#define BODYNODES_WIFI_PASS_DEFAULT "CGHpVUCfALn4"
-
-//#define BODYNODES_WIFI_SSID_DEFAULT "lowerbody"
-//#define BODYNODES_WIFI_PASS_DEFAULT "bodynodes1"
+#define BODYNODES_WIFI_SSID_DEFAULT "BodyodesHotspot"
+#define BODYNODES_WIFI_PASS_DEFAULT "bodynodes1"
 #define BODYNODES_MULTICASTIP_DEFAULT  "239.192.1.99"
 
-// Set BODYNODE_BODYPART_TAG 
+// Set BODYNODE_BODYPART_TAG
 #if BODYNODE_BODYPART_HEX == BODYPART_HEAD_HEX
   #define BODYNODE_BODYPART_TAG BODYPART_HEAD_TAG
 #elif BODYNODE_BODYPART_HEX == BODYPART_HAND_LEFT_HEX

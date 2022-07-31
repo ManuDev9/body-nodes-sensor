@@ -1,6 +1,6 @@
 /**
 * MIT License
-* 
+*
 * Copyright (c) 2021-2022 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -103,10 +103,8 @@
 #define BODYNODES_PORT 12345
 #define BODYNODES_MULTICAST_PORT 12346
 
-//#define BODYNODES_WIFI_SSID_DEFAULT "upperbody"
-//#define BODYNODES_WIFI_PASS_DEFAULT "bodynodes1"
-#define BODYNODES_WIFI_SSID_DEFAULT "BTHub6-X87G"
-#define BODYNODES_WIFI_PASS_DEFAULT "CGHpVUCfALn4"
+#define BODYNODES_WIFI_SSID_DEFAULT "BodynodeHotspot"
+#define BODYNODES_WIFI_PASS_DEFAULT "bodynodes1"
 #define BODYNODES_MULTICASTIP_DEFAULT  "239.192.1.99"
 
 // Set BODYNODE_BODYPART_TAG
