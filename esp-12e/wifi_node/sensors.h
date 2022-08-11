@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2021 Manuel Bottini
+* Copyright (c) 2021-2022 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -28,8 +28,8 @@
 #include "basics.h" 
 #include "commons.h"
 
-#ifndef __WIFI_NODE_SENSOR_H__
-#define __WIFI_NODE_SENSOR_H__
+#ifndef __WIFI_NODE_SENSORS_H__
+#define __WIFI_NODE_SENSORS_H__
 
 class Sensor {
 public:
@@ -54,7 +54,34 @@ private:
   unsigned long s_sensorReconnectionTime;
   //At the beginning of each connection with the sensor it seems it returns some 0s. The first 0s are not of my interest.
   volatile bool s_firstZeros;
+  float s_values[4];
 
 };
 
-#endif /*__WIFI_NODE_SENSOR_H__*/
+#ifdef BODYNODE_GLOVE_SENSOR
+
+class GloveSensorReaderSerial {
+public:
+  // Initializes the reader
+  void init();
+  // Reads from the serial. Returns true if a full read has been received, false otherwise.
+  bool checkAllOk();
+  // Returns the data read
+  void getData(int *values);
+  // Returns the type of the sensor as string
+  String getType();
+  // Enable/Disable Sensor
+  void setEnable(bool enable_status);
+  // Returns if sensor is enabled or not
+  bool isEnabled();
+
+private:
+  boolean grs_lineDone;
+  String grs_lineToPrint;
+  bool grs_enabled;
+};
+
+
+#endif /*BODYNODE_GLOVE_SENSOR*/
+
+#endif /*__WIFI_NODE_SENSORS_H__*/

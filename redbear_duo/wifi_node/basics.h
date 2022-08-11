@@ -1,7 +1,7 @@
 /**
 * MIT License
 *
-* Copyright (c) 2021 Manuel Bottini
+* Copyright (c) 2021-2022 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,7 @@
 #ifndef __WIFI_NODE_BASICS_H
 #define __WIFI_NODE_BASICS_H
 
-#define BODYNODE_BODYPART_HEX BODYPART_UPPERLEG_RIGHT_HEX
+#define BODYNODE_BODYPART_HEX BODYPART_LOWERLEG_RIGHT_HEX
 #define BODYNODE_PLAYER_DEFAULT_TAG  "mario"
 
 // #define BODYNODE_GLOVE_SENSOR
@@ -47,6 +47,18 @@
 #else
   #undef BODYNODE_GLOVE_SENSOR
 #endif // BODYNODE_BODYPART_HEX != BODYPART_LOWERARM_RIGHT_HEX && BODYNODE_BODYPART_HEX != BODYPART_LOWERARM_LEFT_HEX
+
+#define BODYNODE_SHOE_SENSOR
+
+// If BODYNODE_SHOE_SENSOR is defined then BODYNODE_BODYPART_SHOE_TAG will be defined in case the node is a lowerleg
+// Note that only forearm nodes can have gloves, therefore BODYNODE_GLOVE_SENSOR is undefined for the other cases
+#if BODYNODE_BODYPART_HEX == BODYPART_LOWERLEG_RIGHT_HEX
+  #define BODYNODE_BODYPART_SHOE_TAG BODYPART_FOOT_RIGHT_TAG
+#elif BODYNODE_BODYPART_HEX == BODYPART_LOWERLEG_LEFT_HEX
+  #define BODYNODE_BODYPART_SHOE_TAG BODYPART_FOOT_LEFT_TAG
+#else
+  #undef BODYNODE_SHOE_SENSOR
+#endif // BODYNODE_BODYPART_HEX != BODYPART_LOWERLEG_RIGHT_HEX && BODYNODE_BODYPART_HEX != BODYPART_LOWERLEG_LEFT_HEX
 
 #define SENSOR_READ_INTERVAL_MS 30
 #define BIG_QUAT_DIFF 0.002
@@ -75,12 +87,14 @@
 // PINS
 #define BUZZER_FREQ 1000 //Specified in Hz
 #define LED_DT_ON 30 // Duty cicle of LED ON
-#define STATUS_SENSOR_HMI_LED_P 6
-#define STATUS_SENSOR_HMI_LED_M 5
-#define STATUS_CONNECTION_HMI_LED_P 3
-#define STATUS_CONNECTION_HMI_LED_M 2
-#define HAPTIC_MOTOR_PIN_P 10
-#define HAPTIC_MOTOR_PIN_M 11
+
+#define STATUS_SENSOR_HMI_LED_P      6
+#define STATUS_SENSOR_HMI_LED_M      5
+#define STATUS_CONNECTION_HMI_LED_P  3
+#define STATUS_CONNECTION_HMI_LED_M  2
+#define HAPTIC_MOTOR_PIN_P           10
+#define HAPTIC_MOTOR_PIN_M           11
+#define SHOE_SENSOR_PIN_P            19
 
 #define MAX_BUFF_LENGTH 100
 

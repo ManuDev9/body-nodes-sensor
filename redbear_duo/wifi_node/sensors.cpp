@@ -1,6 +1,6 @@
 /**
 * MIT License
-*
+* 
 * Copyright (c) 2021-2022 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,12 +22,14 @@
 * SOFTWARE.
 */
 
-#include "sensor.h"
+#include "sensors.h"
 
 void Sensor::init(){
   s_enabled = true;
   pinMode(STATUS_SENSOR_HMI_LED_P, OUTPUT);
-  analogWrite(STATUS_SENSOR_HMI_LED_P, 0);
+  pinMode(STATUS_SENSOR_HMI_LED_M, OUTPUT);
+  digitalWrite(STATUS_SENSOR_HMI_LED_P, LOW);
+  digitalWrite(STATUS_SENSOR_HMI_LED_M, LOW);
   s_statusSensorLED.on = false;
   s_statusSensorLED.lastToggle = millis();
 
@@ -50,7 +52,7 @@ void Sensor::setStatus(int sensor_status){
   if(sensor_status == SENSOR_STATUS_NOT_ACCESSIBLE){
     s_sensorInit=false;
     DEBUG_PRINTLN("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
-    analogWrite(STATUS_SENSOR_HMI_LED_P, LED_DT_ON);
+    digitalWrite(STATUS_SENSOR_HMI_LED_P, HIGH);
     s_statusSensorLED.on = true;
     s_statusSensorLED.lastToggle = millis();
   } else if(sensor_status == SENSOR_STATUS_CALIBRATING) {
@@ -58,14 +60,14 @@ void Sensor::setStatus(int sensor_status){
       s_statusSensorLED.lastToggle = millis();
       s_statusSensorLED.on = !s_statusSensorLED.on;
       if(s_statusSensorLED.on){
-        analogWrite(STATUS_SENSOR_HMI_LED_P, LED_DT_ON);
+        digitalWrite(STATUS_SENSOR_HMI_LED_P, HIGH);
       } else {
-        analogWrite(STATUS_SENSOR_HMI_LED_P, 0);
+        digitalWrite(STATUS_SENSOR_HMI_LED_P, LOW);
       }
     }
   } else if(sensor_status == SENSOR_STATUS_WORKING) {
     s_sensorInit=true;
-    analogWrite(STATUS_SENSOR_HMI_LED_P, 0);
+    digitalWrite(STATUS_SENSOR_HMI_LED_P, LOW);
     s_statusSensorLED.on = false;
     s_statusSensorLED.lastToggle = millis();
   }
@@ -90,30 +92,6 @@ bool Sensor::checkAllOk(){
   if(millis()-s_lastReadSensorTime<SENSOR_READ_INTERVAL_MS){
     return false;
   }
-
-  sensors_event_t event;
-  s_BNO.getEvent(&event);
-  imu::Quaternion sensor_quat = s_BNO.getQuat();
-  float svalues[4] = { sensor_quat.w(), sensor_quat.x(), sensor_quat.y(), sensor_quat.z() };
-  float tvalues[4];
-  realignAxis(svalues, tvalues);
-
-  //I noticed that just before after a disconnection the getEvent returns 0 0 0 and THEN blocks. So I just check before the next call to getEvent blocks everything
-  if (tvalues[0] != 0 || tvalues[1]!=0 || tvalues[2]!=0 || tvalues[3]!=0) {
-    s_firstZeros=false;
-  }
-
-  if (tvalues[0] == 0 && tvalues[1]==0 && tvalues[2]==0 && tvalues[3]==0 && !s_firstZeros){
-    DEBUG_PRINTLN("Sensor might have gotten disconnected!");
-    setStatus(SENSOR_STATUS_NOT_ACCESSIBLE);
-    return false;
-  }
-
-  s_values[0] = tvalues[0];
-  s_values[1] = tvalues[1];
-  s_values[2] = tvalues[2];
-  s_values[3] = tvalues[3];
-
   return true;
 }
 
@@ -145,10 +123,27 @@ bool Sensor::isCalibrated(){
 void Sensor::getData(float *values){
   s_lastReadSensorTime=millis();
 
-  values[0] = s_values[0];
-  values[1] = s_values[1];
-  values[2] = s_values[2];
-  values[3] = s_values[3];
+  sensors_event_t event;
+  s_BNO.getEvent(&event);
+  imu::Quaternion sensor_quat = s_BNO.getQuat();
+  float svalues[4] = { sensor_quat.w(), sensor_quat.x(), sensor_quat.y(), sensor_quat.z() };
+  float tvalues[4]; 
+  realignAxis(svalues, tvalues);
+  
+  //I noticed that just before after a disconnection the getEvent returns 0 0 0 and THEN blocks. So I just check before the next call to getEvent blocks everything
+  if (tvalues[0] != 0 || tvalues[1]!=0 || tvalues[2]!=0 || tvalues[3]!=0) { 
+    s_firstZeros=false;
+  }
+  
+  if (tvalues[0] == 0 && tvalues[1]==0 && tvalues[2]==0 && tvalues[3]==0 && !s_firstZeros){
+    DEBUG_PRINTLN("Sensor might have gotten disconnected!");
+    setStatus(SENSOR_STATUS_NOT_ACCESSIBLE);
+  }
+
+  values[0] = tvalues[0];
+  values[1] = tvalues[1];
+  values[2] = tvalues[2];
+  values[3] = tvalues[3];
 
   /*
   DEBUG_PRINT("values = ");
@@ -163,7 +158,7 @@ void Sensor::getData(float *values){
 }
 
 String Sensor::getType(){
-  return SENSOR_DATA_TYPE_ORIENTATION_ABS_TAG;
+  return SENSOR_DATA_TYPE_ORIENTATION_ABS_TAG;  
 }
 
 void Sensor::setEnable(bool enable_status){
@@ -225,3 +220,99 @@ void Sensor::realignAxis(float values[], float revalues[]){
   revalues[2] = MUL_AXIS_Y * revalues[2];
   revalues[3] = MUL_AXIS_Z * revalues[3];
 }
+
+
+
+#ifdef BODYNODE_GLOVE_SENSOR
+
+void GloveSensorReaderSerial::init() {
+  Serial.begin(115200);
+  while (!Serial) {
+    delay (1000);
+  }
+  grs_lineDone = false;
+  grs_lineToPrint = "";
+  grs_enabled = true;
+}
+
+
+bool GloveSensorReaderSerial::checkAllOk() {
+  while(Serial.peek() != -1 && grs_lineDone == false) {
+    uint8_t byteVal = Serial.read();
+
+    // In ASCII encoding, \n is the Newline character 0x0A (decimal 10), \r is the Carriage Return character 0x0D (decimal 13).
+    if(byteVal == 13 || byteVal == 10) {
+      grs_lineDone = true;
+    } else {
+      grs_lineToPrint += String((char)(byteVal));
+    }
+    Serial.flush();
+  }
+  return grs_lineDone;
+}
+
+// 9 values are expected
+void GloveSensorReaderSerial::getData(int *values){
+  if(grs_lineDone == false){
+    return;
+  }
+  const int str_len = grs_lineToPrint.length() + 1;
+  char buf[str_len];
+  grs_lineToPrint.toCharArray(buf, str_len);
+  grs_lineToPrint = "";
+  grs_lineDone = false;
+
+  char *p_end = &buf[0];
+  for(uint8_t counter = 0; counter < 9; ++counter) {
+    values[counter] = (int)(strtol(p_end, &p_end, 10));
+  }
+}
+
+String GloveSensorReaderSerial::getType(){
+  return SENSOR_DATA_TYPE_GLOVE_TAG;
+}
+
+void GloveSensorReaderSerial::setEnable(bool enable_status){
+  grs_enabled = enable_status;
+}
+
+bool GloveSensorReaderSerial::isEnabled(){
+  return grs_enabled;
+}
+
+#endif /*BODYNODE_GLOVE_SENSOR*/
+
+#ifdef BODYNODE_SHOE_SENSOR
+
+void ShoeSensor::init() {
+  ss_value = 0;
+  ss_pin = SHOE_SENSOR_PIN_P;
+  pinMode(STATUS_SENSOR_HMI_LED_M, INPUT);
+  ss_enabled = true;
+}
+
+
+bool ShoeSensor::checkAllOk() {
+  return true;
+}
+
+// 1 value is expected
+void ShoeSensor::getData(int *values){
+  values[0] = digitalRead(ss_pin);
+  DEBUG_PRINT("Reading from ShoeSensor value = ");
+  DEBUG_PRINTLN(values[0]);
+}
+
+String ShoeSensor::getType(){
+  return SENSOR_DATA_TYPE_SHOE_TAG;
+}
+
+void ShoeSensor::setEnable(bool enable_status){
+  ss_enabled = enable_status;
+}
+
+bool ShoeSensor::isEnabled(){
+  return ss_enabled;
+}
+
+#endif /*BODYNODE_SHOE_SENSOR*/

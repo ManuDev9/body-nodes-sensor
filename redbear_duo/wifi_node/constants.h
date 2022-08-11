@@ -91,6 +91,7 @@
 // MEMORY
 #define MEMORY_BODYPART_TAG           "bodypart"
 #define MEMORY_BODYPART_GLOVE_TAG     "bodypart_glove"
+#define MEMORY_BODYPART_SHOE_TAG      "bodypart_shoe"
 #define MEMORY_PLAYER_TAG             "player"
 #define MEMORY_WIFI_SSID_TAG          "wifi_ssid"
 #define MEMORY_WIFI_PASSWORD_TAG      "wifi_password"
@@ -100,6 +101,7 @@
 #define SENSOR_DATA_TYPE_ORIENTATION_ABS_TAG    "orientation_abs"
 #define SENSOR_DATA_TYPE_ACCELERATION_REL_TAG   "acceleration_rel"
 #define SENSOR_DATA_TYPE_GLOVE_TAG              "glove"
+#define SENSOR_DATA_TYPE_SHOE_TAG               "shoe"
 
 // SENSOR STATUS
 #define SENSOR_STATUS_NOT_ACCESSIBLE  1

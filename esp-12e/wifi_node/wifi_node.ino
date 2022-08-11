@@ -23,9 +23,8 @@
 */
 
 #include "basics.h"
-#include "sensor.h"
+#include "sensors.h"
 #include "wifi_node_communicator.h"
-#include "glove_sensor_serial_reader.h"
 #include "actuator.h"
 #include "commons.h"
 

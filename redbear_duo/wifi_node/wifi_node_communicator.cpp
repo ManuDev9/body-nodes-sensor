@@ -53,8 +53,8 @@ void WifiNodeCommunicator::init(){
 }
 
 void WifiNodeCommunicator::setConnectionParams(JsonObject &params){
-  PersMemory::setValue(ACTION_SETWIFI_SSID_TAG, params[ACTION_SETWIFI_SSID_TAG].as<String>());
-  PersMemory::setValue(ACTION_SETWIFI_PASSWORD_TAG, params[ACTION_SETWIFI_PASSWORD_TAG].as<String>());
+  PersMemory::setValue(MEMORY_WIFI_SSID_TAG, params[ACTION_SETWIFI_SSID_TAG].as<String>());
+  PersMemory::setValue(MEMORY_WIFI_PASSWORD_TAG, params[ACTION_SETWIFI_PASSWORD_TAG].as<String>());
 }
 
 void WifiNodeCommunicator::receiveBytes(){
@@ -80,8 +80,8 @@ bool WifiNodeCommunicator::checkAllOk(){
     wnc_connection_data.setDisconnected();
   }
   if (wnc_connection_data.isDisconnected()){
-    String ssid = PersMemory::getValue(ACTION_SETWIFI_SSID_TAG);
-    String password = PersMemory::getValue(ACTION_SETWIFI_PASSWORD_TAG);
+    String ssid = PersMemory::getValue(MEMORY_WIFI_SSID_TAG);
+    String password = PersMemory::getValue(MEMORY_WIFI_PASSWORD_TAG);
     if (!tryConnectWifi(ssid, password)){
       DEBUG_PRINTLN("Not connected to the Wifi");
       wnc_connection_data.setDisconnected();
