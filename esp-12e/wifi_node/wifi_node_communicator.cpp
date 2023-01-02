@@ -24,11 +24,6 @@
 
 #include "wifi_node_communicator.h"
 
-extern "C" {
-    #include "user_interface.h"  // Required for wifi_station_connect() to work
-}
-#define FPM_SLEEP_MAX_TIME 0xFFFFFFF
-
 // UTILITY FUNCTIONS
 void printWifiStatus();
 bool tryConnectWifi(String ssid, String password); // Instead of Serial.begin
@@ -54,6 +49,7 @@ void WifiNodeCommunicator::init(){
 void WifiNodeCommunicator::setConnectionParams(JsonObject &params){
   PersMemory::setValue(MEMORY_WIFI_SSID_TAG, params[ACTION_SETWIFI_SSID_TAG].as<String>());
   PersMemory::setValue(MEMORY_WIFI_PASSWORD_TAG, params[ACTION_SETWIFI_PASSWORD_TAG].as<String>());
+  PersMemory::setValue(MEMORY_WIFI_MULTICASTMESSAGE_TAG, params[ACTION_SETWIFI_MULTICASTMESSAGE_TAG].as<String>());
 }
 
 void WifiNodeCommunicator::receiveBytes(){
@@ -90,7 +86,7 @@ bool WifiNodeCommunicator::checkAllOk(){
       //wnc_connection_data.ip_address = WiFi.gatewayIP();
       wnc_connector.begin(BODYNODES_PORT);
       IPAddress multicastIP;
-      multicastIP.fromString(BODYNODES_MULTICASTIP_DEFAULT);
+      multicastIP.fromString(BODYNODES_MULTICASTGROUP_DEFAULT);
       wnc_multicast_connector.beginMulticast(WiFi.localIP(), multicastIP, BODYNODES_MULTICAST_PORT); // Listen to the Multicast
       wnc_multicast_data.setConnected();
       printWifiStatus();
@@ -106,7 +102,7 @@ bool WifiNodeCommunicator::checkAllOk(){
 
   if(wnc_connection_data.isWaitingACK()){
     //DEBUG_PRINTLN("isWaitingACK");
-    if(checkForMulticastBN()){
+    if(checkForMulticastMessage()){
       saveHostInfo();      
     }
     if(hasHostInfo()) {
@@ -249,10 +245,17 @@ bool WifiNodeCommunicator::checkForACKH(){
   return false;
 }
 
-bool WifiNodeCommunicator::checkForMulticastBN() {
-  if(wnc_multicast_data.num_received_bytes >= 2){
+bool WifiNodeCommunicator::checkForMulticastMessage() {
+  String multicastMessage = PersMemory::getValue(MEMORY_WIFI_MULTICASTMESSAGE_TAG);
+  if(wnc_multicast_data.num_received_bytes >= multicastMessage.length()){
     for(uint16_t index = 0; index<wnc_multicast_data.num_received_bytes-1; ++index){
-      if( wnc_multicast_data.received_bytes[index] == 'B' && wnc_multicast_data.received_bytes[index+1] == 'N') {
+      bool checks = true;      
+      for(uint16_t index_mex = 0; checks && index_mex<multicastMessage.length(); ++index_mex){
+        if( wnc_multicast_data.received_bytes[index] != multicastMessage[index_mex]) {
+          checks = false;
+        }
+      }
+      if(checks) {
         wnc_multicast_data.last_rec_time = millis();
         wnc_multicast_data.cleanBytes();
         return true;

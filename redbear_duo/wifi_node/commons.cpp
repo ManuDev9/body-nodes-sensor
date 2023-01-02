@@ -24,7 +24,7 @@
 
 #include "commons.h"
 
-#include "basics.h"
+#include "node_specific.h"
 
 void IPConnectionData::setDisconnected(){ conn_status = CONNECTION_STATUS_NOT_CONNECTED; }
 void IPConnectionData::setWaitingACK(){ conn_status = CONNECTION_STATUS_WAITING_ACK; }

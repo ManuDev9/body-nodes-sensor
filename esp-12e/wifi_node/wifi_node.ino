@@ -22,7 +22,7 @@
 * SOFTWARE.
 */
 
-#include "basics.h"
+#include "node_specific.h"
 #include "sensors.h"
 #include "wifi_node_communicator.h"
 #include "actuator.h"
@@ -73,8 +73,7 @@ bool bigChanges(T values[], T prev_values[], uint8_t num_values, T big_differenc
   return somethingChanged;
 }
 
-
-void setup() {  
+void setup() {
   //Initialize the serial and wait for the port to open
   Serial.begin(921600);
 
@@ -99,7 +98,7 @@ void loop() {
   if(mCommunicator.checkAllOk()){
     if(mSensor.isEnabled() && mSensor.checkAllOk()) {
       float values[4] = {0, 0, 0, 0};
-      mSensor.getData(values);
+      mSensor.getData().getValues(values);
       if(bigChanges(values, mLastSensorData_OA, 4, mBigDiff_OA)) {
         StaticJsonDocument<MAX_MESSAGE_BYTES> message_doc;
         JsonObject message = message_doc.to<JsonObject>();;

@@ -31,7 +31,7 @@ void Actuator::init(){
   a_vibration.duration_ms = 0;
 }
 
-void Actuator::setAction(JsonObject &action){
+void Actuator::setAction(BnAction &action){
   if(action["type"] == ACTION_TYPE_HAPTIC_TAG){
     DEBUG_PRINT("Haptic triggered with duration and strenght = ");
     uint16_t duration_ms = action["duration_ms"];
@@ -52,7 +52,7 @@ void Actuator::performAction(){
   }
 }
 
-String Actuator::getType(){
+BnType Actuator::getType(){
   // It is well known for this Bodynode
   return ACTION_TYPE_HAPTIC_TAG;
 }

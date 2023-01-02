@@ -22,7 +22,7 @@
 * SOFTWARE.
 */
 
-#include "basics.h"
+#include "node_specific.h"
 #include "commons.h"
 
 #ifndef __WIFI_NODE_ACTUATOR_H__

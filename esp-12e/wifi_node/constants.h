@@ -46,7 +46,7 @@
 #define BODYPART_UNTAGGED_TAG         "untagged"
 #define BODYPART_ALL_TAG              "all"
 
-// BODY PARTS HEX CODES
+// BODY PARTS HEX CODES (Important for the preprocessing macros)
 #define BODYPART_HEAD_HEX             0x0000
 #define BODYPART_HAND_LEFT_HEX        0x0001
 #define BODYPART_LOWERARM_LEFT_HEX    0x0002
@@ -87,13 +87,15 @@
 #define ACTION_ENABLESENSOR_ENABLE_TAG      "enable"
 #define ACTION_SETWIFI_SSID_TAG             "ssid"
 #define ACTION_SETWIFI_PASSWORD_TAG         "password"
+#define ACTION_SETWIFI_MULTICASTMESSAGE_TAG "multicast_message"
 
 // MEMORY
-#define MEMORY_BODYPART_TAG           "bodypart"
-#define MEMORY_BODYPART_GLOVE_TAG     "bodypart_glove"
-#define MEMORY_PLAYER_TAG             "player"
-#define MEMORY_WIFI_SSID_TAG          "wifi_ssid"
-#define MEMORY_WIFI_PASSWORD_TAG      "wifi_password"
+#define MEMORY_BODYPART_TAG               "bodypart"
+#define MEMORY_BODYPART_GLOVE_TAG         "bodypart_glove"
+#define MEMORY_PLAYER_TAG                 "player"
+#define MEMORY_WIFI_SSID_TAG              "wifi_ssid"
+#define MEMORY_WIFI_PASSWORD_TAG          "wifi_password"
+#define MEMORY_WIFI_MULTICASTMESSAGE_TAG  "multicast_message"
 
 // SENSOR DATA TYPES 
 #define SENSOR_DATA_TYPE_NONE_TAG               "none"

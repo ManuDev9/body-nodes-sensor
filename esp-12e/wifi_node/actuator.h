@@ -22,7 +22,7 @@
 * SOFTWARE.
 */
 
-#include "basics.h"
+#include "node_specific.h"
 #include "commons.h"
 
 #ifndef __WIFI_NODE_ACTUATOR_H__
@@ -37,9 +37,9 @@ struct Vibration_struct {
 class Actuator {
 public:
   void init();
-  void setAction(JsonObject &action);
+  void setAction(BnAction &action);
   void performAction();
-  String getType();
+  BnType getType();
 
 private:
   Vibration_struct a_vibration;

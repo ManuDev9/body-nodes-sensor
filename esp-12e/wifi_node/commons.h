@@ -25,14 +25,12 @@
 #include "constants.h"
 #include <Arduino.h> 
 #include <ArduinoJson.h>
-#include <ESP8266WiFi.h>
+#include "node_specific.h"
 
 #ifndef __BODYNODES_COMMONS_H
 #define __BODYNODES_COMMONS_H
 
 #define MAX_RECEIVED_BYTES_LENGTH 150
-#define MAX_MAP_ELEMENTS 25
-#define MAX_MAP_STRING_LENGTH 40
 
 #define CONNECTION_STATUS_NOT_CONNECTED  0
 #define CONNECTION_STATUS_WAITING_ACK    1
@@ -42,6 +40,10 @@ struct StatusLED {
   bool on;
   unsigned long lastToggle;
 };
+
+using BnKey = String;
+using BnType = String;
+using BnAction = JsonObject;
 
 class IPConnectionData {
 public:
@@ -64,12 +66,29 @@ public:
   unsigned long last_rec_time = 0;
 };
 
+class BnSensorData {
+public:
+
+  void setValues(float values[], BnType sensortype);
+  void setValues(int values[], BnType sensortype);
+  void getValues(float values[]);
+  void getValues(int values[]);
+  BnType getType();
+  bool isEmpty();
+
+private:
+  BnType sd_sensortype = SENSOR_DATA_TYPE_NONE_TAG;
+  float sd_values_float[5];
+  int16_t sd_values_int[5];
+  uint8_t sd_num_values;
+};
+
 class PersMemory {
 public:
   static void init();
   static void clean();
-  static void setValue(String key, String value);
-  static String getValue(String key);
+  static void setValue(BnKey key, String value);
+  static String getValue(BnKey key);
 private:
   PersMemory(){};
 
@@ -93,6 +112,9 @@ private:
 
   static constexpr uint16_t pm_password_addr_nbytes = 250;
   static constexpr uint16_t pm_password_addr_chars = 251;
+
+  static constexpr uint16_t pm_multicast_message_addr_nbytes = 300;
+  static constexpr uint16_t pm_multicast_message_addr_chars = 301;
 
 };
 

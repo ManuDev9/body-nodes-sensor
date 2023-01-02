@@ -22,7 +22,7 @@
 * SOFTWARE.
 */
 
-#include "basics.h"
+#include "node_specific.h"
 #include <utility/imumaths.h>
 #include "commons.h"
 

@@ -142,27 +142,24 @@ bool Sensor::isCalibrated(){
   }
 }
 
-void Sensor::getData(float *values){
+BnSensorData Sensor::getData(){
   s_lastReadSensorTime=millis();
-
-  values[0] = s_values[0];
-  values[1] = s_values[1];
-  values[2] = s_values[2];
-  values[3] = s_values[3];
-
   /*
   DEBUG_PRINT("values = ");
-  DEBUG_PRINT(values[0]);
+  DEBUG_PRINT(s_values[0]);
   DEBUG_PRINT(", ");
-  DEBUG_PRINT(values[1]);
+  DEBUG_PRINT(s_values[1]);
   DEBUG_PRINT(", ");
-  DEBUG_PRINT(values[2]);
+  DEBUG_PRINT(s_values[2]);
   DEBUG_PRINT(", ");
-  DEBUG_PRINTLN(values[3]);
+  DEBUG_PRINTLN(s_values[3]);
   */
+  BnSensorData sensorData;
+  sensorData.setValues(s_values, SENSOR_DATA_TYPE_ORIENTATION_ABS_TAG);
+  return sensorData;
 }
 
-String Sensor::getType(){
+BnType Sensor::getType(){
   return SENSOR_DATA_TYPE_ORIENTATION_ABS_TAG;
 }
 

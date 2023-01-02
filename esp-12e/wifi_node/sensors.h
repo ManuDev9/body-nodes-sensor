@@ -25,18 +25,18 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
-#include "basics.h" 
+#include "node_specific.h" 
 #include "commons.h"
 
-#ifndef __WIFI_NODE_SENSORS_H__
-#define __WIFI_NODE_SENSORS_H__
+#ifndef __BODYNODES_SENSORS_H__
+#define __BODYNODES_SENSORS_H__
 
 class Sensor {
 public:
   void init();
   bool checkAllOk();
   bool isCalibrated();
-  void getData(float *values);
+  BnSensorData getData();
   String getType();
   void setEnable(bool enable_status);
   bool isEnabled();
@@ -81,7 +81,6 @@ private:
   bool grs_enabled;
 };
 
-
 #endif /*BODYNODE_GLOVE_SENSOR*/
 
-#endif /*__WIFI_NODE_SENSORS_H__*/
+#endif /*__BODYNODES_SENSORS_H__*/

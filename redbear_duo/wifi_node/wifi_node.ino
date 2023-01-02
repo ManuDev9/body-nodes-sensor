@@ -22,7 +22,7 @@
 * SOFTWARE.
 */
 
-#include "basics.h"
+#include "node_specific.h"
 #include "sensors.h"
 #include "wifi_node_communicator.h"
 #include "actuator.h"

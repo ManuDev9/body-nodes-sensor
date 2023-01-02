@@ -25,15 +25,14 @@
 #include <Arduino.h>
 #include "constants.h"
 
-// Implements Specification version 1.0
-// Sensortypes: orientation_abs
-// Player: 1
-// Board: ESP-12E
+// Implements Specification Version Dev 1.0
+// Sensortypes: orientation_abs, acceleration_rel, glove
+// Board: RedBear Duo (Native USB Port)
 
 #ifndef __WIFI_NODE_BASICS_H
 #define __WIFI_NODE_BASICS_H
 
-#define BODYNODE_BODYPART_HEX BODYPART_UPPERARM_LEFT_HEX
+#define BODYNODE_BODYPART_HEX BODYPART_LOWERLEG_RIGHT_HEX
 #define BODYNODE_PLAYER_DEFAULT_TAG  "mario"
 
 // #define BODYNODE_GLOVE_SENSOR
@@ -48,13 +47,23 @@
   #undef BODYNODE_GLOVE_SENSOR
 #endif // BODYNODE_BODYPART_HEX != BODYPART_LOWERARM_RIGHT_HEX && BODYNODE_BODYPART_HEX != BODYPART_LOWERARM_LEFT_HEX
 
+#define BODYNODE_SHOE_SENSOR
+
+// If BODYNODE_SHOE_SENSOR is defined then BODYNODE_BODYPART_SHOE_TAG will be defined in case the node is a lowerleg
+// Note that only forearm nodes can have gloves, therefore BODYNODE_GLOVE_SENSOR is undefined for the other cases
+#if BODYNODE_BODYPART_HEX == BODYPART_LOWERLEG_RIGHT_HEX
+  #define BODYNODE_BODYPART_SHOE_TAG BODYPART_FOOT_RIGHT_TAG
+#elif BODYNODE_BODYPART_HEX == BODYPART_LOWERLEG_LEFT_HEX
+  #define BODYNODE_BODYPART_SHOE_TAG BODYPART_FOOT_LEFT_TAG
+#else
+  #undef BODYNODE_SHOE_SENSOR
+#endif // BODYNODE_BODYPART_HEX != BODYPART_LOWERLEG_RIGHT_HEX && BODYNODE_BODYPART_HEX != BODYPART_LOWERLEG_LEFT_HEX
+
 #define SENSOR_READ_INTERVAL_MS 30
 #define BIG_QUAT_DIFF 0.002
-#define BIG_ANGLE_DIFF 6
 #define CONNECTION_ACK_INTERVAL_MS 1000
 #define CONNECTION_KEEP_ALIVE_SEND_INTERVAL_MS 30000
 #define CONNECTION_KEEP_ALIVE_REC_INTERVAL_MS 60000
-#define MULTICAST_KEEP_ALIVE_REC_INTERVAL_MS 30000
 
 // Device Specific Axis Configuration
 // Use the program "sensor_test" and check the "bodynodes universal orientation specs" to build your axis configuration,
@@ -77,9 +86,14 @@
 // PINS
 #define BUZZER_FREQ 1000 //Specified in Hz
 #define LED_DT_ON 30 // Duty cicle of LED ON
-#define STATUS_SENSOR_HMI_LED_P 2
-#define STATUS_CONNECTION_HMI_LED_P 0
-#define HAPTIC_MOTOR_PIN_P 14
+
+#define STATUS_SENSOR_HMI_LED_P      6
+#define STATUS_SENSOR_HMI_LED_M      5
+#define STATUS_CONNECTION_HMI_LED_P  3
+#define STATUS_CONNECTION_HMI_LED_M  2
+#define HAPTIC_MOTOR_PIN_P           10
+#define HAPTIC_MOTOR_PIN_M           11
+#define SHOE_SENSOR_PIN_P            19
 
 #define MAX_BUFF_LENGTH 100
 
@@ -103,9 +117,12 @@
 #define BODYNODES_PORT 12345
 #define BODYNODES_MULTICAST_PORT 12346
 
-#define BODYNODES_WIFI_SSID_DEFAULT "BodynodeHotspot"
+#define BODYNODES_WIFI_SSID_DEFAULT "BodyodesHotspot"
 #define BODYNODES_WIFI_PASS_DEFAULT "bodynodes1"
 #define BODYNODES_MULTICASTIP_DEFAULT  "239.192.1.99"
+
+#define BODYNODES_WIFI_SSID_DEFAULT "BTHub6-X87G"
+#define BODYNODES_WIFI_PASS_DEFAULT "CGHpVUCfALn4"
 
 // Set BODYNODE_BODYPART_TAG
 #if BODYNODE_BODYPART_HEX == BODYPART_HEAD_HEX
@@ -144,6 +161,6 @@
   #define BODYNODE_BODYPART_TAG BODYPART_KATANA_TAG
 #elif BODYNODE_BODYPART_HEX == BODYPART_UNTAGGED_HEX
   #define BODYNODE_BODYPART_TAG BODYPART_UNTAGGED_TAG
-#endif // BODYNODE_BODYPART_TAG
+#endif // BODYNODE_BODYPART_TAG 
 
 #endif //__WIFI_NODE_BASICS_H

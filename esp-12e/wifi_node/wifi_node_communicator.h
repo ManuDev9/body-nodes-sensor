@@ -22,9 +22,7 @@
 * SOFTWARE.
 */
 
-#include "basics.h"
-#include <ESP8266WiFi.h>
-#include <WiFiUdp.h>
+#include "node_specific.h"
 #include <utility/imumaths.h>
 #include "commons.h"
 
@@ -57,7 +55,7 @@ private:
   bool checkForACKH();
   void checkForActions();
   void checkStatus();
-  bool checkForMulticastBN();
+  bool checkForMulticastMessage();
   void saveHostInfo();
   bool hasHostInfo();
 

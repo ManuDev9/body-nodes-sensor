@@ -25,7 +25,7 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
-#include "basics.h" 
+#include "node_specific.h" 
 #include "commons.h"
 
 #ifndef __WIFI_NODE_SENSORS_H__
