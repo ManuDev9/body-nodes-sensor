@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2021-2022 Manuel Bottini
+* Copyright (c) 2021-2023 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -23,8 +23,6 @@
 */
 
 #include "commons.h"
-
-#include <EEPROM.h>
 
 void IPConnectionData::setDisconnected(){ conn_status = CONNECTION_STATUS_NOT_CONNECTED; }
 void IPConnectionData::setWaitingACK(){ conn_status = CONNECTION_STATUS_WAITING_ACK; }
@@ -107,6 +105,9 @@ void PersMemory::init(){
 #ifdef BODYNODE_GLOVE_SENSOR
     setValue(MEMORY_BODYPART_GLOVE_TAG, BODYNODE_BODYPART_GLOVE_TAG);
 #endif /*BODYNODE_GLOVE_SENSOR*/
+#ifdef BODYNODE_SHOE_SENSOR
+    setValue(MEMORY_BODYPART_SHOE_TAG, BODYNODE_BODYPART_SHOE_TAG);
+#endif /*BODYNODE_SHOE_SENSOR*/
     setValue(MEMORY_WIFI_SSID_TAG, BODYNODES_WIFI_SSID_DEFAULT);
     setValue(MEMORY_WIFI_PASSWORD_TAG, BODYNODES_WIFI_PASS_DEFAULT);
     setValue(MEMORY_WIFI_MULTICASTMESSAGE_TAG, BODYNODES_MULTICASTMESSAGE_DEFAULT);

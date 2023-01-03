@@ -55,6 +55,7 @@ void WifiNodeCommunicator::init(){
 void WifiNodeCommunicator::setConnectionParams(JsonObject &params){
   PersMemory::setValue(MEMORY_WIFI_SSID_TAG, params[ACTION_SETWIFI_SSID_TAG].as<String>());
   PersMemory::setValue(MEMORY_WIFI_PASSWORD_TAG, params[ACTION_SETWIFI_PASSWORD_TAG].as<String>());
+  PersMemory::setValue(MEMORY_WIFI_MULTICASTMESSAGE_TAG, params[ACTION_SETWIFI_MULTICASTMESSAGE_TAG].as<String>());
 }
 
 void WifiNodeCommunicator::receiveBytes(){
@@ -91,7 +92,7 @@ bool WifiNodeCommunicator::checkAllOk(){
       DEBUG_PRINTLN("Connected to the Wifi");
       //wnc_connection_data.ip_address = WiFi.gatewayIP();      
       wnc_connector.begin(BODYNODES_PORT);
-      IPAddress multicastIP = getIPAdressFromStr(BODYNODES_MULTICASTIP_DEFAULT);
+      IPAddress multicastIP = getIPAdressFromStr(BODYNODES_MULTICASTGROUP_DEFAULT);
       wnc_multicast_connector.begin(BODYNODES_MULTICAST_PORT);
       wnc_multicast_connector.joinMulticast(multicastIP); // Listen to the Multicast 
       wnc_multicast_data.setConnected();

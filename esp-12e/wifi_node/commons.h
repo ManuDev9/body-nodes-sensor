@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2021-2022 Manuel Bottini
+* Copyright (c) 2021-2023 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -96,7 +96,7 @@ private:
   static constexpr char pm_checkkey_1 = 0x00;
   static constexpr char pm_checkkey_2 = 0x00;
   static constexpr char pm_checkkey_3 = 0x00;
-  static constexpr char pm_checkkey_4 = 0x01;
+  static constexpr char pm_checkkey_4 = 0x00;
 
   static constexpr uint16_t pm_player_addr_nbytes = 50;
   static constexpr uint16_t pm_player_addr_chars = 51;
@@ -107,14 +107,17 @@ private:
   static constexpr uint16_t pm_bodypart_glove_addr_nbytes = 150;
   static constexpr uint16_t pm_bodypart_glove_addr_chars = 151;
 
-  static constexpr uint16_t pm_ssid_addr_nbytes = 200;
-  static constexpr uint16_t pm_ssid_addr_chars = 201;
+  static constexpr uint16_t pm_bodypart_shoe_addr_nbytes = 200;
+  static constexpr uint16_t pm_bodypart_shoe_addr_chars = 201;
 
-  static constexpr uint16_t pm_password_addr_nbytes = 250;
-  static constexpr uint16_t pm_password_addr_chars = 251;
+  static constexpr uint16_t pm_ssid_addr_nbytes = 250;
+  static constexpr uint16_t pm_ssid_addr_chars = 251;
 
-  static constexpr uint16_t pm_multicast_message_addr_nbytes = 300;
-  static constexpr uint16_t pm_multicast_message_addr_chars = 301;
+  static constexpr uint16_t pm_password_addr_nbytes = 300;
+  static constexpr uint16_t pm_password_addr_chars = 301;
+
+  static constexpr uint16_t pm_multicast_message_addr_nbytes = 350;
+  static constexpr uint16_t pm_multicast_message_addr_chars = 351;
 
 };
 

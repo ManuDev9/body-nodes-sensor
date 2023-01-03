@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2021-2022 Manuel Bottini
+* Copyright (c) 2021-2023 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -144,7 +144,12 @@ void loop() {
     for (JsonObject action : actions) {
       String actionPlayer = action[ACTION_PLAYER_TAG].as<String>();
       String actionBodypart = action[ACTION_BODYPART_TAG].as<String>();
-      if( actionPlayer != mPlayerName && actionBodypart != mBodypartName ) {
+      if(actionPlayer != mPlayerName) {
+        DEBUG_PRINTLN("Wrong player in the action");
+        continue;
+      }
+      if(actionBodypart != mBodypartName) {
+        DEBUG_PRINTLN("Wrong bodypart in the action");
         continue;
       }
       String actionType = action[ACTION_TYPE_TAG].as<String>();
