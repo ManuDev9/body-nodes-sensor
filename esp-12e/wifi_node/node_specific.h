@@ -32,8 +32,8 @@
 // Sensortypes: orientation_abs, acceleration_rel, glove
 // Board: ESP-12E
 
-#ifndef __WIFI_NODE_BASICS_H
-#define __WIFI_NODE_BASICS_H
+#ifndef __BODYNODES_NODE_SPECIFIC_H
+#define __BODYNODES_NODE_SPECIFIC_H
 
 extern "C" {
     #include "user_interface.h"  // Required for wifi_station_connect() to work
@@ -166,4 +166,4 @@ extern "C" {
 #endif // BODYNODE_BODYPART_TAG_DEFAULT
 
 
-#endif //__WIFI_NODE_BASICS_H
+#endif //__BODYNODES_NODE_SPECIFIC_H

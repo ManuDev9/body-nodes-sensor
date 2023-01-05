@@ -29,8 +29,8 @@
 // Sensortypes: orientation_abs, acceleration_rel, glove
 // Board: RedBear Duo (Native USB Port)
 
-#ifndef __WIFI_NODE_BASICS_H
-#define __WIFI_NODE_BASICS_H
+#ifndef __BODYNODES_NODE_SPECIFIC_H
+#define __BODYNODES_NODE_SPECIFIC_H
 
 #define BODYNODE_BODYPART_HEX_DEFAULT BODYPART_LOWERLEG_RIGHT_HEX
 #define BODYNODE_PLAYER_TAG_DEFAULT  "mario"
@@ -164,4 +164,4 @@
 // Override values in here
 
 
-#endif //__WIFI_NODE_BASICS_H
+#endif //__BODYNODES_NODE_SPECIFIC_H
