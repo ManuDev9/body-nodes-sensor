@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item>
+        <rotate
+            android:fromDegrees="60"
+            android:toDegrees="60">
+
+            <shape
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:shape="oval">
+
+                <size
+                    android:height="40dp"
+                    android:width="90dp"/>
+
+                <solid android:color="@color/btc_grey" />
+
+            </shape>
+        </rotate>
+    </item>
+</layer-list>

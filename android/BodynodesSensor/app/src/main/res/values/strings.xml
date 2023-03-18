@@ -1,0 +1,48 @@
+<resources>
+    <string name="app_name">Bodynodes Sensor</string>
+
+    <string name="main_page_bt_enabled">
+        Bluetooth on your phone is now enabled.
+    </string>
+    <string name="main_page_bt_not_enabled">
+        Bluetooth on your phone was not enabled therefore your phone can\'t communicate.
+        You can turn it on manually at any time.
+    </string>
+    <string name="main_page_bt_error">
+        An error occurred during the request to activate the Bluetooth. Please check your settings and if your Bluetooth is working on your phone.
+    </string>
+    <string name="main_page_bt_adv_not_support">
+        You have an old version of Android and BLE is not supported.
+    </string>
+
+    <string name="main_sensor_page_hello_text">Transform your phone in a Bodynodes sensor by pressing \"Start\".
+        Remember to press \"Stop\" when you have finished.</string>
+
+    <string name="main_sensor_page_start_button_text">Start</string>
+    <string name="main_sensor_page_stop_button_text">Stop</string>
+
+    <string name="ble_uuid">1E948DF1-4831-94BA-754C-3E5000003D71</string>
+
+    <!--General messages-->
+    <string name="message_sensor_not_supported">
+        Your phone doesn\'t have the necessary sensors and the app can\'t work.\nPlease try with another smartphone.
+    </string>
+
+    <string name="main_sensor_select_sensortype">Please select at least one sensor type</string>
+    <string name="wifi_permission_not_granted">Wifi permission has not been granted</string>
+    <string name="notification_permission_not_granted">Notification permission has not been granted</string>
+    <string name="main_sensor_absolute_orientation_str">Absolute Orientation</string>
+    <string name="main_sensor_relative_acceleration_str">Relative Acceleration</string>
+    <!-- Strings used for fragments for navigation -->
+
+    <string name="settings_wifi_host_ip_address_string">Host IP Address:</string>
+    <string name="settings_wifi_save_button_str">Save</string>
+    <string name="main_sensor_page_settings_button_text">Settings</string>
+    <string name="settings_connection_type_string">Connection:</string>
+    <string name="settings_connection_type_osc_string">OSC</string>
+    <string name="settings_connection_type_wifi_string">WIFI</string>
+    <string name="settings_player_string">Player:</string>
+    <string name="settings_bodypart_string">Body part:</string>
+    <string name="settings_sensor_interval_string">Sensor interval (ms):</string>
+
+</resources>
