@@ -22,21 +22,22 @@
 * SOFTWARE.
 */
 
-#include "node_specific.h"
-#include "sensors.h"
-#include "wifi_node_communicator.h"
-#include "actuator.h"
-#include "commons.h"
+#include "bn_node_specific.h"
+#include "bn_sensors.h"
+#include "bn_wifi_node_communicator.h"
+#include "bn_actuator.h"
+#include "bn_utils.h"
+#include "bn_datatypes.h"
 
-Actuator mActuator;
-WifiNodeCommunicator mCommunicator;
-Sensor mSensor;
+BnActuator mActuator;
+BnWifiNodeCommunicator mCommunicator;
+BnSensor mSensor;
 String mPlayerName;
 String mBodypartName;
 
 #ifdef BODYNODE_GLOVE_SENSOR
 String mBodypartGloveName;
-GloveSensorReaderSerial mGloveSensorReaderSerial;
+BnGloveSensorReaderSerial mGloveSensorReaderSerial;
 #endif /*BODYNODE_GLOVE_SENSOR*/
 
 float mLastSensorData_OA[4] = {0 ,0 ,0 ,0};
@@ -77,7 +78,7 @@ void setup() {
   //Initialize the serial and wait for the port to open
   Serial.begin(921600);
 
-  PersMemory::init();
+  BnPersMemory::init();
   mActuator.init();
   mSensor.init();
   mCommunicator.init();
@@ -87,8 +88,8 @@ void setup() {
   mBodypartGloveName = PersMemory::getValue(MEMORY_BODYPART_GLOVE_TAG);
 #endif /*BODYNODE_GLOVE_SENSOR*/
 
-  mPlayerName = PersMemory::getValue(MEMORY_PLAYER_TAG);
-  mBodypartName = PersMemory::getValue(MEMORY_BODYPART_TAG);
+  mPlayerName = BnPersMemory::getValue(MEMORY_PLAYER_TAG);
+  mBodypartName = BnPersMemory::getValue(MEMORY_BODYPART_TAG);
 }
 
 void loop() {
@@ -168,10 +169,10 @@ void loop() {
         }
       } else if(actionType == ACTION_TYPE_SETPLAYER_TAG) {
         mPlayerName = action[ACTION_SETPLAYER_NEWPLAYER_TAG].as<String>();
-        PersMemory::setValue(MEMORY_PLAYER_TAG, mPlayerName);
+        BnPersMemory::setValue(MEMORY_PLAYER_TAG, mPlayerName);
       } else if(actionType == ACTION_TYPE_SETBODYPART_TAG) {
         mBodypartName = action[ACTION_SETBODYPART_NEWBODYPART_TAG].as<String>();
-        PersMemory::setValue(MEMORY_BODYPART_TAG, mBodypartName);
+        BnPersMemory::setValue(MEMORY_BODYPART_TAG, mBodypartName);
       } else if(actionType == ACTION_TYPE_SETWIFI_TAG) {
         mCommunicator.setConnectionParams(action);
         mCommunicator.init();
