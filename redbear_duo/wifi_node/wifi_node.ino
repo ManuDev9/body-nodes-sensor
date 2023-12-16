@@ -48,6 +48,13 @@ int mLastSensorData_G[9] = {0 ,0 ,0 ,0, 0, 0 ,0 ,0 ,0};
 int mBigDiff_G[9] = {BIG_ANGLE_DIFF ,BIG_ANGLE_DIFF ,BIG_ANGLE_DIFF ,BIG_ANGLE_DIFF, BIG_ANGLE_DIFF, 0, 0, 0, 0};
 #endif /*BODYNODE_GLOVE_SENSOR*/
 
+#ifdef BODYNODE_SHOE_SENSOR
+String mBodypartShoeName;
+BnShoeSensor mShoeSensor;
+int mLastSensorData_S[1] = {0};
+int mBigDiff_S[1] = {0};
+#endif /*BODYNODE_SHOE_SENSOR*/
+
 template<typename T>
 bool bigChanges(T values[], T prev_values[], uint8_t num_values, T big_difference[]) {
   bool somethingChanged=false;
@@ -87,6 +94,11 @@ void setup() {
   mGloveSensorReaderSerial.init();
   mBodypartGloveName = PersMemory::getValue(MEMORY_BODYPART_GLOVE_TAG);
 #endif /*BODYNODE_GLOVE_SENSOR*/
+
+#ifdef BODYNODE_SHOE_SENSOR
+  mShoeSensor.init();
+  mBodypartShoeName = PersMemory::getValue(MEMORY_BODYPART_SHOE_TAG);
+#endif /*BODYNODE_SHOE_SENSOR*/
 
   mPlayerName = BnPersMemory::getValue(MEMORY_PLAYER_TAG);
   mBodypartName = BnPersMemory::getValue(MEMORY_BODYPART_TAG);
@@ -136,6 +148,24 @@ void loop() {
       }
     }
 #endif /*BODYNODE_GLOVE_SENSOR*/
+
+#ifdef BODYNODE_SHOE_SENSOR
+    if(mShoeSensor.isEnabled() && mShoeSensor.checkAllOk()) {
+      int values[1] = {0};
+      mShoeSensor.getData(values);
+      if(bigChanges(values, mLastSensorData_S, 1, mBigDiff_S)) {
+        StaticJsonDocument<MAX_MESSAGE_BYTES> message_doc;
+        JsonObject message = message_doc.to<JsonObject>();
+        message["player"] = mPlayerName;
+        message["bodypart"] = mBodypartShoeName;
+        message["sensortype"] = mShoeSensor.getType();
+        message["value"] = values[0];
+        mLastSensorData_S[0] = values[0];
+        mCommunicator.addMessage(message);
+      }
+    }
+#endif /*BODYNODE_SHOE_SENSOR*/
+
     mCommunicator.sendAllMessages();
 
     StaticJsonDocument<MAX_ACTION_BYTES> actions_doc;

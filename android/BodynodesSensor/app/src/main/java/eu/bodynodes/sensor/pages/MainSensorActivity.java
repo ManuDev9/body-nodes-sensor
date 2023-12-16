@@ -41,6 +41,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -57,7 +58,7 @@ import eu.bodynodes.sensor.R;
 import eu.bodynodes.sensor.service.SensorServiceWifiOsc;
 import eu.bodynodes.sensor.service.SensorServiceWifi;
 
-public class MainSensorActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainSensorActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener {
 
     private final static String TAG = "MainSensorActivity";
 
@@ -66,7 +67,14 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
     private Button mStopButton;
     private TextView mSensorNotSupportedPopup;
     private ProgressBar mProgressBar;
-    private RelativeLayout mBodyKatanaLayout;
+    private RelativeLayout mBodynodesKatana;
+    private RelativeLayout mBodynodesGlove;
+    private View mBodynodesThumb;
+    private View mBodynodesIndexFinger;
+    private View mBodynodesMiddleFinger;
+    private View mBodynodesRingFinger;
+    private View mBodynodesLittleFinger;
+    private View mBodynodesPalm;
     private LinearLayout mSensortypeChecklist;
     private CheckBox mOrientationAbsCheckbox;
     private CheckBox mAccelerationRelCheckbox;
@@ -114,7 +122,16 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
         mStopButton = findViewById(R.id.main_sensor_stop_button);
         mSettingsButton = findViewById(R.id.main_sensor_settings_button);
         mProgressBar = findViewById(R.id.main_sensor_progress_bar);
-        mBodyKatanaLayout = findViewById(R.id.main_sensor_katana_layout);
+
+        mBodynodesKatana = findViewById(R.id.main_sensor_katana_layout);
+        mBodynodesGlove = findViewById(R.id.main_sensor_glove_layout);
+        mBodynodesThumb = findViewById(R.id.main_sensor_thumb_right);
+        mBodynodesIndexFinger = findViewById(R.id.main_sensor_index_finger_right);
+        mBodynodesMiddleFinger = findViewById(R.id.main_sensor_middle_finger_right);
+        mBodynodesRingFinger = findViewById(R.id.main_sensor_ring_finger_right);
+        mBodynodesLittleFinger = findViewById(R.id.main_sensor_little_finger_right);
+        mBodynodesPalm = findViewById(R.id.main_sensor_palm_right);
+
         mSensorNotSupportedPopup = findViewById(R.id.katana_page_sensor_not_supported_popup);
         mSensortypeChecklist = findViewById(R.id.main_sensor_sensortype_checklist);
         mOrientationAbsCheckbox = findViewById(R.id.main_sensor_orientation_abs_checkbox);
@@ -133,6 +150,13 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
         mStopButton.setOnClickListener(this);
         mStartButton.setOnClickListener(this);
         mSettingsButton.setOnClickListener(this);
+
+        mBodynodesThumb.setOnTouchListener(this);
+        mBodynodesIndexFinger.setOnTouchListener(this);
+        mBodynodesMiddleFinger.setOnTouchListener(this);
+        mBodynodesRingFinger.setOnTouchListener(this);
+        mBodynodesLittleFinger.setOnTouchListener(this);
+        mBodynodesPalm.setOnTouchListener(this);
     }
 
     private void startSersorService(){
@@ -157,6 +181,7 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
         mSensortypeChecklist.setVisibility(View.GONE);
         mStartButton.setVisibility(View.GONE);
         mSettingsButton.setVisibility(View.GONE);
+        mBodynodesGlove.setVisibility(View.VISIBLE);
     }
 
     private void stopSersorService(){
@@ -172,6 +197,7 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
         mSensortypeChecklist.setVisibility(View.VISIBLE);
         mStopButton.setVisibility(View.GONE);
         mSettingsButton.setVisibility(View.VISIBLE);
+        mBodynodesGlove.setVisibility(View.VISIBLE);
     }
 
     private void checkService() {
@@ -185,6 +211,44 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
             mSensortypeChecklist.setVisibility(View.VISIBLE);
             mStopButton.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        //if(!AppData.isCommunicationConnected()){
+        //  return false;
+        //}
+        int id = view.getId();
+        int action = motionEvent.getAction();
+        int[] intArray;
+        Intent intent;
+        switch (id){
+            case R.id.main_sensor_thumb_right:
+            case R.id.main_sensor_index_finger_right:
+            case R.id.main_sensor_middle_finger_right:
+            case R.id.main_sensor_ring_finger_right:
+            case R.id.main_sensor_little_finger_right:
+            case R.id.main_sensor_palm_right:
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        intArray = new int[]{90, 90, 90, 90, 90, 1, 0, 0, 0};
+                        intent = new Intent(BodynodesConstants.ACTION_SENSOR_GLOVE);
+                        intent.putExtra(BodynodesConstants.GLOVE_DATA, intArray);
+                        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        intArray = new int[]{90, 90, 90, 90, 90, 0, 0, 0, 0};
+                        intent = new Intent(BodynodesConstants.ACTION_SENSOR_GLOVE);
+                        intent.putExtra(BodynodesConstants.GLOVE_DATA, intArray);
+                        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                        return true;
+                    default:
+                        break;
+                }
+            default:
+                break;
+        }
+        return false;
     }
 
     @Override
@@ -251,15 +315,46 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
                 }
             }
             if(!AppData.isServiceRunning()) {
-                mBodyKatanaLayout.setBackgroundResource(R.drawable.bg_katana_grey);
+                mBodynodesKatana.setBackgroundResource(R.drawable.bg_katana_grey);
+                mBodynodesThumb.setBackgroundColor(getResources().getColor(R.color.btc_grey));
+                mBodynodesIndexFinger.setBackgroundColor(getResources().getColor(R.color.btc_grey));
+                mBodynodesMiddleFinger.setBackgroundColor(getResources().getColor(R.color.btc_grey));
+                mBodynodesRingFinger.setBackgroundColor(getResources().getColor(R.color.btc_grey));
+                mBodynodesLittleFinger.setBackgroundColor(getResources().getColor(R.color.btc_grey));
+                mBodynodesPalm.setBackgroundColor(getResources().getColor(R.color.btc_grey));
             } else if(AppData.isCommunicationConnected()) {
-                mBodyKatanaLayout.setBackgroundResource(R.drawable.bg_katana_green);
+                mBodynodesKatana.setBackgroundResource(R.drawable.bg_katana_green);
+                mBodynodesThumb.setBackgroundColor(getResources().getColor(R.color.btc_green));
+                mBodynodesIndexFinger.setBackgroundColor(getResources().getColor(R.color.btc_green));
+                mBodynodesMiddleFinger.setBackgroundColor(getResources().getColor(R.color.btc_green));
+                mBodynodesRingFinger.setBackgroundColor(getResources().getColor(R.color.btc_green));
+                mBodynodesLittleFinger.setBackgroundColor(getResources().getColor(R.color.btc_green));
+                mBodynodesPalm.setBackgroundColor(getResources().getColor(R.color.btc_green));
             } else if(AppData.isCommunicationWaitingACK()){
-                mBodyKatanaLayout.setBackgroundResource(R.drawable.bg_katana_yellow);
+                mBodynodesKatana.setBackgroundResource(R.drawable.bg_katana_yellow);
+                mBodynodesThumb.setBackgroundColor(getResources().getColor(R.color.btc_yellow));
+                mBodynodesIndexFinger.setBackgroundColor(getResources().getColor(R.color.btc_yellow));
+                mBodynodesMiddleFinger.setBackgroundColor(getResources().getColor(R.color.btc_yellow));
+                mBodynodesRingFinger.setBackgroundColor(getResources().getColor(R.color.btc_yellow));
+                mBodynodesLittleFinger.setBackgroundColor(getResources().getColor(R.color.btc_yellow));
+                mBodynodesPalm.setBackgroundColor(getResources().getColor(R.color.btc_yellow));
             } else {
-                mBodyKatanaLayout.setBackgroundResource(R.drawable.bg_katana_red);
+                mBodynodesKatana.setBackgroundResource(R.drawable.bg_katana_red);
+                mBodynodesThumb.setBackgroundColor(getResources().getColor(R.color.btc_red));
+                mBodynodesIndexFinger.setBackgroundColor(getResources().getColor(R.color.btc_red));
+                mBodynodesMiddleFinger.setBackgroundColor(getResources().getColor(R.color.btc_red));
+                mBodynodesRingFinger.setBackgroundColor(getResources().getColor(R.color.btc_red));
+                mBodynodesLittleFinger.setBackgroundColor(getResources().getColor(R.color.btc_red));
+                mBodynodesPalm.setBackgroundColor(getResources().getColor(R.color.btc_red));
             }
-            mBodyKatanaLayout.invalidate();
+            mBodynodesKatana.invalidate();
+            mBodynodesThumb.invalidate();
+            mBodynodesIndexFinger.invalidate();
+            mBodynodesMiddleFinger.invalidate();
+            mBodynodesRingFinger.invalidate();
+            mBodynodesLittleFinger.invalidate();
+            mBodynodesPalm.invalidate();
         });
     }
+
 }

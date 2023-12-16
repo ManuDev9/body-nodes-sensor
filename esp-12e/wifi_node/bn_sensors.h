@@ -86,4 +86,29 @@ private:
 
 #endif /*BODYNODE_GLOVE_SENSOR*/
 
+#ifdef BODYNODE_SHOE_SENSOR
+
+class BnShoeSensor {
+public:
+  // Initializes the reader
+  void init();
+  // Reads from the serial. Returns true if a full read has been received, false otherwise.
+  bool checkAllOk();
+  // Returns the data read
+  void getData(int *values);
+  // Returns the type of the sensor as string
+  String getType();
+  // Enable/Disable Sensor
+  void setEnable(bool enable_status);
+  // Returns if sensor is enabled or not
+  bool isEnabled();
+
+private:
+  int ss_value;
+  int ss_pin;
+  bool ss_enabled;
+};
+
+#endif /*BODYNODE_SHOE_SENSOR*/
+
 #endif /*__BN_SENSORS_H__*/

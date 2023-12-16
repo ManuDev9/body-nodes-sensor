@@ -26,8 +26,10 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -36,6 +38,7 @@ import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 
@@ -90,7 +93,7 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
     private SensorManager mSensorManager;
     private Sensor mOrientationAbsSensor;
     private Sensor mAccelerationRelSensor;
-
+    public static final int ACCELETATION_TYPE = Sensor.TYPE_LINEAR_ACCELERATION;
     private Timer mTimer;
     private float[] mOrientationAbs;
     private float[] mAccelerationRel;
@@ -102,7 +105,7 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
         super.onCreate();
         createNotification();
         mOrientationAbs = new float[]{0, 0, 0, 0};
-        mAccelerationRel = new float[]{0, 0, 0, 0};
+        mAccelerationRel = new float[]{0, 0, 0};
         mPrevOrientationAbs = new float[]{0, 0, 0, 0};
         mPrevAccelerationRel = new float[]{0, 0, 0};
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -116,7 +119,7 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
                 mSensorManager.registerListener(this, mOrientationAbsSensor, AppData.getSensorIntervalMs(this) * 1000);
             }
             if(BodynodesData.isAccelerationRelSensorEnabled(this)) {
-                mAccelerationRelSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+                mAccelerationRelSensor = mSensorManager.getDefaultSensor(ACCELETATION_TYPE);
                 mSensorManager.registerListener(this, mAccelerationRelSensor, AppData.getSensorIntervalMs(this) * 1000);
             }
         }
@@ -176,6 +179,10 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
                     e.printStackTrace();
                 }
             }
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(BodynodesConstants.ACTION_SENSOR_GLOVE);
+            LocalBroadcastManager.getInstance(this).registerReceiver(mSensorReceiver, intentFilter);
+
             run_connection_background();
             run_multicast_background();
 
@@ -199,8 +206,8 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
             });
             thread.start();
         },5000);
-    }
 
+    }
 
     @Override
     public void onDestroy() {
@@ -222,18 +229,34 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        if (sensorEvent.sensor.getType() == Sensor.TYPE_GAME_ROTATION_VECTOR ||
-                sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+        if(sensorEvent.sensor.getType() == Sensor.TYPE_GAME_ROTATION_VECTOR ) {
+            //Log.i(TAG, "onSensorChanged values = [ " + values[0] + ", " + values[1] + ", " + values[2] + ", " + values[3] + " ]");
             float[] values = sensorEvent.values;
-            if(sensorEvent.sensor.getType() == Sensor.TYPE_GAME_ROTATION_VECTOR ) {
-                //Log.i(TAG, "onSensorChanged values = [ " + values[0] + ", " + values[1] + ", " + values[2] + ", " + values[3] + " ]");
-                BodynodesUtils.realignQuat(values, mOrientationAbs);
-            } else if(sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-                //Log.i(TAG, "onSensorChanged values = [ " + values[0] + ", " + values[1] + ", " + values[2] + " ]");
-                mAccelerationRel = new float[]{values[0], values[1], values[2]};
-            }
+            BodynodesUtils.realignQuat(values, mOrientationAbs);
+        } else if(sensorEvent.sensor.getType() == ACCELETATION_TYPE) {
+            //Log.i(TAG, "onSensorChanged values = [ " + values[0] + ", " + values[1] + ", " + values[2] + " ]");
+            float[] values = sensorEvent.values;
+            mAccelerationRel = new float[]{values[0], values[1], values[2]};
         }
     }
+
+    private final BroadcastReceiver mSensorReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals(BodynodesConstants.ACTION_SENSOR_GLOVE)) {
+                int[] gloveData = intent.getIntArrayExtra(BodynodesConstants.GLOVE_DATA);
+                Log.d(TAG,"Glove change");
+                JSONArray jsonArray = new JSONArray();
+                JSONObject jsonObject = BodynodesProtocol.makeMessageWifi(
+                        BodynodesData.getPlayerName(SensorServiceWifi.this),
+                        BodynodesData.getBodypart(SensorServiceWifi.this),
+                        BodynodesConstants.SENSORTYPE_GLOVE_TAG,
+                        gloveData);
+                jsonArray.put(jsonObject);
+                sendMessageWifiUdp(jsonArray.toString());
+            }
+        }
+    };
 
     boolean isReading(){
         return mTimer!=null;
@@ -383,7 +406,6 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
         return somethingChanged;
     }
 
-
     private void sendSensorData() {
         if(AppData.getCommunicationType(this) == BodynodesConstants.COMMUNICATION_TYPE_WIFI){
             sendSensorDataViaWifiUdp();
@@ -425,33 +447,29 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
     private void sendSensorDataViaWifiUdp() {
         //Log.d(TAG,"sendSensorDataViaWifi");
         boolean anydataToSend = false;
-        try {
-            JSONArray jsonArray = new JSONArray();
-            if(BodynodesData.isOrientationAbsSensorEnabled(this) && bigChangeValues(mOrientationAbs, mPrevOrientationAbs, 4, BodynodesConstants.BIG_ORIENTATION_ABS_DIFF)){
-                Log.d(TAG,"Orientation big change");
-                JSONObject jsonObject = BodynodesProtocol.makeMessageWifi(
-                        BodynodesData.getPlayerName(this),
-                        BodynodesData.getBodypart(this),
-                        BodynodesConstants.SENSORTYPE_ORIENTATION_ABS_TAG,
-                        mOrientationAbs);
-                jsonArray.put(jsonObject);
-                anydataToSend = true;
-            }
-            if(BodynodesData.isAccelerationRelSensorEnabled(this) && bigChangeValues(mAccelerationRel, mPrevAccelerationRel, 3, BodynodesConstants.BIG_ACCELERATION_REL_DIFF)){
-                Log.d(TAG,"Acceleration big change");
-                JSONObject jsonObject = BodynodesProtocol.makeMessageWifi(
-                        BodynodesData.getPlayerName(this),
-                        BodynodesData.getBodypart(this),
-                        BodynodesConstants.SENSORTYPE_ACCELERATION_REL_TAG,
-                        mAccelerationRel);
-                jsonArray.put(jsonObject);
-                anydataToSend = true;
-            }
-            if(anydataToSend) {
-                sendMessageWifiUdp(jsonArray.toString());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        JSONArray jsonArray = new JSONArray();
+        if(BodynodesData.isOrientationAbsSensorEnabled(this) && bigChangeValues(mOrientationAbs, mPrevOrientationAbs, 4, BodynodesConstants.BIG_ORIENTATION_ABS_DIFF)){
+            Log.d(TAG,"Orientation big change");
+            JSONObject jsonObject = BodynodesProtocol.makeMessageWifi(
+                    BodynodesData.getPlayerName(this),
+                    BodynodesData.getBodypart(this),
+                    BodynodesConstants.SENSORTYPE_ORIENTATION_ABS_TAG,
+                    mOrientationAbs);
+            jsonArray.put(jsonObject);
+            anydataToSend = true;
+        }
+        if(BodynodesData.isAccelerationRelSensorEnabled(this) && bigChangeValues(mAccelerationRel, mPrevAccelerationRel, 3, BodynodesConstants.BIG_ACCELERATION_REL_DIFF)){
+            Log.d(TAG,"Acceleration big change");
+            JSONObject jsonObject = BodynodesProtocol.makeMessageWifi(
+                    BodynodesData.getPlayerName(this),
+                    BodynodesData.getBodypart(this),
+                    BodynodesConstants.SENSORTYPE_ACCELERATION_REL_TAG,
+                    mAccelerationRel);
+            jsonArray.put(jsonObject);
+            anydataToSend = true;
+        }
+        if(anydataToSend) {
+            sendMessageWifiUdp(jsonArray.toString());
         }
     }
 
@@ -478,12 +496,25 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
         thread.start();
     }
 
+    private void sendMessageWifiUdp(String msg) {
 
-    private void sendMessageWifiUdp(String msg) throws IOException {
-        Log.d(TAG,"sending = "+msg);
-        int msg_length = msg.length();
-        byte[] message = msg.getBytes();
-        DatagramPacket packet = new DatagramPacket(message, msg_length, mServerIpAddress, 12345);
-        mConnector.send(packet);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "sending = " + msg);
+                int msg_length = msg.length();
+                byte[] message = msg.getBytes();
+                DatagramPacket packet = new DatagramPacket(message, msg_length, mServerIpAddress, 12345);
+                try {
+                    if(mConnector != null) {
+                        mConnector.send(packet);
+                    } else {
+                        Log.e(TAG, "mConnector is null");
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }).start();
     }
 }

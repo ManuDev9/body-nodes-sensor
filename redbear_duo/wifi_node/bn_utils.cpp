@@ -64,11 +64,9 @@ void BnPersMemory::init(){
     setValue(MEMORY_WIFI_SSID_TAG, BODYNODES_WIFI_SSID_DEFAULT);
     setValue(MEMORY_WIFI_PASSWORD_TAG, BODYNODES_WIFI_PASS_DEFAULT);
     setValue(MEMORY_WIFI_MULTICASTMESSAGE_TAG, BODYNODES_MULTICASTMESSAGE_DEFAULT);
-
   } else {
     DEBUG_PRINTLN("Already setup memory!");
   }
-
 }
 
 void BnPersMemory::clean(){
@@ -90,6 +88,9 @@ void BnPersMemory::setValue(String key, String value){
   } else if(key == MEMORY_BODYPART_GLOVE_TAG) {
     addr_nbytes = pm_bodypart_glove_addr_nbytes;
     addr_chars = pm_bodypart_glove_addr_chars;
+  } else if(key == MEMORY_BODYPART_SHOE_TAG) {
+    addr_nbytes = pm_bodypart_shoe_addr_nbytes;
+    addr_chars = pm_bodypart_shoe_addr_chars;
   } else if(key == MEMORY_WIFI_SSID_TAG) {
     addr_nbytes = pm_ssid_addr_nbytes;
     addr_chars = pm_ssid_addr_chars;

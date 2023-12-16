@@ -30,6 +30,7 @@ package eu.bodynodes.sensor;
 public class BodynodesConstants {
 
     public static final String ACTION_UPDATE_UI = "eu.bodynodes.sensor.ACTION_UPDATE_UI";
+    public static final String ACTION_SENSOR_GLOVE = "eu.bodynodes.sensor.ACTION_SENSOR_GLOVE";
     public static final String ACTION_RECEIVED = "eu.bodynodes.sensor.ACTION_RECEIVED";
     public static final String KEY_JSON_ACTION = "JSON_ACTION";
 
@@ -61,6 +62,7 @@ public class BodynodesConstants {
 
     public static final String SENSORTYPE_ORIENTATION_ABS_TAG = "orientation_abs";
     public static final String SENSORTYPE_ACCELERATION_REL_TAG = "acceleration_rel";
+    public static final String SENSORTYPE_GLOVE_TAG = "glove";
     public static final String PLAYER_NAME_DEFAULT = "playerone";
 
     /*Actions*/
@@ -98,23 +100,6 @@ public class BodynodesConstants {
     public final static int COMMUNICATION_STATE_WAITING_ACK = 1;
     public final static int COMMUNICATION_STATE_CONNECTED = 2;
 
-    public static final String BODY_SERVICE_BLE_UUID               = "0000ccc0-0000-1000-8000-00805f9b34fb";
-    public static final String BODY_HEAD_BLE_CHAR_UUID             = "0000ccc1-0000-1000-8000-00805f9b34fb";
-    public static final String BODY_HAND_LEFT_BLE_CHAR_UUID        = "0000ccc2-0000-1000-8000-00805f9b34fb";
-    public static final String BODY_FOREARM_LEFT_BLE_CHAR_UUID     = "0000ccc3-0000-1000-8000-00805f9b34fb";
-    public static final String BODY_UPPERARM_LEFT_BLE_CHAR_UUID    = "0000ccc4-0000-1000-8000-00805f9b34fb";
-    public static final String BODY_BODY_BLE_CHAR_UUID             = "0000ccc5-0000-1000-8000-00805f9b34fb";
-    public static final String BODY_FOREARM_RIGHT_BLE_CHAR_UUID    = "0000ccc6-0000-1000-8000-00805f9b34fb";
-    public static final String BODY_UPPERARM_RIGHT_BLE_CHAR_UUID   = "0000ccc7-0000-1000-8000-00805f9b34fb";
-    public static final String BODY_HAND_RIGHT_BLE_CHAR_UUID       = "0000ccc8-0000-1000-8000-00805f9b34fb";
-    public static final String BODY_LOWERLEG_LEFT_BLE_CHAR_UUID    = "0000ccc9-0000-1000-8000-00805f9b34fb";
-    public static final String BODY_UPPERLEG_LEFT_BLE_CHAR_UUID    = "0000ccca-0000-1000-8000-00805f9b34fb";
-    public static final String BODY_FOOT_LEFT_BLE_CHAR_UUID        = "0000cccb-0000-1000-8000-00805f9b34fb";
-    public static final String BODY_LOWERLEG_RIGHT_BLE_CHAR_UUID   = "0000cccc-0000-1000-8000-00805f9b34fb";
-    public static final String BODY_UPPERLEG_RIGHT_BLE_CHAR_UUID   = "0000cccd-0000-1000-8000-00805f9b34fb";
-    public static final String BODY_FOOT_RIGHT_BLE_CHAR_UUID       = "0000ccce-0000-1000-8000-00805f9b34fb";
-    public static final String BODY_UNTAGGED_CHAR_UUID             = "0000cccf-0000-1000-8000-00805f9b34fb";
-
     public static final int COMMUNICATION_TYPE_WIFI = 0;
     public static final int COMMUNICATION_TYPE_WIFI_OSC = 1;
 
@@ -151,11 +136,11 @@ public class BodynodesConstants {
     public static final String REMOTE_PORT_OUT_NUMBER = "REMOTE_PORT_OUT_NUMBER";
     public static final String COMMUNICATION_TYPE = "COMMUNICATION_TYPE";
     public static final String BODYPART = "BODYPART";
+    public static final String GLOVE_DATA = "GLOVE_DATA";
     public static final String ORIENTATION_ABSOLUTE_ENABLED = "ORIENTATION_ABSOLUTE_ENABLED";
     public static final String ACCELERATION_RELATIVE_ENABLED = "ACCELERATION_RELATIVE_ENABLED";
     public static final String SENSOR_INTERVAL_MS = "SENSOR_INTERVAL_MS";
     public static final String PLAYER_NAME = "PLAYER_NAME";
-
 
     public static final int REMOTE_PORT_OUT_NUMBER_DEFAULT = 8000;
     public static final int LOCAL_PORT_IN_NUMBER_DEFAULT = 9000;

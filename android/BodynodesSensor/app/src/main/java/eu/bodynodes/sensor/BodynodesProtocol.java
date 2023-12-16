@@ -40,6 +40,30 @@ public class BodynodesProtocol {
     // Specification Version
     public final static String VERSION = "d1.0";
 
+    public static JSONObject makeMessageWifi(String player, String bodypart, String sensortype, int[] values){
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+            jsonObject.put(BodynodesConstants.MESSAGE_PLAYER_TAG, player);
+            jsonObject.put(BodynodesConstants.MESSAGE_BODYPART_TAG, bodypart);
+            jsonObject.put(BodynodesConstants.MESSAGE_SENSOR_TYPE_TAG, sensortype);
+            if(sensortype.equals(BodynodesConstants.SENSORTYPE_GLOVE_TAG)){
+                jsonObject.accumulate(BodynodesConstants.MESSAGE_VALUE_TAG,values[0]);
+                jsonObject.accumulate(BodynodesConstants.MESSAGE_VALUE_TAG,values[1]);
+                jsonObject.accumulate(BodynodesConstants.MESSAGE_VALUE_TAG,values[2]);
+                jsonObject.accumulate(BodynodesConstants.MESSAGE_VALUE_TAG,values[3]);
+                jsonObject.accumulate(BodynodesConstants.MESSAGE_VALUE_TAG,values[4]);
+                jsonObject.accumulate(BodynodesConstants.MESSAGE_VALUE_TAG,values[5]);
+                jsonObject.accumulate(BodynodesConstants.MESSAGE_VALUE_TAG,values[6]);
+                jsonObject.accumulate(BodynodesConstants.MESSAGE_VALUE_TAG,values[7]);
+                jsonObject.accumulate(BodynodesConstants.MESSAGE_VALUE_TAG,values[8]);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject;
+    }
+
     public static JSONObject makeMessageWifi(String player, String bodypart, String sensortype, float[] values){
         JSONObject jsonObject = new JSONObject();
 

@@ -60,7 +60,6 @@ private:
 
   static constexpr uint16_t pm_multicast_message_addr_nbytes = 350;
   static constexpr uint16_t pm_multicast_message_addr_chars = 351;
-
 };
 
 #endif //__BN_UTILS_H

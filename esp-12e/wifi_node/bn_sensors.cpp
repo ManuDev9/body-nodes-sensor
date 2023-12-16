@@ -280,3 +280,37 @@ bool BnGloveSensorReaderSerial::isEnabled(){
 }
 
 #endif /*BODYNODE_GLOVE_SENSOR*/
+
+#ifdef BODYNODE_SHOE_SENSOR
+
+void BnShoeSensor::init() {
+  ss_value = 0;
+  ss_pin = SHOE_SENSOR_PIN_P;
+  pinMode(STATUS_SENSOR_HMI_LED_M, INPUT);
+  ss_enabled = true;
+}
+
+bool BnShoeSensor::checkAllOk() {
+  return true;
+}
+
+// 1 value is expected
+void BnShoeSensor::getData(int *values){
+  values[0] = digitalRead(ss_pin);
+  DEBUG_PRINT("Reading from BnShoeSensor value = ");
+  DEBUG_PRINTLN(values[0]);
+}
+
+String BnShoeSensor::getType(){
+  return SENSOR_DATA_TYPE_SHOE_TAG;
+}
+
+void BnShoeSensor::setEnable(bool enable_status){
+  ss_enabled = enable_status;
+}
+
+bool BnShoeSensor::isEnabled(){
+  return ss_enabled;
+}
+
+#endif /*BODYNODE_SHOE_SENSOR*/
