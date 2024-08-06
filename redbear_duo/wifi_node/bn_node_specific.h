@@ -52,7 +52,7 @@
   #undef BODYNODE_GLOVE_SENSOR
 #endif // BODYNODE_BODYPART_HEX != BODYPART_LOWERARM_RIGHT_HEX && BODYNODE_BODYPART_HEX != BODYPART_LOWERARM_LEFT_HEX
 
-#define BODYNODE_SHOE_SENSOR
+//#define BODYNODE_SHOE_SENSOR
 
 // If BODYNODE_SHOE_SENSOR is defined then BODYNODE_BODYPART_SHOE_TAG will be defined in case the node is a lowerleg
 // Note that only forearm nodes can have gloves, therefore BODYNODE_GLOVE_SENSOR is undefined for the other cases
@@ -165,6 +165,9 @@
 #elif BODYNODE_BODYPART_HEX_DEFAULT == BODYPART_UNTAGGED_HEX
   #define BODYNODE_BODYPART_TAG_DEFAULT BODYPART_UNTAGGED_TAG
 #endif // BODYNODE_BODYPART_TAG_DEFAULT
+
+#define BODYNODES_WIFI_SSID_DEFAULT "VM9179260"
+#define BODYNODES_WIFI_PASS_DEFAULT "tq6Pvhfxjvgy"
 
 // Node Specific functions definitions
 // Defines have been chose because we want code to be easily place in the functions
