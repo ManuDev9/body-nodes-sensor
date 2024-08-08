@@ -119,7 +119,7 @@
         <RelativeLayout
             android:id="@+id/main_sensor_glove_layout"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="250dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:gravity="center_horizontal"
@@ -128,67 +128,115 @@
             <!-- Thumb -->
             <RelativeLayout
                 android:id="@+id/main_sensor_thumb_layout"
-                android:layout_width="30dp"
-                android:layout_height="100dp"
+                android:layout_width="@dimen/main_finger_width"
+                android:layout_height="@dimen/main_long_finger_height"
                 android:layout_marginEnd="10dp" >
 
                 <View
                     android:id="@+id/main_sensor_thumb_right"
-                    android:layout_height="80dp"
+                    android:layout_height="@dimen/main_small_finger_height"
                     android:layout_width="match_parent"
                     android:layout_alignParentBottom="true"
-                    android:background="@color/btc_grey"  />
+                    android:background="@color/btc_grey" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_thumb_name"
+                    android:textColor="#FFFFFF"
+                    android:textAlignment="center"
+                    android:layout_alignParentBottom="true" />
 
             </RelativeLayout>
 
-            <View
+            <RelativeLayout
                 android:id="@+id/main_sensor_index_finger_right"
-                android:layout_width="30dp"
-                android:layout_height="100dp"
+                android:layout_width="@dimen/main_finger_width"
+                android:layout_height="@dimen/main_long_finger_height"
                 android:layout_marginEnd="10dp"
-                android:layout_toEndOf="@id/main_sensor_thumb_layout"
-                android:background="@color/btc_grey" />
+                android:background="@color/btc_grey"
+                android:layout_toEndOf="@id/main_sensor_thumb_layout">
 
-            <View
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_index_name"
+                    android:textColor="#FFFFFF"
+                    android:textAlignment="center"
+                    android:layout_alignParentBottom="true" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:id="@+id/main_sensor_middle_finger_right"
-                android:layout_width="30dp"
-                android:layout_height="100dp"
+                android:layout_width="@dimen/main_finger_width"
+                android:layout_height="@dimen/main_long_finger_height"
                 android:layout_marginEnd="10dp"
-                android:layout_toEndOf="@id/main_sensor_index_finger_right"
-                android:background="@color/btc_grey" />
+                android:background="@color/btc_grey"
+                android:layout_toEndOf="@id/main_sensor_index_finger_right">
 
-            <View
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_middle_name"
+                    android:textColor="#FFFFFF"
+                    android:textAlignment="center"
+                    android:layout_alignParentBottom="true" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:id="@+id/main_sensor_ring_finger_right"
-                android:layout_width="30dp"
-                android:layout_height="100dp"
+                android:layout_width="@dimen/main_finger_width"
+                android:layout_height="@dimen/main_long_finger_height"
                 android:layout_marginEnd="10dp"
-                android:layout_toEndOf="@id/main_sensor_middle_finger_right"
-                android:background="@color/btc_grey" />
+                android:background="@color/btc_grey"
+                android:layout_toEndOf="@id/main_sensor_middle_finger_right" >
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_ring_name"
+                    android:textColor="#FFFFFF"
+                    android:textAlignment="center"
+                    android:layout_alignParentBottom="true" />
+
+            </RelativeLayout>
 
 
             <!-- Little Finger -->
             <RelativeLayout
                 android:id="@+id/main_sensor_little_finger_layout"
-                android:layout_width="30dp"
+                android:layout_width="@dimen/main_finger_width"
                 android:layout_toEndOf="@id/main_sensor_ring_finger_right"
-                android:layout_height="100dp" >
+                android:layout_height="@dimen/main_long_finger_height"
+                >
 
                 <View
                     android:id="@+id/main_sensor_little_finger_right"
-                    android:layout_height="80dp"
+                    android:layout_height="@dimen/main_small_finger_height"
                     android:layout_width="match_parent"
                     android:layout_alignParentBottom="true"
                     android:background="@color/btc_grey"  />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_pinkie_name"
+                    android:textColor="#FFFFFF"
+                    android:textAlignment="center"
+                    android:layout_alignParentBottom="true" />
 
             </RelativeLayout>
 
             <!-- Palm -->
             <View
                 android:id="@+id/main_sensor_palm_right"
-                android:layout_width="150dp"
-                android:layout_height="80dp"
+                android:layout_width="@dimen/main_hand_width"
+                android:layout_height="@dimen/main_small_finger_height"
                 android:layout_marginTop="5dp"
-                android:layout_marginLeft="40dp"
+                android:layout_marginLeft="80dp"
                 android:layout_below="@id/main_sensor_middle_finger_right"
                 android:background="@color/btc_grey" />
 

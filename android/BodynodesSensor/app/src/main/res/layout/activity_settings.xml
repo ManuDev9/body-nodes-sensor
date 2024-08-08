@@ -66,6 +66,49 @@
             android:padding="10sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="@string/settings_glovebodypart_type_string"/>
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            >
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_horizontal"
+                >
+
+                <RadioButton
+                    android:id="@+id/settings_connection_type_glovebodypart_left_radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5sp"
+                    android:text="@string/settings_glovebodypart_hand_left_string"
+                    />
+
+                <RadioButton
+                    android:id="@+id/settings_connection_type_glovebodypart_right_radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5sp"
+                    android:text="@string/settings_glovebodypart_hand_right_string" />
+            </RadioGroup>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        >
+        <TextView
+            android:padding="10sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="@string/settings_connection_type_string"/>
 
         <LinearLayout
@@ -82,11 +125,11 @@
                 >
 
                 <RadioButton
-                    android:id="@+id/settings_connection_type_osc_radio"
+                    android:id="@+id/settings_connection_type_bluetooth_radio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="5sp"
-                    android:text="@string/settings_connection_type_osc_string"
+                    android:text="@string/settings_connection_type_bluetooth_string"
                     />
 
                 <RadioButton

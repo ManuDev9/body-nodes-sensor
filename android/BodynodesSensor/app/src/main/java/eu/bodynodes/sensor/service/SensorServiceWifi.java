@@ -22,6 +22,7 @@
 
 package eu.bodynodes.sensor.service;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -30,6 +31,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ServiceInfo;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -44,6 +46,7 @@ import android.os.Vibrator;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.ServiceCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.util.Log;
@@ -131,10 +134,11 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
         }
     }
 
+    @SuppressLint("ForegroundServiceType")
     private void createNotification() {
-        String NOTIFICATION_CHANNEL_ID = "eu.bodynodes.sensor";
+        String NOTIFICATION_CHANNEL_ID = BodynodesConstants.NOTIFICATION_CHANNEL_ID;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            String channelName = "Bodynodes Service";
+            String channelName = BodynodesConstants.NOTIFICATION_CHANNEL_NAME;
             NotificationChannel chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_NONE);
             chan.setLightColor(Color.BLUE);
             chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
@@ -148,7 +152,7 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
                     .setPriority(NotificationManager.IMPORTANCE_MIN)
                     .setCategory(Notification.CATEGORY_SERVICE)
                     .build();
-            startForeground(BodynodesConstants.SENSOR_SERVICE_NOTIFICATION_ID, notification);
+            ServiceCompat.startForeground(this, BodynodesConstants.SENSOR_SERVICE_NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_REMOTE_MESSAGING);
         } else {
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
             Notification notification = notificationBuilder.setOngoing(true)
@@ -249,7 +253,7 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
                 JSONArray jsonArray = new JSONArray();
                 JSONObject jsonObject = BodynodesProtocol.makeMessageWifi(
                         BodynodesData.getPlayerName(SensorServiceWifi.this),
-                        BodynodesData.getBodypart(SensorServiceWifi.this),
+                        BodynodesData.getGloveBodypart(SensorServiceWifi.this),
                         BodynodesConstants.SENSORTYPE_GLOVE_TAG,
                         gloveData);
                 jsonArray.put(jsonObject);

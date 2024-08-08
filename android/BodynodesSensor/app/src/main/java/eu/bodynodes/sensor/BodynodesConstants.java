@@ -29,6 +29,9 @@ package eu.bodynodes.sensor;
  */
 public class BodynodesConstants {
 
+    public final static String NOTIFICATION_CHANNEL_ID = "eu.bodynodes.sensor";
+    public final static String NOTIFICATION_CHANNEL_NAME = "Bodynodes Service";
+
     public static final String ACTION_UPDATE_UI = "eu.bodynodes.sensor.ACTION_UPDATE_UI";
     public static final String ACTION_SENSOR_GLOVE = "eu.bodynodes.sensor.ACTION_SENSOR_GLOVE";
     public static final String ACTION_RECEIVED = "eu.bodynodes.sensor.ACTION_RECEIVED";
@@ -66,7 +69,6 @@ public class BodynodesConstants {
     public static final String PLAYER_NAME_DEFAULT = "playerone";
 
     /*Actions*/
-    public static final String OSC_ACTION_PATH_TAG          = "/action";
 
     public static final String ACTION_ACTION_TAG            = "action";
     public static final String ACTION_HAPTIC_TAG            = "haptic";
@@ -92,7 +94,7 @@ public class BodynodesConstants {
                 BODY_LOWERLEG_RIGHT_TAG,
                 BODY_UPPERLEG_RIGHT_TAG,
                 BODY_FOOT_RIGHT_TAG,
-            BODY_KATANA_TAG,
+                BODY_KATANA_TAG,
                 BODY_UNTAGGED_TAG
             };
 
@@ -101,7 +103,7 @@ public class BodynodesConstants {
     public final static int COMMUNICATION_STATE_CONNECTED = 2;
 
     public static final int COMMUNICATION_TYPE_WIFI = 0;
-    public static final int COMMUNICATION_TYPE_WIFI_OSC = 1;
+    public static final int COMMUNICATION_TYPE_BLUETOOTH = 1;
 
     // Device Specific Axis Configuration
     public static final int OA_OUT_AXIS_W = 0;
@@ -136,6 +138,7 @@ public class BodynodesConstants {
     public static final String REMOTE_PORT_OUT_NUMBER = "REMOTE_PORT_OUT_NUMBER";
     public static final String COMMUNICATION_TYPE = "COMMUNICATION_TYPE";
     public static final String BODYPART = "BODYPART";
+    public static final String GLOVE_BODYPART = "GLOVE_BODYPART";
     public static final String GLOVE_DATA = "GLOVE_DATA";
     public static final String ORIENTATION_ABSOLUTE_ENABLED = "ORIENTATION_ABSOLUTE_ENABLED";
     public static final String ACCELERATION_RELATIVE_ENABLED = "ACCELERATION_RELATIVE_ENABLED";

@@ -100,8 +100,7 @@ public class AppData {
 
     public static boolean isCommunicationWifi(Context context) {
         int communicationType = getCommunicationType(context);
-        return communicationType == BodynodesConstants.COMMUNICATION_TYPE_WIFI_OSC ||
-                communicationType == BodynodesConstants.COMMUNICATION_TYPE_WIFI;
+        return communicationType == BodynodesConstants.COMMUNICATION_TYPE_WIFI;
     }
 
     public static int getSensorIntervalMs(Context context) {

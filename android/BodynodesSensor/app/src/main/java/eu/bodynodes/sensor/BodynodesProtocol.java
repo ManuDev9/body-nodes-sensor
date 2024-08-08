@@ -24,8 +24,6 @@
 
 package eu.bodynodes.sensor;
 
-import com.illposed.osc.OSCMessage;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -102,30 +100,4 @@ public class BodynodesProtocol {
         return -1;
     }
 
-    public static String createOscPath(String player, String bodypart, String sensortype) {
-        return "/obBn";
-    }
-
-    public static OSCMessage makeMessageWifiOsc(String player, String bodypart, String sensortype, float[] values) {
-        final List<Object> args = new ArrayList<>(0);
-        if(sensortype.equals(BodynodesConstants.SENSORTYPE_ORIENTATION_ABS_TAG)){
-            args.add(player);
-            args.add(bodypart);
-            args.add(sensortype);
-
-            args.add(values[BodynodesConstants.OA_OUT_AXIS_W]);
-            args.add(values[BodynodesConstants.OA_OUT_AXIS_X]);
-            args.add(values[BodynodesConstants.OA_OUT_AXIS_Y]);
-            args.add(values[BodynodesConstants.OA_OUT_AXIS_Z]);
-        } else if(sensortype.equals(BodynodesConstants.SENSORTYPE_ACCELERATION_REL_TAG)){
-            args.add(player);
-            args.add(bodypart);
-            args.add(sensortype);
-
-            args.add(values[BodynodesConstants.AR_OUT_AXIS_X]);
-            args.add(values[BodynodesConstants.AR_OUT_AXIS_Y]);
-            args.add(values[BodynodesConstants.AR_OUT_AXIS_Z]);
-        }
-        return new OSCMessage(createOscPath(player, bodypart, sensortype), args);
-    }
 }

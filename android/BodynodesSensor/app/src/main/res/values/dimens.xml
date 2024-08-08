@@ -3,4 +3,11 @@
 
     <dimen name="settings_wifi_size_ip_address_block">80sp</dimen>
 
+    <dimen name="main_finger_width">70sp</dimen>
+    <dimen name="main_small_finger_height">120sp</dimen>
+    <dimen name="main_long_finger_height">160sp</dimen>
+
+    <dimen name="main_hand_width">300sp</dimen>
+
+
 </resources>

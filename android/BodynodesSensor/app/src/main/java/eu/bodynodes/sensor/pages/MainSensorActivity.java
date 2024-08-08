@@ -55,7 +55,6 @@ import eu.bodynodes.sensor.BodynodesConstants;
 import eu.bodynodes.sensor.data.AppData;
 import eu.bodynodes.sensor.data.BodynodesData;
 import eu.bodynodes.sensor.R;
-import eu.bodynodes.sensor.service.SensorServiceWifiOsc;
 import eu.bodynodes.sensor.service.SensorServiceWifi;
 
 public class MainSensorActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener {
@@ -163,18 +162,19 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
         BodynodesData.setOrientationAbsSensorEnabled(this, mOrientationAbsCheckbox.isChecked());
         BodynodesData.setAccelerationRelSensorEnabled(this, mAccelerationRelCheckbox.isChecked());
 
-        Intent sensorServiceIntent;
+        Intent sensorServiceIntent = null;
         if(AppData.getCommunicationType(this) == BodynodesConstants.COMMUNICATION_TYPE_WIFI) {
             sensorServiceIntent = new Intent(this, SensorServiceWifi.class);
-        } else if(AppData.getCommunicationType(this) == BodynodesConstants.COMMUNICATION_TYPE_WIFI_OSC) {
-            sensorServiceIntent = new Intent(this, SensorServiceWifiOsc.class);
+        } else if(AppData.getCommunicationType(this) == BodynodesConstants.COMMUNICATION_TYPE_BLUETOOTH) {
+            //sensorServiceIntent = new Intent(this, SensorServiceBluetooth.class);
         } else {
             Log.d(TAG, "Cannot start because communication type is not implemented");
             return;
         }
-
-        startService(sensorServiceIntent);
-        sensorServiceONUI();
+        if(sensorServiceIntent != null) {
+            startService(sensorServiceIntent);
+            sensorServiceONUI();
+        }
     }
 
     private void sensorServiceONUI() {
@@ -187,8 +187,8 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
     private void stopSersorService(){
         if(AppData.getCommunicationType(this) == BodynodesConstants.COMMUNICATION_TYPE_WIFI) {
             stopService(new Intent(this, SensorServiceWifi.class));
-        } else if(AppData.getCommunicationType(this) == BodynodesConstants.COMMUNICATION_TYPE_WIFI_OSC) {
-            stopService(new Intent(this, SensorServiceWifiOsc.class));
+        } else if(AppData.getCommunicationType(this) == BodynodesConstants.COMMUNICATION_TYPE_BLUETOOTH) {
+            //stopService(new Intent(this, SensorServiceWifiOsc.class));
         }
         sensorServiceOFFUI();
     }
@@ -218,33 +218,47 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
         //if(!AppData.isCommunicationConnected()){
         //  return false;
         //}
+
         int id = view.getId();
         int action = motionEvent.getAction();
+        if( action != MotionEvent.ACTION_DOWN && action != MotionEvent.ACTION_UP ) {
+            Log.i(TAG, "Not an action down or action up");
+            return false;
+        }
+        int sending = 0;
+        if( action == MotionEvent.ACTION_DOWN ) {
+            sending = 1;
+        }
+
         int[] intArray;
         Intent intent;
         switch (id){
-            case R.id.main_sensor_thumb_right:
             case R.id.main_sensor_index_finger_right:
+                intArray = new int[]{90, 90, 90, 90, 90, sending, 0, 0, 0};
+                intent = new Intent(BodynodesConstants.ACTION_SENSOR_GLOVE);
+                intent.putExtra(BodynodesConstants.GLOVE_DATA, intArray);
+                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                return true;
             case R.id.main_sensor_middle_finger_right:
+                intArray = new int[]{90, 90, 90, 90, 90, 0, sending, 0, 0};
+                intent = new Intent(BodynodesConstants.ACTION_SENSOR_GLOVE);
+                intent.putExtra(BodynodesConstants.GLOVE_DATA, intArray);
+                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                return true;
             case R.id.main_sensor_ring_finger_right:
+                intArray = new int[]{90, 90, 90, 90, 90, 0, 0, sending, 0};
+                intent = new Intent(BodynodesConstants.ACTION_SENSOR_GLOVE);
+                intent.putExtra(BodynodesConstants.GLOVE_DATA, intArray);
+                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                return true;
             case R.id.main_sensor_little_finger_right:
+                intArray = new int[]{90, 90, 90, 90, 90, 0, 0, 0, sending};
+                intent = new Intent(BodynodesConstants.ACTION_SENSOR_GLOVE);
+                intent.putExtra(BodynodesConstants.GLOVE_DATA, intArray);
+                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                return true;
+            case R.id.main_sensor_thumb_right:
             case R.id.main_sensor_palm_right:
-                switch (action) {
-                    case MotionEvent.ACTION_DOWN:
-                        intArray = new int[]{90, 90, 90, 90, 90, 1, 0, 0, 0};
-                        intent = new Intent(BodynodesConstants.ACTION_SENSOR_GLOVE);
-                        intent.putExtra(BodynodesConstants.GLOVE_DATA, intArray);
-                        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-                        return true;
-                    case MotionEvent.ACTION_UP:
-                        intArray = new int[]{90, 90, 90, 90, 90, 0, 0, 0, 0};
-                        intent = new Intent(BodynodesConstants.ACTION_SENSOR_GLOVE);
-                        intent.putExtra(BodynodesConstants.GLOVE_DATA, intArray);
-                        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-                        return true;
-                    default:
-                        break;
-                }
             default:
                 break;
         }

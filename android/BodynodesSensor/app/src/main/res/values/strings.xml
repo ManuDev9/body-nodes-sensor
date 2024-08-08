@@ -33,16 +33,26 @@
     <string name="notification_permission_not_granted">Notification permission has not been granted</string>
     <string name="main_sensor_absolute_orientation_str">Absolute Orientation</string>
     <string name="main_sensor_relative_acceleration_str">Relative Acceleration</string>
+
+    <string name="main_thumb_name">Thumb</string>
+    <string name="main_index_name">Index</string>
+    <string name="main_middle_name">Middle</string>
+    <string name="main_ring_name">Ring</string>
+    <string name="main_pinkie_name">Pinkie</string>
+
     <!-- Strings used for fragments for navigation -->
 
     <string name="settings_wifi_host_ip_address_string">Host IP Address:</string>
     <string name="settings_wifi_save_button_str">Save</string>
     <string name="main_sensor_page_settings_button_text">Settings</string>
+    <string name="settings_glovebodypart_type_string">Glove body part:</string>
     <string name="settings_connection_type_string">Connection:</string>
-    <string name="settings_connection_type_osc_string">OSC</string>
+    <string name="settings_connection_type_bluetooth_string">Bluetooth</string>
     <string name="settings_connection_type_wifi_string">WIFI</string>
     <string name="settings_player_string">Player:</string>
     <string name="settings_bodypart_string">Body part:</string>
     <string name="settings_sensor_interval_string">Sensor interval (ms):</string>
+    <string name="settings_glovebodypart_hand_left_string">Left Hand</string>
+    <string name="settings_glovebodypart_hand_right_string">Right Hand</string>
 
 </resources>

@@ -28,6 +28,12 @@
         Il tuo smartphone non ha i sensori necessari al corretto funzionamento dell\'app. Prova con un altro smartphone.
     </string>
 
+    <string name="main_thumb_name">Pollice</string>
+    <string name="main_index_name">Indice</string>
+    <string name="main_middle_name">Medio</string>
+    <string name="main_ring_name">Anulare</string>
+    <string name="main_pinkie_name">Mignolo</string>
+
 
     <string name="main_sensor_select_sensortype">Seleziona almeno un tipo di sensore</string>
     <string name="wifi_permission_not_granted">I permessi Wifi non sono stati concessi</string>
@@ -37,11 +43,13 @@
     <string name="settings_wifi_host_ip_address_string">Indirizzo IP Host:</string>
     <string name="settings_wifi_save_button_str">Salva</string>
     <string name="main_sensor_page_settings_button_text">Impostazioni</string>
+    <string name="settings_glovebodypart_type_string">Parte del corpo del guanto:</string>
     <string name="settings_connection_type_string">Connessione:</string>
-    <string name="settings_connection_type_osc_string">OSC</string>
+    <string name="settings_connection_type_bluetooth_string">Bluetooth</string>
     <string name="settings_connection_type_wifi_string">WIFI</string>
     <string name="settings_player_string">Player:</string>
     <string name="settings_bodypart_string">Parte del corpo:</string>
     <string name="settings_sensor_interval_string">Intervallo Sensore (ms):</string>
-
+    <string name="settings_glovebodypart_hand_left_string">Mano Sinistra</string>
+    <string name="settings_glovebodypart_hand_right_string">Mano Destra</string>
 </resources>
