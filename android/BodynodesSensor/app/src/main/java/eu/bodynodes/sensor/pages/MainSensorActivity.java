@@ -36,6 +36,7 @@ import android.os.Build;
 import android.os.Handler;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.appcompat.app.AppCompatActivity;
@@ -55,6 +56,7 @@ import eu.bodynodes.sensor.BodynodesConstants;
 import eu.bodynodes.sensor.data.AppData;
 import eu.bodynodes.sensor.data.BodynodesData;
 import eu.bodynodes.sensor.R;
+import eu.bodynodes.sensor.service.SensorServiceBluetooth;
 import eu.bodynodes.sensor.service.SensorServiceWifi;
 
 public class MainSensorActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener {
@@ -166,7 +168,7 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
         if(AppData.getCommunicationType(this) == BodynodesConstants.COMMUNICATION_TYPE_WIFI) {
             sensorServiceIntent = new Intent(this, SensorServiceWifi.class);
         } else if(AppData.getCommunicationType(this) == BodynodesConstants.COMMUNICATION_TYPE_BLUETOOTH) {
-            //sensorServiceIntent = new Intent(this, SensorServiceBluetooth.class);
+            sensorServiceIntent = new Intent(this, SensorServiceBluetooth.class);
         } else {
             Log.d(TAG, "Cannot start because communication type is not implemented");
             return;
@@ -188,7 +190,7 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
         if(AppData.getCommunicationType(this) == BodynodesConstants.COMMUNICATION_TYPE_WIFI) {
             stopService(new Intent(this, SensorServiceWifi.class));
         } else if(AppData.getCommunicationType(this) == BodynodesConstants.COMMUNICATION_TYPE_BLUETOOTH) {
-            //stopService(new Intent(this, SensorServiceWifiOsc.class));
+            stopService(new Intent(this, SensorServiceBluetooth.class));
         }
         sensorServiceOFFUI();
     }
@@ -277,7 +279,10 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
 
                 if (AppData.isCommunicationWifi(this) &&
                         ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, BodynodesConstants.WIFI_PERMISSION_CODE);
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, BodynodesConstants.WIFI_PERMISSION_CODE);
+                } else if(AppData.isCommunicationBluetooth(this) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                        ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, BodynodesConstants.BLUETOOTH_PERMISSION_CODE);
                 } else {
                     startSersorService();
                 }

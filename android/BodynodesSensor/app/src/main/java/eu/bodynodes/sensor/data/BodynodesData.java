@@ -49,7 +49,7 @@ public class BodynodesData {
 
     public static void setBodypart(Context context, String bodypart) {
         SharedPreferences.Editor editor = context.getSharedPreferences(BodynodesConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE).edit();
-        editor.putString(BodynodesConstants.GLOVE_BODYPART, bodypart);
+        editor.putString(BodynodesConstants.BODYPART, bodypart);
         editor.apply();
     }
 

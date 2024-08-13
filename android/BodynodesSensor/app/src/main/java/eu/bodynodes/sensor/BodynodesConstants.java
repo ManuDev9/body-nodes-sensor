@@ -70,7 +70,7 @@ public class BodynodesConstants {
 
     /*Actions*/
 
-    public static final String ACTION_ACTION_TAG            = "action";
+    public static final String ACTION_TYPE_TAG              = "type";
     public static final String ACTION_HAPTIC_TAG            = "haptic";
     public static final String ACTION_HAPTIC_DURATIONMS_TAG = "duration_ms";
     public static final String ACTION_HAPTIC_STRENGTH_TAG   = "strength";
@@ -127,7 +127,8 @@ public class BodynodesConstants {
 
     public static final int WIFI_PERMISSION_CODE                = 10000;
     public static final int FOREGROUND_SERVICE_PERMISSION_CODE  = 10001;
-    public static final int SENSOR_SERVICE_NOTIFICATION_ID      = 1000;
+    public static final int SENSOR_SERVICE_NOTIFICATION_ID      = 10002;
+    public static final int BLUETOOTH_PERMISSION_CODE            = 10003;
 
     public final static float BIG_ORIENTATION_ABS_DIFF = 0.002f;
     public final static float BIG_ACCELERATION_REL_DIFF = 0.05f;

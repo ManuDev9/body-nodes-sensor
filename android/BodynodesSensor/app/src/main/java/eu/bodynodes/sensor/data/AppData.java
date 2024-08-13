@@ -103,6 +103,11 @@ public class AppData {
         return communicationType == BodynodesConstants.COMMUNICATION_TYPE_WIFI;
     }
 
+    public static boolean isCommunicationBluetooth(Context context) {
+        int communicationType = getCommunicationType(context);
+        return communicationType == BodynodesConstants.COMMUNICATION_TYPE_BLUETOOTH;
+    }
+
     public static int getSensorIntervalMs(Context context) {
         SharedPreferences sharedPref = context.getSharedPreferences(BodynodesConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
         return sharedPref.getInt(BodynodesConstants.SENSOR_INTERVAL_MS, BodynodesConstants.SENSOR_INTERVAL_MS_DEFAULT);

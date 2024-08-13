@@ -27,10 +27,6 @@ package eu.bodynodes.sensor;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 public class BodynodesProtocol {
 
     public final static String TAG = "BodynodesProtocol";
@@ -87,8 +83,8 @@ public class BodynodesProtocol {
 
     public static int parseActionWifi(JSONObject jsonAction){
         try {
-            if(jsonAction.has(BodynodesConstants.ACTION_ACTION_TAG)) {
-                if (BodynodesConstants.ACTION_HAPTIC_TAG.equals(jsonAction.getString(BodynodesConstants.ACTION_ACTION_TAG))) {
+            if(jsonAction.has(BodynodesConstants.ACTION_TYPE_TAG)) {
+                if (BodynodesConstants.ACTION_HAPTIC_TAG.equals(jsonAction.getString(BodynodesConstants.ACTION_TYPE_TAG))) {
                     if (jsonAction.has(BodynodesConstants.ACTION_HAPTIC_STRENGTH_TAG) && jsonAction.has(BodynodesConstants.ACTION_HAPTIC_DURATIONMS_TAG)) {
                         return BodynodesConstants.ACTION_CODE_HAPTIC;
                     }
