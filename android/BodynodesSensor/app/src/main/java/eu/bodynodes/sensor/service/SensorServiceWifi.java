@@ -329,8 +329,14 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
 
     private void run_connection_background() {
         mDataConnectionThread = new Thread(() -> {
-            if(AppData.isServiceRunning()) {
+            while(AppData.isServiceRunning()) {
                 try {
+                    try {
+                        Thread.sleep(AppData.getSensorIntervalMs(this));
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        return;
+                    }
                     byte[] buffer = new byte[2048];
                     DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                     if (mConnector != null) {

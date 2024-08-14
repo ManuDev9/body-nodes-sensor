@@ -18,10 +18,10 @@
     <string name="main_sensor_page_hello_text">Ciao!\nTrasforma il tuo cellulare in un sensore BodyNodes solo premendo \"Start\".
         Ricorda di premere \"Stop\" quando hai finito.</string>
 
-    <string name="main_sensor_page_start_button_text">Start</string>
-    <string name="main_sensor_page_stop_button_text">Stop</string>
-
-    <string name="ble_uuid">1E948DF1-4831-94BA-754C-3E5000003D71</string>
+    <string name="main_sensor_page_start_wifi_button_text">Inizia WiFi</string>
+    <string name="main_sensor_page_stop_wifi_button_text">Ferma WiFi</string>
+    <string name="main_sensor_page_start_bluetooth_button_text">Inizia Bluetooth</string>
+    <string name="main_sensor_page_stop_bluetooth_button_text">Ferma Bluetooth</string>
 
     <!--General messages-->
     <string name="message_sensor_not_supported">

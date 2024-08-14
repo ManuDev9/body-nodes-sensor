@@ -118,6 +118,19 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
         super.onDestroy();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if( AppData.isCommunicationWifi(this) ){
+            mStartButton.setText(R.string.main_sensor_page_start_wifi_button_text);
+            mStopButton.setText(R.string.main_sensor_page_stop_wifi_button_text);
+        } else if( AppData.isCommunicationBluetooth(this) ){
+            mStartButton.setText(R.string.main_sensor_page_start_bluetooth_button_text);
+            mStopButton.setText(R.string.main_sensor_page_stop_bluetooth_button_text);
+        }
+
+    }
+
     private void getViewReferences() {
         mStartButton = findViewById(R.id.main_sensor_start_button);
         mStopButton = findViewById(R.id.main_sensor_stop_button);

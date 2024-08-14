@@ -96,7 +96,7 @@
                 android:id="@+id/main_sensor_start_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/main_sensor_page_start_button_text"
+                android:text="@string/main_sensor_page_start_wifi_button_text"
                 android:visibility="visible"
                 />
 
@@ -104,7 +104,7 @@
                 android:id="@+id/main_sensor_stop_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/main_sensor_page_stop_button_text"
+                android:text="@string/main_sensor_page_stop_wifi_button_text"
                 android:visibility="gone"
                 />
 

@@ -337,6 +337,7 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
                     Thread.sleep(AppData.getSensorIntervalMs(this));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                    return;
                 }
                 try {
                     byte[] buffer = new byte[2048];
