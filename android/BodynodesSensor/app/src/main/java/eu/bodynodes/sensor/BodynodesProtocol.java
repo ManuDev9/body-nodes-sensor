@@ -81,6 +81,24 @@ public class BodynodesProtocol {
         return jsonObject;
     }
 
+    public static JSONObject makeMessageWifi(String player, String bodypart, String sensortype, String value){
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+            jsonObject.put(BodynodesConstants.MESSAGE_PLAYER_TAG, player);
+            jsonObject.put(BodynodesConstants.MESSAGE_BODYPART_TAG, bodypart);
+            jsonObject.put(BodynodesConstants.MESSAGE_SENSOR_TYPE_TAG, sensortype);
+            if(sensortype.equals(BodynodesConstants.SENSORTYPE_ORIENTATION_ABS_TAG)){
+                jsonObject.put(BodynodesConstants.MESSAGE_VALUE_TAG,value);
+            } else if(sensortype.equals(BodynodesConstants.SENSORTYPE_ACCELERATION_REL_TAG)) {
+                jsonObject.put(BodynodesConstants.MESSAGE_VALUE_TAG,value);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject;
+    }
+
     public static int parseActionWifi(JSONObject jsonAction){
         try {
             if(jsonAction.has(BodynodesConstants.ACTION_TYPE_TAG)) {

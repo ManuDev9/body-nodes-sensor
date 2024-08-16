@@ -33,7 +33,8 @@ public class BodynodesConstants {
     public final static String NOTIFICATION_CHANNEL_NAME = "Bodynodes Service";
 
     public static final String ACTION_UPDATE_UI = "eu.bodynodes.sensor.ACTION_UPDATE_UI";
-    public static final String ACTION_SENSOR_GLOVE = "eu.bodynodes.sensor.ACTION_SENSOR_GLOVE";
+    public static final String ACTION_GLOVE_SENSOR_MESSAGE = "eu.bodynodes.sensor.ACTION_GLOVE_SENSOR_MESSAGE";
+    public static final String ACTION_RESET_MESSAGE = "eu.bodynodes.sensor.ACTION_RESET_MESSAGE";
     public static final String ACTION_RECEIVED = "eu.bodynodes.sensor.ACTION_RECEIVED";
     public static final String KEY_JSON_ACTION = "JSON_ACTION";
 
@@ -62,6 +63,7 @@ public class BodynodesConstants {
     public static final String MESSAGE_BODYPART_TAG    = "bodypart";
     public static final String MESSAGE_SENSOR_TYPE_TAG = "sensortype";
     public static final String MESSAGE_VALUE_TAG       = "value";
+    public static final String MESSAGE_VALUE_RESET_TAG = "reset";
 
     public static final String SENSORTYPE_ORIENTATION_ABS_TAG = "orientation_abs";
     public static final String SENSORTYPE_ACCELERATION_REL_TAG = "acceleration_rel";
@@ -128,7 +130,7 @@ public class BodynodesConstants {
     public static final int WIFI_PERMISSION_CODE                = 10000;
     public static final int FOREGROUND_SERVICE_PERMISSION_CODE  = 10001;
     public static final int SENSOR_SERVICE_NOTIFICATION_ID      = 10002;
-    public static final int BLUETOOTH_PERMISSION_CODE            = 10003;
+    public static final int BLUETOOTH_PERMISSION_CODE           = 10003;
 
     public final static float BIG_ORIENTATION_ABS_DIFF = 0.002f;
     public final static float BIG_ACCELERATION_REL_DIFF = 0.05f;
@@ -140,7 +142,7 @@ public class BodynodesConstants {
     public static final String COMMUNICATION_TYPE = "COMMUNICATION_TYPE";
     public static final String BODYPART = "BODYPART";
     public static final String GLOVE_BODYPART = "GLOVE_BODYPART";
-    public static final String GLOVE_DATA = "GLOVE_DATA";
+    public static final String GLOVE_SENSOR_DATA = "GLOVE_SENSOR_DATA";
     public static final String ORIENTATION_ABSOLUTE_ENABLED = "ORIENTATION_ABSOLUTE_ENABLED";
     public static final String ACCELERATION_RELATIVE_ENABLED = "ACCELERATION_RELATIVE_ENABLED";
     public static final String SENSOR_INTERVAL_MS = "SENSOR_INTERVAL_MS";

@@ -40,7 +40,6 @@ import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 
@@ -184,8 +183,9 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
                 }
             }
             IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(BodynodesConstants.ACTION_SENSOR_GLOVE);
-            LocalBroadcastManager.getInstance(this).registerReceiver(mSensorReceiver, intentFilter);
+            intentFilter.addAction(BodynodesConstants.ACTION_GLOVE_SENSOR_MESSAGE);
+            intentFilter.addAction(BodynodesConstants.ACTION_RESET_MESSAGE);
+            LocalBroadcastManager.getInstance(this).registerReceiver(mMessagesToSendReceiver, intentFilter);
 
             run_connection_background();
             run_multicast_background();
@@ -244,12 +244,12 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
         }
     }
 
-    private final BroadcastReceiver mSensorReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mMessagesToSendReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals(BodynodesConstants.ACTION_SENSOR_GLOVE)) {
-                int[] gloveData = intent.getIntArrayExtra(BodynodesConstants.GLOVE_DATA);
-                Log.d(TAG,"Glove change");
+            if(intent.getAction().equals(BodynodesConstants.ACTION_GLOVE_SENSOR_MESSAGE)) {
+                int[] gloveData = intent.getIntArrayExtra(BodynodesConstants.GLOVE_SENSOR_DATA);
+                Log.d(TAG,"Glove data to send");
                 JSONArray jsonArray = new JSONArray();
                 JSONObject jsonObject = BodynodesProtocol.makeMessageWifi(
                         BodynodesData.getPlayerName(SensorServiceWifi.this),
@@ -257,6 +257,22 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
                         BodynodesConstants.SENSORTYPE_GLOVE_TAG,
                         gloveData);
                 jsonArray.put(jsonObject);
+                sendMessageWifiUdp(jsonArray.toString());
+            } else if(intent.getAction().equals(BodynodesConstants.ACTION_RESET_MESSAGE)){
+                Log.d(TAG,"Reset message to send");
+                JSONArray jsonArray = new JSONArray();
+                JSONObject jsonObject1 = BodynodesProtocol.makeMessageWifi(
+                        BodynodesData.getPlayerName(SensorServiceWifi.this),
+                        BodynodesData.getBodypart(SensorServiceWifi.this),
+                        BodynodesConstants.SENSORTYPE_ORIENTATION_ABS_TAG,
+                        BodynodesConstants.MESSAGE_VALUE_RESET_TAG);
+                JSONObject jsonObject2 = BodynodesProtocol.makeMessageWifi(
+                        BodynodesData.getPlayerName(SensorServiceWifi.this),
+                        BodynodesData.getBodypart(SensorServiceWifi.this),
+                        BodynodesConstants.SENSORTYPE_ACCELERATION_REL_TAG,
+                        BodynodesConstants.MESSAGE_VALUE_RESET_TAG);
+                jsonArray.put(jsonObject1);
+                jsonArray.put(jsonObject2);
                 sendMessageWifiUdp(jsonArray.toString());
             }
         }

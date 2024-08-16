@@ -36,7 +36,6 @@ import android.os.Build;
 import android.os.Handler;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.appcompat.app.AppCompatActivity;
@@ -64,8 +63,9 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
     private final static String TAG = "MainSensorActivity";
 
     private Button mStartButton;
-    private Button mSettingsButton;
     private Button mStopButton;
+    private Button mSettingsButton;
+    private Button mResetButton;
     private TextView mSensorNotSupportedPopup;
     private ProgressBar mProgressBar;
     private RelativeLayout mBodynodesKatana;
@@ -135,6 +135,7 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
         mStartButton = findViewById(R.id.main_sensor_start_button);
         mStopButton = findViewById(R.id.main_sensor_stop_button);
         mSettingsButton = findViewById(R.id.main_sensor_settings_button);
+        mResetButton = findViewById(R.id.main_sensor_reset_button);
         mProgressBar = findViewById(R.id.main_sensor_progress_bar);
 
         mBodynodesKatana = findViewById(R.id.main_sensor_katana_layout);
@@ -164,6 +165,7 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
         mStopButton.setOnClickListener(this);
         mStartButton.setOnClickListener(this);
         mSettingsButton.setOnClickListener(this);
+        mResetButton.setOnClickListener(this);
 
         mBodynodesThumb.setOnTouchListener(this);
         mBodynodesIndexFinger.setOnTouchListener(this);
@@ -196,6 +198,7 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
         mSensortypeChecklist.setVisibility(View.GONE);
         mStartButton.setVisibility(View.GONE);
         mSettingsButton.setVisibility(View.GONE);
+        mResetButton.setVisibility(View.VISIBLE);
         mBodynodesGlove.setVisibility(View.VISIBLE);
     }
 
@@ -212,6 +215,7 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
         mSensortypeChecklist.setVisibility(View.VISIBLE);
         mStopButton.setVisibility(View.GONE);
         mSettingsButton.setVisibility(View.VISIBLE);
+        mResetButton.setVisibility(View.GONE);
         mBodynodesGlove.setVisibility(View.VISIBLE);
     }
 
@@ -250,26 +254,26 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
         switch (id){
             case R.id.main_sensor_index_finger_right:
                 intArray = new int[]{90, 90, 90, 90, 90, sending, 0, 0, 0};
-                intent = new Intent(BodynodesConstants.ACTION_SENSOR_GLOVE);
-                intent.putExtra(BodynodesConstants.GLOVE_DATA, intArray);
+                intent = new Intent(BodynodesConstants.ACTION_GLOVE_SENSOR_MESSAGE);
+                intent.putExtra(BodynodesConstants.GLOVE_SENSOR_DATA, intArray);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                 return true;
             case R.id.main_sensor_middle_finger_right:
                 intArray = new int[]{90, 90, 90, 90, 90, 0, sending, 0, 0};
-                intent = new Intent(BodynodesConstants.ACTION_SENSOR_GLOVE);
-                intent.putExtra(BodynodesConstants.GLOVE_DATA, intArray);
+                intent = new Intent(BodynodesConstants.ACTION_GLOVE_SENSOR_MESSAGE);
+                intent.putExtra(BodynodesConstants.GLOVE_SENSOR_DATA, intArray);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                 return true;
             case R.id.main_sensor_ring_finger_right:
                 intArray = new int[]{90, 90, 90, 90, 90, 0, 0, sending, 0};
-                intent = new Intent(BodynodesConstants.ACTION_SENSOR_GLOVE);
-                intent.putExtra(BodynodesConstants.GLOVE_DATA, intArray);
+                intent = new Intent(BodynodesConstants.ACTION_GLOVE_SENSOR_MESSAGE);
+                intent.putExtra(BodynodesConstants.GLOVE_SENSOR_DATA, intArray);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                 return true;
             case R.id.main_sensor_little_finger_right:
                 intArray = new int[]{90, 90, 90, 90, 90, 0, 0, 0, sending};
-                intent = new Intent(BodynodesConstants.ACTION_SENSOR_GLOVE);
-                intent.putExtra(BodynodesConstants.GLOVE_DATA, intArray);
+                intent = new Intent(BodynodesConstants.ACTION_GLOVE_SENSOR_MESSAGE);
+                intent.putExtra(BodynodesConstants.GLOVE_SENSOR_DATA, intArray);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                 return true;
             case R.id.main_sensor_thumb_right:
@@ -283,6 +287,7 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onClick(View view) {
         int id = view.getId();
+        Intent intent = null;
         switch (id){
             case R.id.main_sensor_start_button:
                 if(!mOrientationAbsCheckbox.isChecked() && !mAccelerationRelCheckbox.isChecked()){
@@ -304,8 +309,12 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
                 stopSersorService();
                 break;
             case R.id.main_sensor_settings_button:
-                Intent intent = new Intent(this, SettingsActivity.class);
+                intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
+                break;
+            case R.id.main_sensor_reset_button:
+                intent = new Intent(BodynodesConstants.ACTION_RESET_MESSAGE);
+                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
             default:
                 break;
         }

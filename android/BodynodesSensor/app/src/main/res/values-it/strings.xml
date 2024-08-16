@@ -42,6 +42,7 @@
     <string name="main_sensor_relative_acceleration_str">Accelerazione Relativa</string>
     <string name="settings_wifi_host_ip_address_string">Indirizzo IP Host:</string>
     <string name="settings_wifi_save_button_str">Salva</string>
+    <string name="main_sensor_page_reset_button_text">Risistema</string>
     <string name="main_sensor_page_settings_button_text">Impostazioni</string>
     <string name="settings_glovebodypart_type_string">Parte del corpo del guanto:</string>
     <string name="settings_connection_type_string">Connessione:</string>

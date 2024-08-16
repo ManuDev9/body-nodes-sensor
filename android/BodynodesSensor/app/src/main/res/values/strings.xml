@@ -44,7 +44,10 @@
 
     <string name="settings_wifi_host_ip_address_string">Host IP Address:</string>
     <string name="settings_wifi_save_button_str">Save</string>
+    <string name="main_sensor_page_reset_button_text">Reset</string>
     <string name="main_sensor_page_settings_button_text">Settings</string>
+
+
     <string name="settings_glovebodypart_type_string">Glove body part:</string>
     <string name="settings_connection_type_string">Connection:</string>
     <string name="settings_connection_type_bluetooth_string">Bluetooth</string>

@@ -187,7 +187,8 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
             }
 
             IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(BodynodesConstants.ACTION_SENSOR_GLOVE);
+            intentFilter.addAction(BodynodesConstants.ACTION_GLOVE_SENSOR_MESSAGE);
+            intentFilter.addAction(BodynodesConstants.ACTION_RESET_MESSAGE);
             LocalBroadcastManager.getInstance(this).registerReceiver(mSensorReceiver, intentFilter);
 
             run_connection_background();
@@ -250,8 +251,8 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
     private final BroadcastReceiver mSensorReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(BodynodesConstants.ACTION_SENSOR_GLOVE)) {
-                int[] gloveData = intent.getIntArrayExtra(BodynodesConstants.GLOVE_DATA);
+            if (intent.getAction().equals(BodynodesConstants.ACTION_GLOVE_SENSOR_MESSAGE)) {
+                int[] gloveData = intent.getIntArrayExtra(BodynodesConstants.GLOVE_SENSOR_DATA);
                 Log.d(TAG, "Glove change");
                 JSONArray jsonArray = new JSONArray();
                 JSONObject jsonObject = BodynodesProtocol.makeMessageWifi(
@@ -260,6 +261,22 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
                         BodynodesConstants.SENSORTYPE_GLOVE_TAG,
                         gloveData);
                 jsonArray.put(jsonObject);
+                sendMessageWifiUdp(jsonArray.toString());
+            } else if(intent.getAction().equals(BodynodesConstants.ACTION_RESET_MESSAGE)){
+                Log.d(TAG,"Reset message to send");
+                JSONArray jsonArray = new JSONArray();
+                JSONObject jsonObject1 = BodynodesProtocol.makeMessageWifi(
+                        BodynodesData.getPlayerName(SensorServiceBluetooth.this),
+                        BodynodesData.getBodypart(SensorServiceBluetooth.this),
+                        BodynodesConstants.SENSORTYPE_ORIENTATION_ABS_TAG,
+                        BodynodesConstants.MESSAGE_VALUE_RESET_TAG);
+                JSONObject jsonObject2 = BodynodesProtocol.makeMessageWifi(
+                        BodynodesData.getPlayerName(SensorServiceBluetooth.this),
+                        BodynodesData.getBodypart(SensorServiceBluetooth.this),
+                        BodynodesConstants.SENSORTYPE_ACCELERATION_REL_TAG,
+                        BodynodesConstants.MESSAGE_VALUE_RESET_TAG);
+                jsonArray.put(jsonObject1);
+                jsonArray.put(jsonObject2);
                 sendMessageWifiUdp(jsonArray.toString());
             }
         }
