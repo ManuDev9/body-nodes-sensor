@@ -2,7 +2,7 @@
 This project is for a script that can easily create Bodynodes projects for development environment.
 
 At the moment these are the platform the project supports.
-- Arduino: use the command "bn_coder_arduino.py h" to print the help and check how to run it
+- Arduino: use the command "python3 BnPythonNodesCoderArduino.py h" to print the help and check how to run it
 
 For example if you want to create your own hardware sensors and you have your own platform at home.
 You can find out more about the hardware and logical requirements in here: https://github.com/ManuDev9/body-nodes-specs
