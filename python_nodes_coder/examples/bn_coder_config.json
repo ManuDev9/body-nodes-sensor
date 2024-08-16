@@ -1,0 +1,11 @@
+{
+  "type" : "node",
+  "board" : "esp-12e",
+  "node_communicator": "wifi",
+  "sensors": {
+    "acceleration_rel" : "no",
+    "orientation_abs" : "yes",
+    "glove" : "yes",
+    "shoe" : "yes"
+  }
+}
