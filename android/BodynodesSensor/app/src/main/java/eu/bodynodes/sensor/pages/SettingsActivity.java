@@ -32,15 +32,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 
-import eu.bodynodes.sensor.BodynodesConstants;
+import eu.bodynodes.sensor.BnConstants;
 import eu.bodynodes.sensor.R;
 import eu.bodynodes.sensor.data.AppData;
-import eu.bodynodes.sensor.data.BodynodesData;
+import eu.bodynodes.sensor.data.BnSensorAppData;
 
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText mPlayerNameEdit;
     private EditText mBodypartEdit;
+    private EditText mWifiMulticastGroupEdit;
     private EditText mSensorIntervalMsEdit;
     private RadioButton mGloveBodypartLeftHandRadio;
     private RadioButton mGloveBodypartRightHandRadio;
@@ -60,24 +61,25 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void initUIfromData() {
-        if(AppData.getCommunicationType(this) == BodynodesConstants.COMMUNICATION_TYPE_BLUETOOTH) {
+        if(AppData.getCommunicationType(this) == BnConstants.COMMUNICATION_TYPE_BLUETOOTH) {
             mConnectionTypeBluetoothRadio.setChecked(true);
             mConnectionTypeWifiRadio.setChecked(false);
-        } else if(AppData.getCommunicationType(this) == BodynodesConstants.COMMUNICATION_TYPE_WIFI){
+        } else if(AppData.getCommunicationType(this) == BnConstants.COMMUNICATION_TYPE_WIFI){
             mConnectionTypeBluetoothRadio.setChecked(false);
             mConnectionTypeWifiRadio.setChecked(true);
         }
 
-        if( BodynodesConstants.BODY_HAND_LEFT_TAG.equals(BodynodesData.getGloveBodypart(this)) ) {
+        if( BnConstants.BODYPART_HAND_LEFT_TAG.equals(BnSensorAppData.getGloveBodypart(this)) ) {
             mGloveBodypartLeftHandRadio.setChecked(true);
             mGloveBodypartRightHandRadio.setChecked(false);
-        } else if( BodynodesConstants.BODY_HAND_RIGHT_TAG.equals(BodynodesData.getGloveBodypart(this)) ){
+        } else if( BnConstants.BODYPART_HAND_RIGHT_TAG.equals(BnSensorAppData.getGloveBodypart(this)) ){
             mGloveBodypartLeftHandRadio.setChecked(false);
             mGloveBodypartRightHandRadio.setChecked(true);
         }
 
-        mPlayerNameEdit.setText(BodynodesData.getPlayerName(this));
-        mBodypartEdit.setText(BodynodesData.getBodypart(this));
+        mPlayerNameEdit.setText(BnSensorAppData.getPlayerName(this));
+        mBodypartEdit.setText(BnSensorAppData.getBodypart(this));
+        mWifiMulticastGroupEdit.setText(BnSensorAppData.getMulticastGroup(this));
         mSensorIntervalMsEdit.setText(AppData.getSensorIntervalMs(this)+"");
     }
 
@@ -88,6 +90,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private void getViewReferences() {
         mPlayerNameEdit = findViewById(R.id.settings_player_name_edit);
         mBodypartEdit = findViewById(R.id.settings_bodypart_edit);
+        mWifiMulticastGroupEdit = findViewById(R.id.wifi_multicast_group_edit);
         mSensorIntervalMsEdit = findViewById(R.id.settings_sensor_interval_ms_edit);
         mGloveBodypartLeftHandRadio = findViewById(R.id.settings_connection_type_glovebodypart_left_radio);
         mGloveBodypartRightHandRadio = findViewById(R.id.settings_connection_type_glovebodypart_right_radio);
@@ -101,19 +104,20 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         int id = view.getId();
         switch (id) {
             case R.id.settings_save_button:
-                BodynodesData.setPlayerName(this, mPlayerNameEdit.getText().toString());
-                BodynodesData.setBodypart(this, mBodypartEdit.getText().toString());
+                BnSensorAppData.setPlayerName(this, mPlayerNameEdit.getText().toString());
+                BnSensorAppData.setBodypart(this, mBodypartEdit.getText().toString());
+                BnSensorAppData.setMulticastGroup(this, mWifiMulticastGroupEdit.getText().toString());
                 AppData.setSensorIntervalMs(this, Integer.parseInt(mSensorIntervalMsEdit.getText().toString()));
                 if(mConnectionTypeBluetoothRadio.isChecked()){
-                    AppData.setCommunitcationType(this, BodynodesConstants.COMMUNICATION_TYPE_BLUETOOTH);
+                    AppData.setCommunitcationType(this, BnConstants.COMMUNICATION_TYPE_BLUETOOTH);
                 } else if(mConnectionTypeWifiRadio.isChecked()){
-                    AppData.setCommunitcationType(this, BodynodesConstants.COMMUNICATION_TYPE_WIFI);
+                    AppData.setCommunitcationType(this, BnConstants.COMMUNICATION_TYPE_WIFI);
                 }
 
                 if(mGloveBodypartLeftHandRadio.isChecked()){
-                    BodynodesData.setGloveBodypart(this, BodynodesConstants.BODY_HAND_LEFT_TAG);
+                    BnSensorAppData.setGloveBodypart(this, BnConstants.BODYPART_HAND_LEFT_TAG);
                 } else if(mGloveBodypartRightHandRadio.isChecked()){
-                    BodynodesData.setGloveBodypart(this, BodynodesConstants.BODY_HAND_RIGHT_TAG);
+                    BnSensorAppData.setGloveBodypart(this, BnConstants.BODYPART_HAND_RIGHT_TAG);
                 }
 
                 finish();

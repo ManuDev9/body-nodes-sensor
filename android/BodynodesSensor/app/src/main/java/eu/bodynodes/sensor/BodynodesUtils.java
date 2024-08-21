@@ -29,12 +29,8 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.net.DhcpInfo;
-import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
-import android.util.Log;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
@@ -104,10 +100,10 @@ public class BodynodesUtils {
     }
 
     public static void realignQuat(float[] orientation_in, float[] orientation_out) {
-        orientation_out[BodynodesConstants.OA_OUT_AXIS_W] = BodynodesConstants.OA_MUL_AXIS_W * orientation_in[BodynodesConstants.OA_SENSOR_AXIS_W];
-        orientation_out[BodynodesConstants.OA_OUT_AXIS_X] = BodynodesConstants.OA_MUL_AXIS_X *orientation_in[BodynodesConstants.OA_SENSOR_AXIS_X];
-        orientation_out[BodynodesConstants.OA_OUT_AXIS_Y] = BodynodesConstants.OA_MUL_AXIS_Y *orientation_in[BodynodesConstants.OA_SENSOR_AXIS_Y];
-        orientation_out[BodynodesConstants.OA_OUT_AXIS_Z] = BodynodesConstants.OA_MUL_AXIS_Z *orientation_in[BodynodesConstants.OA_SENSOR_AXIS_Z];
+        orientation_out[BnConstants.OA_OUT_AXIS_W] = BnConstants.OA_MUL_AXIS_W * orientation_in[BnConstants.OA_SENSOR_AXIS_W];
+        orientation_out[BnConstants.OA_OUT_AXIS_X] = BnConstants.OA_MUL_AXIS_X *orientation_in[BnConstants.OA_SENSOR_AXIS_X];
+        orientation_out[BnConstants.OA_OUT_AXIS_Y] = BnConstants.OA_MUL_AXIS_Y *orientation_in[BnConstants.OA_SENSOR_AXIS_Y];
+        orientation_out[BnConstants.OA_OUT_AXIS_Z] = BnConstants.OA_MUL_AXIS_Z *orientation_in[BnConstants.OA_SENSOR_AXIS_Z];
     }
 
     public static InetAddress getLocalhostIpAddress(Activity activity) throws UnknownHostException {

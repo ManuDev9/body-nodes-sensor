@@ -38,19 +38,19 @@ public class BodynodesProtocol {
         JSONObject jsonObject = new JSONObject();
 
         try {
-            jsonObject.put(BodynodesConstants.MESSAGE_PLAYER_TAG, player);
-            jsonObject.put(BodynodesConstants.MESSAGE_BODYPART_TAG, bodypart);
-            jsonObject.put(BodynodesConstants.MESSAGE_SENSOR_TYPE_TAG, sensortype);
-            if(sensortype.equals(BodynodesConstants.SENSORTYPE_GLOVE_TAG)){
-                jsonObject.accumulate(BodynodesConstants.MESSAGE_VALUE_TAG,values[0]);
-                jsonObject.accumulate(BodynodesConstants.MESSAGE_VALUE_TAG,values[1]);
-                jsonObject.accumulate(BodynodesConstants.MESSAGE_VALUE_TAG,values[2]);
-                jsonObject.accumulate(BodynodesConstants.MESSAGE_VALUE_TAG,values[3]);
-                jsonObject.accumulate(BodynodesConstants.MESSAGE_VALUE_TAG,values[4]);
-                jsonObject.accumulate(BodynodesConstants.MESSAGE_VALUE_TAG,values[5]);
-                jsonObject.accumulate(BodynodesConstants.MESSAGE_VALUE_TAG,values[6]);
-                jsonObject.accumulate(BodynodesConstants.MESSAGE_VALUE_TAG,values[7]);
-                jsonObject.accumulate(BodynodesConstants.MESSAGE_VALUE_TAG,values[8]);
+            jsonObject.put(BnConstants.MESSAGE_PLAYER_TAG, player);
+            jsonObject.put(BnConstants.MESSAGE_BODYPART_TAG, bodypart);
+            jsonObject.put(BnConstants.MESSAGE_SENSOR_TYPE_TAG, sensortype);
+            if(sensortype.equals(BnConstants.SENSORTYPE_GLOVE_TAG)){
+                jsonObject.accumulate(BnConstants.MESSAGE_VALUE_TAG,values[0]);
+                jsonObject.accumulate(BnConstants.MESSAGE_VALUE_TAG,values[1]);
+                jsonObject.accumulate(BnConstants.MESSAGE_VALUE_TAG,values[2]);
+                jsonObject.accumulate(BnConstants.MESSAGE_VALUE_TAG,values[3]);
+                jsonObject.accumulate(BnConstants.MESSAGE_VALUE_TAG,values[4]);
+                jsonObject.accumulate(BnConstants.MESSAGE_VALUE_TAG,values[5]);
+                jsonObject.accumulate(BnConstants.MESSAGE_VALUE_TAG,values[6]);
+                jsonObject.accumulate(BnConstants.MESSAGE_VALUE_TAG,values[7]);
+                jsonObject.accumulate(BnConstants.MESSAGE_VALUE_TAG,values[8]);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -62,18 +62,18 @@ public class BodynodesProtocol {
         JSONObject jsonObject = new JSONObject();
 
         try {
-            jsonObject.put(BodynodesConstants.MESSAGE_PLAYER_TAG, player);
-            jsonObject.put(BodynodesConstants.MESSAGE_BODYPART_TAG, bodypart);
-            jsonObject.put(BodynodesConstants.MESSAGE_SENSOR_TYPE_TAG, sensortype);
-            if(sensortype.equals(BodynodesConstants.SENSORTYPE_ORIENTATION_ABS_TAG)){
-                jsonObject.accumulate(BodynodesConstants.MESSAGE_VALUE_TAG,values[0]);
-                jsonObject.accumulate(BodynodesConstants.MESSAGE_VALUE_TAG,values[1]);
-                jsonObject.accumulate(BodynodesConstants.MESSAGE_VALUE_TAG,values[2]);
-                jsonObject.accumulate(BodynodesConstants.MESSAGE_VALUE_TAG,values[3]);
-            } else if(sensortype.equals(BodynodesConstants.SENSORTYPE_ACCELERATION_REL_TAG)) {
-                jsonObject.accumulate(BodynodesConstants.MESSAGE_VALUE_TAG,values[0]);
-                jsonObject.accumulate(BodynodesConstants.MESSAGE_VALUE_TAG,values[1]);
-                jsonObject.accumulate(BodynodesConstants.MESSAGE_VALUE_TAG,values[2]);
+            jsonObject.put(BnConstants.MESSAGE_PLAYER_TAG, player);
+            jsonObject.put(BnConstants.MESSAGE_BODYPART_TAG, bodypart);
+            jsonObject.put(BnConstants.MESSAGE_SENSOR_TYPE_TAG, sensortype);
+            if(sensortype.equals(BnConstants.SENSORTYPE_ORIENTATION_ABS_TAG)){
+                jsonObject.accumulate(BnConstants.MESSAGE_VALUE_TAG,values[0]);
+                jsonObject.accumulate(BnConstants.MESSAGE_VALUE_TAG,values[1]);
+                jsonObject.accumulate(BnConstants.MESSAGE_VALUE_TAG,values[2]);
+                jsonObject.accumulate(BnConstants.MESSAGE_VALUE_TAG,values[3]);
+            } else if(sensortype.equals(BnConstants.SENSORTYPE_ACCELERATION_REL_TAG)) {
+                jsonObject.accumulate(BnConstants.MESSAGE_VALUE_TAG,values[0]);
+                jsonObject.accumulate(BnConstants.MESSAGE_VALUE_TAG,values[1]);
+                jsonObject.accumulate(BnConstants.MESSAGE_VALUE_TAG,values[2]);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -85,33 +85,18 @@ public class BodynodesProtocol {
         JSONObject jsonObject = new JSONObject();
 
         try {
-            jsonObject.put(BodynodesConstants.MESSAGE_PLAYER_TAG, player);
-            jsonObject.put(BodynodesConstants.MESSAGE_BODYPART_TAG, bodypart);
-            jsonObject.put(BodynodesConstants.MESSAGE_SENSOR_TYPE_TAG, sensortype);
-            if(sensortype.equals(BodynodesConstants.SENSORTYPE_ORIENTATION_ABS_TAG)){
-                jsonObject.put(BodynodesConstants.MESSAGE_VALUE_TAG,value);
-            } else if(sensortype.equals(BodynodesConstants.SENSORTYPE_ACCELERATION_REL_TAG)) {
-                jsonObject.put(BodynodesConstants.MESSAGE_VALUE_TAG,value);
+            jsonObject.put(BnConstants.MESSAGE_PLAYER_TAG, player);
+            jsonObject.put(BnConstants.MESSAGE_BODYPART_TAG, bodypart);
+            jsonObject.put(BnConstants.MESSAGE_SENSOR_TYPE_TAG, sensortype);
+            if(sensortype.equals(BnConstants.SENSORTYPE_ORIENTATION_ABS_TAG)){
+                jsonObject.put(BnConstants.MESSAGE_VALUE_TAG,value);
+            } else if(sensortype.equals(BnConstants.SENSORTYPE_ACCELERATION_REL_TAG)) {
+                jsonObject.put(BnConstants.MESSAGE_VALUE_TAG,value);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return jsonObject;
-    }
-
-    public static int parseActionWifi(JSONObject jsonAction){
-        try {
-            if(jsonAction.has(BodynodesConstants.ACTION_TYPE_TAG)) {
-                if (BodynodesConstants.ACTION_HAPTIC_TAG.equals(jsonAction.getString(BodynodesConstants.ACTION_TYPE_TAG))) {
-                    if (jsonAction.has(BodynodesConstants.ACTION_HAPTIC_STRENGTH_TAG) && jsonAction.has(BodynodesConstants.ACTION_HAPTIC_DURATIONMS_TAG)) {
-                        return BodynodesConstants.ACTION_CODE_HAPTIC;
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return -1;
     }
 
 }

@@ -27,12 +27,12 @@ package eu.bodynodes.sensor.data;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import eu.bodynodes.sensor.BodynodesConstants;
+import eu.bodynodes.sensor.BnConstants;
 
 public class AppData {
 
     private static boolean sIsServiceRunning = false;
-    private static int sCommunicationState = BodynodesConstants.COMMUNICATION_STATE_DISCONNECTED;
+    private static int sCommunicationState = BnConstants.COMMUNICATION_STATE_DISCONNECTED;
 
     public static boolean isServiceRunning(){
         return sIsServiceRunning;
@@ -46,76 +46,58 @@ public class AppData {
     }
 
     public static void setCommunicationConnected() {
-        setCommunicationState(BodynodesConstants.COMMUNICATION_STATE_CONNECTED);
+        setCommunicationState(BnConstants.COMMUNICATION_STATE_CONNECTED);
+    }
+
+    public static void setCommunicationDisconnected() {
+        setCommunicationState(BnConstants.COMMUNICATION_STATE_DISCONNECTED);
     }
 
     public static void setCommunicationWaitingACK() {
-        setCommunicationState(BodynodesConstants.COMMUNICATION_STATE_WAITING_ACK);
+        setCommunicationState(BnConstants.COMMUNICATION_STATE_WAITING_ACK);
     }
 
     public static boolean isCommunicationWaitingACK() {
-        return sCommunicationState == BodynodesConstants.COMMUNICATION_STATE_WAITING_ACK;
+        return sCommunicationState == BnConstants.COMMUNICATION_STATE_WAITING_ACK;
     }
 
     public static boolean isCommunicationConnected() {
-        return sCommunicationState == BodynodesConstants.COMMUNICATION_STATE_CONNECTED;
+        return sCommunicationState == BnConstants.COMMUNICATION_STATE_CONNECTED;
     }
 
     public static boolean isCommunicationDisconnected() {
-        return sCommunicationState == BodynodesConstants.COMMUNICATION_STATE_DISCONNECTED;
+        return sCommunicationState == BnConstants.COMMUNICATION_STATE_DISCONNECTED;
     }
 
-    public static int getLocalPortInNumber(Context context) {
-        SharedPreferences sharedPref = context.getSharedPreferences(BodynodesConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
-        return sharedPref.getInt(BodynodesConstants.LOCAL_PORT_IN_NUMBER, BodynodesConstants.LOCAL_PORT_IN_NUMBER_DEFAULT);
-    }
-
-    public static void setLocalPortInNumber(Context context, int portNumber) {
-        SharedPreferences.Editor editor = context.getSharedPreferences(BodynodesConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE).edit();
-        editor.putInt(BodynodesConstants.LOCAL_PORT_IN_NUMBER, portNumber);
-        editor.apply();
-    }
-
-    public static int getRemotePortOutNumber(Context context) {
-        SharedPreferences sharedPref = context.getSharedPreferences(BodynodesConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
-        return sharedPref.getInt(BodynodesConstants.REMOTE_PORT_OUT_NUMBER, BodynodesConstants.REMOTE_PORT_OUT_NUMBER_DEFAULT);
-    }
-
-    public static void setRemotePortOutNumber(Context context, int portNumber) {
-        SharedPreferences.Editor editor = context.getSharedPreferences(BodynodesConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE).edit();
-        editor.putInt(BodynodesConstants.REMOTE_PORT_OUT_NUMBER, portNumber);
-        editor.apply();
-    }
-    
     public static int getCommunicationType(Context context){
-        SharedPreferences sharedPref = context.getSharedPreferences(BodynodesConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
-        return sharedPref.getInt(BodynodesConstants.COMMUNICATION_TYPE, BodynodesConstants.COMMUNICATION_TYPE_WIFI);
+        SharedPreferences sharedPref = context.getSharedPreferences(BnConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
+        return sharedPref.getInt(BnConstants.COMMUNICATION_TYPE, BnConstants.COMMUNICATION_TYPE_WIFI);
     }
 
     public static void setCommunitcationType(Context context, int communicationType) {
-        SharedPreferences.Editor editor = context.getSharedPreferences(BodynodesConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE).edit();
-        editor.putInt(BodynodesConstants.COMMUNICATION_TYPE, communicationType);
+        SharedPreferences.Editor editor = context.getSharedPreferences(BnConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE).edit();
+        editor.putInt(BnConstants.COMMUNICATION_TYPE, communicationType);
         editor.apply();
     }
 
     public static boolean isCommunicationWifi(Context context) {
         int communicationType = getCommunicationType(context);
-        return communicationType == BodynodesConstants.COMMUNICATION_TYPE_WIFI;
+        return communicationType == BnConstants.COMMUNICATION_TYPE_WIFI;
     }
 
     public static boolean isCommunicationBluetooth(Context context) {
         int communicationType = getCommunicationType(context);
-        return communicationType == BodynodesConstants.COMMUNICATION_TYPE_BLUETOOTH;
+        return communicationType == BnConstants.COMMUNICATION_TYPE_BLUETOOTH;
     }
 
     public static int getSensorIntervalMs(Context context) {
-        SharedPreferences sharedPref = context.getSharedPreferences(BodynodesConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
-        return sharedPref.getInt(BodynodesConstants.SENSOR_INTERVAL_MS, BodynodesConstants.SENSOR_INTERVAL_MS_DEFAULT);
+        SharedPreferences sharedPref = context.getSharedPreferences(BnConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
+        return sharedPref.getInt(BnConstants.SENSOR_INTERVAL_MS, BnConstants.SENSOR_READ_INTERVAL_MS);
     }
 
     public static void setSensorIntervalMs(Context context, int sensorIntervalMs) {
-        SharedPreferences.Editor editor = context.getSharedPreferences(BodynodesConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE).edit();
-        editor.putInt(BodynodesConstants.SENSOR_INTERVAL_MS, sensorIntervalMs);
+        SharedPreferences.Editor editor = context.getSharedPreferences(BnConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE).edit();
+        editor.putInt(BnConstants.SENSOR_INTERVAL_MS, sensorIntervalMs);
         editor.apply();
     }
 

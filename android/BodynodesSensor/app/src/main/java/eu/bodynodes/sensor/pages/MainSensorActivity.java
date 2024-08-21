@@ -40,6 +40,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -51,9 +53,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import eu.bodynodes.sensor.BodynodesConstants;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import eu.bodynodes.sensor.BnConstants;
+import eu.bodynodes.sensor.BodynodesProtocol;
 import eu.bodynodes.sensor.data.AppData;
-import eu.bodynodes.sensor.data.BodynodesData;
+import eu.bodynodes.sensor.data.BnSensorAppData;
 import eu.bodynodes.sensor.R;
 import eu.bodynodes.sensor.service.SensorServiceBluetooth;
 import eu.bodynodes.sensor.service.SensorServiceWifi;
@@ -90,24 +96,122 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
         updateUI();
         checkService();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(BodynodesConstants.ACTION_UPDATE_UI);
-        intentFilter.addAction(BodynodesConstants.ACTION_RECEIVED);
+        intentFilter.addAction(BnConstants.ACTION_UPDATE_UI);
+        intentFilter.addAction(BnConstants.ACTION_RECEIVED);
         LocalBroadcastManager.getInstance(this).registerReceiver(mSensorReceiver, intentFilter);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.FOREGROUND_SERVICE}, BodynodesConstants.FOREGROUND_SERVICE_PERMISSION_CODE);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.FOREGROUND_SERVICE}, BnConstants.FOREGROUND_SERVICE_PERMISSION_CODE);
             }
+        }
+    }
+
+    private void vibrate(int duration_ms, int strength) {
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if(strength < 1 ){
+                strength = 1;
+            }
+            if(strength > 255){
+                strength = 255;
+            }
+            v.vibrate(VibrationEffect.createOneShot(duration_ms, strength));
+        } else {
+            //deprecated in API 26
+            v.vibrate(duration_ms);
         }
     }
 
     private final BroadcastReceiver mSensorReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals(BodynodesConstants.ACTION_UPDATE_UI)) {
+            if(intent.getAction().equals(BnConstants.ACTION_UPDATE_UI)) {
                 updateUI();
-            } else if(intent.getAction().equals(BodynodesConstants.ACTION_RECEIVED)){
-                Toast.makeText(MainSensorActivity.this,intent.getStringExtra(BodynodesConstants.KEY_JSON_ACTION),Toast.LENGTH_SHORT).show();
+            } else if(intent.getAction().equals(BnConstants.ACTION_RECEIVED)){
+                //Toast.makeText(MainSensorActivity.this,intent.getStringExtra(BnConstants.INTENT_KEY_ACTION_BYTES),Toast.LENGTH_SHORT).show();
+                String jsonText = intent.getStringExtra(BnConstants.KEY_JSON_ACTION);
+                JSONObject actionJson;
+                try {
+
+                    actionJson = new JSONObject(jsonText);
+                    if(!actionJson.has(BnConstants.ACTION_PLAYER_TAG)) {
+                        return;
+                    }
+                    if(!actionJson.has(BnConstants.ACTION_BODYPART_TAG)) {
+                        return;
+                    }
+                    if(!actionJson.has(BnConstants.ACTION_TYPE_TAG)) {
+                        return;
+                    }
+
+                    String actionPlayer = actionJson.getString(BnConstants.ACTION_PLAYER_TAG);
+                    String actionBodypart = actionJson.getString(BnConstants.ACTION_BODYPART_TAG);
+                    String actionType = actionJson.getString(BnConstants.ACTION_TYPE_TAG);
+                    if( !BnConstants.PLAYER_ALL_TAG.equals(actionPlayer) &&
+                            !BnSensorAppData.getPlayerName(MainSensorActivity.this).equals(actionPlayer) ) {
+                        Log.w(TAG,"Ignoring actions, it is for another player. Action player = " + actionPlayer +
+                                " app player = " + BnSensorAppData.getPlayerName(MainSensorActivity.this));
+                        return;
+                    }
+                    if( !BnConstants.BODYPART_ALL_TAG.equals(actionBodypart) &&
+                            !BnSensorAppData.getBodypart(MainSensorActivity.this).equals(actionBodypart) ) {
+                        Log.w(TAG,"Ignoring actions, it is for another bodypart. Action bodypart = " + actionBodypart +
+                                " app bodypart = " + BnSensorAppData.getBodypart(MainSensorActivity.this));
+                        return;
+                    }
+
+                    if (BnConstants.ACTION_TYPE_HAPTIC_TAG.equals(actionType)) {
+                        Log.i(TAG,"Vibration action");
+                        if (actionJson.has(BnConstants.ACTION_HAPTIC_STRENGTH_TAG) && actionJson.has(BnConstants.ACTION_HAPTIC_DURATIONMS_TAG)) {
+                            vibrate(actionJson.getInt(BnConstants.ACTION_HAPTIC_DURATIONMS_TAG),
+                                    actionJson.getInt(BnConstants.ACTION_HAPTIC_STRENGTH_TAG));
+                        }
+                    } else if(BnConstants.ACTION_TYPE_SETPLAYER_TAG.equals(actionType)){
+                        Log.i(TAG,"New player action");
+                        if( actionJson.has(BnConstants.ACTION_SETPLAYER_NEWPLAYER_TAG)) {
+                            if (BnSensorAppData.getPlayerName(MainSensorActivity.this).equals(actionJson.getString(BnConstants.ACTION_SETPLAYER_NEWPLAYER_TAG))){
+                                Log.w(TAG,"New player and local player are the same");
+                                return;
+                            }
+                            BnSensorAppData.setPlayerName(MainSensorActivity.this, actionJson.getString(BnConstants.ACTION_SETPLAYER_NEWPLAYER_TAG) );
+                        }
+                    } else if(BnConstants.ACTION_TYPE_SETBODYPART_TAG.equals(actionType)) {
+                        Log.i(TAG,"New bodypart action");
+
+                        if( actionJson.has(BnConstants.ACTION_SETBODYPART_NEWBODYPART_TAG)) {
+                            if (BnSensorAppData.getBodypart(MainSensorActivity.this).equals(actionJson.getString(BnConstants.ACTION_SETBODYPART_NEWBODYPART_TAG) )){
+                                Log.w(TAG,"New bodypart and local bodypart are the same");
+                                return;
+                            }
+                            BnSensorAppData.setBodypart(MainSensorActivity.this, actionJson.getString(BnConstants.ACTION_SETBODYPART_NEWBODYPART_TAG) );
+                        }
+                    } else if(BnConstants.ACTION_TYPE_ENABLESENSOR_TAG.equals(actionType)) {
+                        Log.i(TAG,"Enable sensor action");
+                        if(actionJson.has(BnConstants.ACTION_ENABLESENSOR_SENSORTYPE_TAG) && actionJson.has(BnConstants.ACTION_ENABLESENSOR_ENABLE_TAG) ){
+                            if( actionJson.getString(BnConstants.ACTION_ENABLESENSOR_SENSORTYPE_TAG).equals(BnConstants.SENSORTYPE_ORIENTATION_ABS_TAG)) {
+                                Log.i(TAG,"Orientation Abs sensor");
+                                BnSensorAppData.setOrientationAbsSensorEnabled(MainSensorActivity.this,
+                                        actionJson.getBoolean(BnConstants.ACTION_ENABLESENSOR_ENABLE_TAG));
+                            } else if( actionJson.getString(BnConstants.ACTION_ENABLESENSOR_SENSORTYPE_TAG).equals(BnConstants.SENSORTYPE_ACCELERATION_REL_TAG)) {
+                                Log.i(TAG,"Orientation Rel sensor");
+                                BnSensorAppData.setAccelerationRelSensorEnabled(MainSensorActivity.this,
+                                        actionJson.getBoolean(BnConstants.ACTION_ENABLESENSOR_ENABLE_TAG));
+                            }
+                        }
+                    } else if(BnConstants.ACTION_TYPE_SETWIFI_TAG.equals(actionType)) {
+                        if(actionJson.has(BnConstants.ACTION_SETWIFI_SSID_TAG) &&
+                                actionJson.has(BnConstants.ACTION_SETWIFI_PASSWORD_TAG) &&
+                                actionJson.has(BnConstants.ACTION_SETWIFI_MULTICAST_GROUP_TAG )){
+
+                            BnSensorAppData.setMulticastGroup(MainSensorActivity.this, actionJson.getString(BnConstants.ACTION_SETWIFI_MULTICAST_GROUP_TAG ) );
+                            Log.i(TAG,"Orientation Rel sensor");
+
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
     };
@@ -121,6 +225,9 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onResume() {
         super.onResume();
+
+        mOrientationAbsCheckbox.setChecked(BnSensorAppData.isOrientationAbsSensorEnabled(this));
+        mAccelerationRelCheckbox.setChecked(BnSensorAppData.isAccelerationRelSensorEnabled(this));
         if( AppData.isCommunicationWifi(this) ){
             mStartButton.setText(R.string.main_sensor_page_start_wifi_button_text);
             mStopButton.setText(R.string.main_sensor_page_stop_wifi_button_text);
@@ -152,8 +259,6 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
         mOrientationAbsCheckbox = findViewById(R.id.main_sensor_orientation_abs_checkbox);
         mAccelerationRelCheckbox = findViewById(R.id.main_sensor_acceleration_rel_checkbox);
 
-        mOrientationAbsCheckbox.setChecked(BodynodesData.isOrientationAbsSensorEnabled(this));
-        mAccelerationRelCheckbox.setChecked(BodynodesData.isAccelerationRelSensorEnabled(this));
         if(AppData.isServiceRunning()){
             sensorServiceONUI();
         } else {
@@ -176,13 +281,13 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void startSersorService(){
-        BodynodesData.setOrientationAbsSensorEnabled(this, mOrientationAbsCheckbox.isChecked());
-        BodynodesData.setAccelerationRelSensorEnabled(this, mAccelerationRelCheckbox.isChecked());
+        BnSensorAppData.setOrientationAbsSensorEnabled(this, mOrientationAbsCheckbox.isChecked());
+        BnSensorAppData.setAccelerationRelSensorEnabled(this, mAccelerationRelCheckbox.isChecked());
 
         Intent sensorServiceIntent = null;
-        if(AppData.getCommunicationType(this) == BodynodesConstants.COMMUNICATION_TYPE_WIFI) {
+        if(AppData.getCommunicationType(this) == BnConstants.COMMUNICATION_TYPE_WIFI) {
             sensorServiceIntent = new Intent(this, SensorServiceWifi.class);
-        } else if(AppData.getCommunicationType(this) == BodynodesConstants.COMMUNICATION_TYPE_BLUETOOTH) {
+        } else if(AppData.getCommunicationType(this) == BnConstants.COMMUNICATION_TYPE_BLUETOOTH) {
             sensorServiceIntent = new Intent(this, SensorServiceBluetooth.class);
         } else {
             Log.d(TAG, "Cannot start because communication type is not implemented");
@@ -203,9 +308,9 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void stopSersorService(){
-        if(AppData.getCommunicationType(this) == BodynodesConstants.COMMUNICATION_TYPE_WIFI) {
+        if(AppData.getCommunicationType(this) == BnConstants.COMMUNICATION_TYPE_WIFI) {
             stopService(new Intent(this, SensorServiceWifi.class));
-        } else if(AppData.getCommunicationType(this) == BodynodesConstants.COMMUNICATION_TYPE_BLUETOOTH) {
+        } else if(AppData.getCommunicationType(this) == BnConstants.COMMUNICATION_TYPE_BLUETOOTH) {
             stopService(new Intent(this, SensorServiceBluetooth.class));
         }
         sensorServiceOFFUI();
@@ -254,26 +359,26 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
         switch (id){
             case R.id.main_sensor_index_finger_right:
                 intArray = new int[]{90, 90, 90, 90, 90, sending, 0, 0, 0};
-                intent = new Intent(BodynodesConstants.ACTION_GLOVE_SENSOR_MESSAGE);
-                intent.putExtra(BodynodesConstants.GLOVE_SENSOR_DATA, intArray);
+                intent = new Intent(BnConstants.ACTION_GLOVE_SENSOR_MESSAGE);
+                intent.putExtra(BnConstants.GLOVE_SENSOR_DATA, intArray);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                 return true;
             case R.id.main_sensor_middle_finger_right:
                 intArray = new int[]{90, 90, 90, 90, 90, 0, sending, 0, 0};
-                intent = new Intent(BodynodesConstants.ACTION_GLOVE_SENSOR_MESSAGE);
-                intent.putExtra(BodynodesConstants.GLOVE_SENSOR_DATA, intArray);
+                intent = new Intent(BnConstants.ACTION_GLOVE_SENSOR_MESSAGE);
+                intent.putExtra(BnConstants.GLOVE_SENSOR_DATA, intArray);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                 return true;
             case R.id.main_sensor_ring_finger_right:
                 intArray = new int[]{90, 90, 90, 90, 90, 0, 0, sending, 0};
-                intent = new Intent(BodynodesConstants.ACTION_GLOVE_SENSOR_MESSAGE);
-                intent.putExtra(BodynodesConstants.GLOVE_SENSOR_DATA, intArray);
+                intent = new Intent(BnConstants.ACTION_GLOVE_SENSOR_MESSAGE);
+                intent.putExtra(BnConstants.GLOVE_SENSOR_DATA, intArray);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                 return true;
             case R.id.main_sensor_little_finger_right:
                 intArray = new int[]{90, 90, 90, 90, 90, 0, 0, 0, sending};
-                intent = new Intent(BodynodesConstants.ACTION_GLOVE_SENSOR_MESSAGE);
-                intent.putExtra(BodynodesConstants.GLOVE_SENSOR_DATA, intArray);
+                intent = new Intent(BnConstants.ACTION_GLOVE_SENSOR_MESSAGE);
+                intent.putExtra(BnConstants.GLOVE_SENSOR_DATA, intArray);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                 return true;
             case R.id.main_sensor_thumb_right:
@@ -297,10 +402,10 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
 
                 if (AppData.isCommunicationWifi(this) &&
                         ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, BodynodesConstants.WIFI_PERMISSION_CODE);
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, BnConstants.WIFI_PERMISSION_CODE);
                 } else if(AppData.isCommunicationBluetooth(this) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
                         ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED){
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, BodynodesConstants.BLUETOOTH_PERMISSION_CODE);
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, BnConstants.BLUETOOTH_PERMISSION_CODE);
                 } else {
                     startSersorService();
                 }
@@ -313,7 +418,7 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
                 startActivity(intent);
                 break;
             case R.id.main_sensor_reset_button:
-                intent = new Intent(BodynodesConstants.ACTION_RESET_MESSAGE);
+                intent = new Intent(BnConstants.ACTION_RESET_MESSAGE);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
             default:
                 break;
@@ -331,14 +436,14 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == BodynodesConstants.WIFI_PERMISSION_CODE &&
+        if (requestCode == BnConstants.WIFI_PERMISSION_CODE &&
                 permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION)){
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startSersorService();
             } else {
                 Toast.makeText(this, R.string.wifi_permission_not_granted, Toast.LENGTH_SHORT).show();
             }
-        } else if(requestCode == BodynodesConstants.FOREGROUND_SERVICE_PERMISSION_CODE) {
+        } else if(requestCode == BnConstants.FOREGROUND_SERVICE_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, R.string.notification_permission_not_granted, Toast.LENGTH_SHORT).show();
             }
@@ -355,6 +460,9 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
                     return;
                 }
             }
+            mOrientationAbsCheckbox.setChecked(BnSensorAppData.isOrientationAbsSensorEnabled(this));
+            mAccelerationRelCheckbox.setChecked(BnSensorAppData.isAccelerationRelSensorEnabled(this));
+
             if(!AppData.isServiceRunning()) {
                 mBodynodesKatana.setBackgroundResource(R.drawable.bg_katana_grey);
                 mBodynodesThumb.setBackgroundColor(getResources().getColor(R.color.btc_grey));

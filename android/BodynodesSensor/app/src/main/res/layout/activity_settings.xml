@@ -66,6 +66,29 @@
             android:padding="10sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="@string/wifi_multicast_group_string"/>
+
+        <EditText
+            android:id="@+id/wifi_multicast_group_edit"
+            android:layout_marginLeft="20sp"
+            android:layout_marginRight="20sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:importantForAutofill="no"
+            android:gravity="center_horizontal"
+            android:inputType="text"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        >
+        <TextView
+            android:padding="10sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="@string/settings_glovebodypart_type_string"/>
 
         <LinearLayout

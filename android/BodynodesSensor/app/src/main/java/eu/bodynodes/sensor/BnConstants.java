@@ -27,7 +27,11 @@ package eu.bodynodes.sensor;
 /**
  * Created by m.bottini on 04/12/2015.
  */
-public class BodynodesConstants {
+public class BnConstants {
+
+
+    public static final String PLAYER_ALL_TAG           = "all";
+    public static final String PLAYER_NONE_TAG          = "none";
 
     public final static String NOTIFICATION_CHANNEL_ID = "eu.bodynodes.sensor";
     public final static String NOTIFICATION_CHANNEL_NAME = "Bodynodes Service";
@@ -39,20 +43,26 @@ public class BodynodesConstants {
     public static final String KEY_JSON_ACTION = "JSON_ACTION";
 
     /*Body Parts*/
-    public static final String BODY_HEAD_TAG             = "head";
-    public static final String BODY_HAND_LEFT_TAG        = "hand_left";
-    public static final String BODY_FOREARM_LEFT_TAG     = "forearm_left";
-    public static final String BODY_UPPERARM_LEFT_TAG    = "upperarm_left";
-    public static final String BODY_BODY_TAG             = "body";
-    public static final String BODY_FOREARM_RIGHT_TAG    = "forearm_right";
-    public static final String BODY_UPPERARM_RIGHT_TAG   = "upperarm_right";
-    public static final String BODY_HAND_RIGHT_TAG       = "hand_right";
-    public static final String BODY_LOWERLEG_LEFT_TAG    = "lowerleg_left";
-    public static final String BODY_UPPERLEG_LEFT_TAG    = "upperleg_left";
-    public static final String BODY_FOOT_LEFT_TAG        = "shoe_left";
-    public static final String BODY_LOWERLEG_RIGHT_TAG   = "lowerleg_right";
-    public static final String BODY_UPPERLEG_RIGHT_TAG   = "upperleg_right";
-    public static final String BODY_FOOT_RIGHT_TAG       = "shoe_right";
+    public static final String BODYPART_NONE_TAG              = "none";
+    public static final String BODYPART_HEAD_TAG              = "head";
+    public static final String BODYPART_HAND_LEFT_TAG         = "hand_left";
+    public static final String BODYPART_LOWERARM_LEFT_TAG     = "lowerarm_left";
+    public static final String BODYPART_UPPERARM_LEFT_TAG     = "upperarm_left";
+    public static final String BODYPART_BODY_TAG              = "body";
+    public static final String BODYPART_LOWERARM_RIGHT_TAG    = "lowerarm_right";
+    public static final String BODYPART_UPPERARM_RIGHT_TAG    = "upperarm_right";
+    public static final String BODYPART_HAND_RIGHT_TAG        = "hand_right";
+    public static final String BODYPART_LOWERLEG_LEFT_TAG     = "lowerleg_left";
+    public static final String BODYPART_UPPERLEG_LEFT_TAG     = "upperleg_left";
+    public static final String BODYPART_FOOT_LEFT_TAG         = "foot_left";
+    public static final String BODYPART_LOWERLEG_RIGHT_TAG    = "lowerleg_right";
+    public static final String BODYPART_UPPERLEG_RIGHT_TAG    = "upperleg_right";
+    public static final String BODYPART_FOOT_RIGHT_TAG        = "foot_right";
+    public static final String BODYPART_UPPERBODY_TAG         = "upperbody";
+    public static final String BODYPART_LOWERBODY_TAG         = "lowerbody";
+    public static final String BODYPART_KATANA_TAG            = "katana";
+    public static final String BODYPART_UNTAGGED_TAG          = "untagged";
+    public static final String BODYPART_ALL_TAG               = "all";
 
     /*Additional Body Parts*/
     public static final String BODY_UNTAGGED_TAG       = "untagged";
@@ -68,37 +78,29 @@ public class BodynodesConstants {
     public static final String SENSORTYPE_ORIENTATION_ABS_TAG = "orientation_abs";
     public static final String SENSORTYPE_ACCELERATION_REL_TAG = "acceleration_rel";
     public static final String SENSORTYPE_GLOVE_TAG = "glove";
-    public static final String PLAYER_NAME_DEFAULT = "playerone";
 
     /*Actions*/
+    public static final String ACTION_TYPE_NONE_TAG                 = "none";
+    public static final String ACTION_TYPE_HAPTIC_TAG               = "haptic";
+    public static final String ACTION_TYPE_SETPLAYER_TAG            = "set_player";
+    public static final String ACTION_TYPE_SETBODYPART_TAG          = "set_bodypart";
+    public static final String ACTION_TYPE_ENABLESENSOR_TAG         = "enable_sensor";
+    public static final String ACTION_TYPE_SETWIFI_TAG              = "set_wifi";
 
+
+    public static final String ACTION_PLAYER_TAG            = "player";
+    public static final String ACTION_BODYPART_TAG          = "bodypart";
     public static final String ACTION_TYPE_TAG              = "type";
-    public static final String ACTION_HAPTIC_TAG            = "haptic";
     public static final String ACTION_HAPTIC_DURATIONMS_TAG = "duration_ms";
     public static final String ACTION_HAPTIC_STRENGTH_TAG   = "strength";
+    public static final String ACTION_SETPLAYER_NEWPLAYER_TAG       = "new_player";
+    public static final String ACTION_SETBODYPART_NEWBODYPART_TAG   = "new_bodypart";
+    public static final String ACTION_ENABLESENSOR_SENSORTYPE_TAG   = "sensortype";
+    public static final String ACTION_ENABLESENSOR_ENABLE_TAG       = "enable";
+    public static final String ACTION_SETWIFI_SSID_TAG              = "ssid";
+    public static final String ACTION_SETWIFI_PASSWORD_TAG          = "password";
+    public static final String ACTION_SETWIFI_MULTICAST_GROUP_TAG   = "multicast_group";
 
-    public static final int ACTION_CODE_HAPTIC            = 0;
-    public static final int ACTION_CODE_SETPLAYER         = 1;
-    public static final int ACTION_CODE_SETBODYPART       = 2;
-
-    public static final String[] BODY_PART_TAGS = {
-                BODY_HEAD_TAG,
-                BODY_HAND_LEFT_TAG,
-                BODY_FOREARM_LEFT_TAG,
-                BODY_UPPERARM_LEFT_TAG,
-                BODY_BODY_TAG,
-                BODY_FOREARM_RIGHT_TAG,
-                BODY_UPPERARM_RIGHT_TAG,
-                BODY_HAND_RIGHT_TAG,
-                BODY_LOWERLEG_LEFT_TAG,
-                BODY_UPPERLEG_LEFT_TAG,
-                BODY_FOOT_LEFT_TAG,
-                BODY_LOWERLEG_RIGHT_TAG,
-                BODY_UPPERLEG_RIGHT_TAG,
-                BODY_FOOT_RIGHT_TAG,
-                BODY_KATANA_TAG,
-                BODY_UNTAGGED_TAG
-            };
 
     public final static int COMMUNICATION_STATE_DISCONNECTED = 0;
     public final static int COMMUNICATION_STATE_WAITING_ACK = 1;
@@ -107,20 +109,19 @@ public class BodynodesConstants {
     public static final int COMMUNICATION_TYPE_WIFI = 0;
     public static final int COMMUNICATION_TYPE_BLUETOOTH = 1;
 
-    // Device Specific Axis Configuration
     public static final int OA_OUT_AXIS_W = 0;
     public static final int OA_OUT_AXIS_X = 1;
     public static final int OA_OUT_AXIS_Y = 2;
     public static final int OA_OUT_AXIS_Z = 3;
 
-    public static final int OA_SENSOR_AXIS_W = OA_OUT_AXIS_W;
-    public static final int OA_SENSOR_AXIS_X = OA_OUT_AXIS_Z;
-    public static final int OA_SENSOR_AXIS_Y = OA_OUT_AXIS_Y;
-    public static final int OA_SENSOR_AXIS_Z = OA_OUT_AXIS_X;
+    public static final int OA_SENSOR_AXIS_W = OA_OUT_AXIS_X;
+    public static final int OA_SENSOR_AXIS_X = OA_OUT_AXIS_Y;
+    public static final int OA_SENSOR_AXIS_Y = OA_OUT_AXIS_Z;
+    public static final int OA_SENSOR_AXIS_Z = OA_OUT_AXIS_W;
 
     public static final int OA_MUL_AXIS_W = -1;
     public static final int OA_MUL_AXIS_X = 1;
-    public static final int OA_MUL_AXIS_Y = 1;
+    public static final int OA_MUL_AXIS_Y = -1;
     public static final int OA_MUL_AXIS_Z = -1;
 
     public static final int AR_OUT_AXIS_X = 0;
@@ -147,8 +148,18 @@ public class BodynodesConstants {
     public static final String ACCELERATION_RELATIVE_ENABLED = "ACCELERATION_RELATIVE_ENABLED";
     public static final String SENSOR_INTERVAL_MS = "SENSOR_INTERVAL_MS";
     public static final String PLAYER_NAME = "PLAYER_NAME";
+    public static final String MULTICAST_GROUP = "MULTICAST_GROUP";
 
-    public static final int REMOTE_PORT_OUT_NUMBER_DEFAULT = 8000;
-    public static final int LOCAL_PORT_IN_NUMBER_DEFAULT = 9000;
-    public static final int SENSOR_INTERVAL_MS_DEFAULT = 30;
+    public static final String PLAYER_NAME_DEFAULT = "playerone";
+    public static final String MULTICAST_GROUP_DEFAULT = "BN";
+
+
+    public static final int SENSOR_READ_INTERVAL_MS = 30;
+
+    public static final int CONNECTION_ACK_INTERVAL_MS = 1000;
+    public static final int CONNECTION_KEEP_ALIVE_SEND_INTERVAL_MS = 30000;
+    public static final int CONNECTION_KEEP_ALIVE_REC_INTERVAL_MS = 60000;
+    public static final int MULTICAST_KEEP_ALIVE_REC_INTERVAL_MS = 30000;
+
+
 }

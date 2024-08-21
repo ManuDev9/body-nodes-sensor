@@ -53,4 +53,5 @@
     <string name="settings_sensor_interval_string">Intervallo Sensore (ms):</string>
     <string name="settings_glovebodypart_hand_left_string">Mano Sinistra</string>
     <string name="settings_glovebodypart_hand_right_string">Mano Destra</string>
+    <string name="wifi_multicast_group_string">Gruppo Multicast Wifi</string>
 </resources>
