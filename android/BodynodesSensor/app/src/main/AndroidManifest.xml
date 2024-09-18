@@ -34,9 +34,9 @@
             android:name=".pages.SettingsActivity"
             android:exported="false" />
 
-        <service android:name=".service.SensorServiceWifi"
+        <service android:name=".services.SensorServiceWifi"
             android:foregroundServiceType="remoteMessaging" />
-        <service android:name=".service.SensorServiceBluetooth"
+        <service android:name=".services.SensorServiceBluetooth"
             android:foregroundServiceType="remoteMessaging" />
 
     </application>

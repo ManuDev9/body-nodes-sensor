@@ -28,11 +28,11 @@ android {
     compileSdkVersion 34
     buildToolsVersion "30.0.3"
     defaultConfig {
-        applicationId "eu.bodynodes.sensor"
+        applicationId "eu.bodynodesdev.sensor"
         minSdkVersion 18
         targetSdkVersion 34
         versionCode 1
-        versionName "1.0.07082024"
+        versionName "1.0.18092024"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     buildTypes {
@@ -44,7 +44,13 @@ android {
     buildFeatures {
         viewBinding true
     }
-    namespace 'eu.bodynodes.sensor'
+    namespace 'eu.bodynodesdev.sensor'
+
+    sourceSets {
+        main {
+            java.srcDirs += "../../../body-nodes-common"
+        }
+    }
 }
 
 dependencies {

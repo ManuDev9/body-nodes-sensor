@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package eu.bodynodes.sensor;
+package eu.bodynodesdev.sensor;
 
 /**
  * Created by m.bottini on 04/12/2015.
@@ -33,13 +33,13 @@ public class BnConstants {
     public static final String PLAYER_ALL_TAG           = "all";
     public static final String PLAYER_NONE_TAG          = "none";
 
-    public final static String NOTIFICATION_CHANNEL_ID = "eu.bodynodes.sensor";
+    public final static String NOTIFICATION_CHANNEL_ID = "eu.bodynodesdev.sensor";
     public final static String NOTIFICATION_CHANNEL_NAME = "Bodynodes Service";
 
-    public static final String ACTION_UPDATE_UI = "eu.bodynodes.sensor.ACTION_UPDATE_UI";
-    public static final String ACTION_GLOVE_SENSOR_MESSAGE = "eu.bodynodes.sensor.ACTION_GLOVE_SENSOR_MESSAGE";
-    public static final String ACTION_RESET_MESSAGE = "eu.bodynodes.sensor.ACTION_RESET_MESSAGE";
-    public static final String ACTION_RECEIVED = "eu.bodynodes.sensor.ACTION_RECEIVED";
+    public static final String ACTION_UPDATE_UI = "eu.bodynodesdev.sensor.ACTION_UPDATE_UI";
+    public static final String ACTION_GLOVE_SENSOR_MESSAGE = "eu.bodynodesdev.sensor.ACTION_GLOVE_SENSOR_MESSAGE";
+    public static final String ACTION_RESET_MESSAGE = "eu.bodynodesdev.sensor.ACTION_RESET_MESSAGE";
+    public static final String ACTION_RECEIVED = "eu.bodynodesdev.sensor.ACTION_RECEIVED";
     public static final String KEY_JSON_ACTION = "JSON_ACTION";
 
     /*Body Parts*/
@@ -109,20 +109,8 @@ public class BnConstants {
     public static final int COMMUNICATION_TYPE_WIFI = 0;
     public static final int COMMUNICATION_TYPE_BLUETOOTH = 1;
 
-    public static final int OA_OUT_AXIS_W = 0;
-    public static final int OA_OUT_AXIS_X = 1;
-    public static final int OA_OUT_AXIS_Y = 2;
-    public static final int OA_OUT_AXIS_Z = 3;
-
-    public static final int OA_SENSOR_AXIS_W = OA_OUT_AXIS_X;
-    public static final int OA_SENSOR_AXIS_X = OA_OUT_AXIS_Y;
-    public static final int OA_SENSOR_AXIS_Y = OA_OUT_AXIS_Z;
-    public static final int OA_SENSOR_AXIS_Z = OA_OUT_AXIS_W;
-
-    public static final int OA_MUL_AXIS_W = -1;
-    public static final int OA_MUL_AXIS_X = 1;
-    public static final int OA_MUL_AXIS_Y = -1;
-    public static final int OA_MUL_AXIS_Z = -1;
+    public static final int[] REORIENT_IO_AXIS = new int[]{ 1, 2, 3, 0 };
+    public static final int[] REORIENT_IO_SIGN = new int[]{ -1, 1, -1, -1 };
 
     public static final int AR_OUT_AXIS_X = 0;
     public static final int AR_OUT_AXIS_Y = 1;
@@ -137,7 +125,7 @@ public class BnConstants {
     public final static float BIG_ACCELERATION_REL_DIFF = 0.05f;
 
     // SHARED REFS TAGS
-    public static final String BODYNODES_SHARED_PREFS = "BODYNODES_SHARED_PREFS";
+    public static final String BODYNODES_SHARED_PREFS = "BODYNODESDEV_SHARED_PREFS";
     public static final String LOCAL_PORT_IN_NUMBER = "LOCAL_PORT_IN_NUMBER";
     public static final String REMOTE_PORT_OUT_NUMBER = "REMOTE_PORT_OUT_NUMBER";
     public static final String COMMUNICATION_TYPE = "COMMUNICATION_TYPE";

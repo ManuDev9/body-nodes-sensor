@@ -22,12 +22,12 @@
  * SOFTWARE.
  */
 
-package eu.bodynodes.sensor.data;
+package eu.bodynodesdev.sensor.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import eu.bodynodes.sensor.BnConstants;
+import eu.bodynodesdev.sensor.BnConstants;
 
 public class AppData {
 

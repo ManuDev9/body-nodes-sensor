@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package eu.bodynodes.sensor;
+package eu.bodynodesdev.sensor;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -36,17 +36,20 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Locale;
 
+import eu.bodynodesdev.common.BnReorientAxis;
 /**
  * Created by m.bottini on 13/02/2016.
  */
 public class BodynodesUtils {
 
-    public final static String TAG = "BodyNodesUtils";
+    public final static String TAG = "BodynodesUtils";
 
     private final static BluetoothAdapter sBluetoothAdapter;
+    private static BnReorientAxis sBnReorientAxis = new BnReorientAxis();
 
     static {
         sBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        sBnReorientAxis.config( BnConstants.REORIENT_IO_AXIS, BnConstants.REORIENT_IO_SIGN );
     }
 
     /**
@@ -100,10 +103,10 @@ public class BodynodesUtils {
     }
 
     public static void realignQuat(float[] orientation_in, float[] orientation_out) {
-        orientation_out[BnConstants.OA_OUT_AXIS_W] = BnConstants.OA_MUL_AXIS_W * orientation_in[BnConstants.OA_SENSOR_AXIS_W];
-        orientation_out[BnConstants.OA_OUT_AXIS_X] = BnConstants.OA_MUL_AXIS_X *orientation_in[BnConstants.OA_SENSOR_AXIS_X];
-        orientation_out[BnConstants.OA_OUT_AXIS_Y] = BnConstants.OA_MUL_AXIS_Y *orientation_in[BnConstants.OA_SENSOR_AXIS_Y];
-        orientation_out[BnConstants.OA_OUT_AXIS_Z] = BnConstants.OA_MUL_AXIS_Z *orientation_in[BnConstants.OA_SENSOR_AXIS_Z];
+        for( int idi = 0; idi < orientation_in.length; ++idi ){
+            orientation_out[idi] = orientation_in[idi];
+        }
+        sBnReorientAxis.apply(orientation_out);
     }
 
     public static InetAddress getLocalhostIpAddress(Activity activity) throws UnknownHostException {

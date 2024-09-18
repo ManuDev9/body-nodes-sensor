@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package eu.bodynodes.sensor;
+package eu.bodynodesdev.sensor;
 
 import org.json.JSONException;
 import org.json.JSONObject;

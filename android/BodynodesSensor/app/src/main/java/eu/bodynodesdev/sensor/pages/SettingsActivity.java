@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package eu.bodynodes.sensor.pages;
+package eu.bodynodesdev.sensor.pages;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -32,10 +32,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 
-import eu.bodynodes.sensor.BnConstants;
-import eu.bodynodes.sensor.R;
-import eu.bodynodes.sensor.data.AppData;
-import eu.bodynodes.sensor.data.BnSensorAppData;
+import eu.bodynodesdev.sensor.BnConstants;
+import eu.bodynodesdev.sensor.R;
+import eu.bodynodesdev.sensor.data.AppData;
+import eu.bodynodesdev.sensor.data.BnSensorAppData;
 
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener {
 

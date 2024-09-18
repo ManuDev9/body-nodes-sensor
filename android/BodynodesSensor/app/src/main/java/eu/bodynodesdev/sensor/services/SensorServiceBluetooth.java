@@ -20,7 +20,7 @@
   SOFTWARE.
  */
 
-package eu.bodynodes.sensor.service;
+package eu.bodynodesdev.sensor.services;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -63,12 +63,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
-import eu.bodynodes.sensor.BnConstants;
-import eu.bodynodes.sensor.BodynodesProtocol;
-import eu.bodynodes.sensor.BodynodesUtils;
-import eu.bodynodes.sensor.R;
-import eu.bodynodes.sensor.data.AppData;
-import eu.bodynodes.sensor.data.BnSensorAppData;
+import eu.bodynodesdev.sensor.BnConstants;
+import eu.bodynodesdev.sensor.BodynodesProtocol;
+import eu.bodynodesdev.sensor.BodynodesUtils;
+import eu.bodynodesdev.sensor.R;
+import eu.bodynodesdev.sensor.data.AppData;
+import eu.bodynodesdev.sensor.data.BnSensorAppData;
 
 public class SensorServiceBluetooth extends Service implements SensorEventListener {
 

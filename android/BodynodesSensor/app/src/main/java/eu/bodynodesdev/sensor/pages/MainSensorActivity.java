@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package eu.bodynodes.sensor.pages;
+package eu.bodynodesdev.sensor.pages;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -56,13 +56,12 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import eu.bodynodes.sensor.BnConstants;
-import eu.bodynodes.sensor.BodynodesProtocol;
-import eu.bodynodes.sensor.data.AppData;
-import eu.bodynodes.sensor.data.BnSensorAppData;
-import eu.bodynodes.sensor.R;
-import eu.bodynodes.sensor.service.SensorServiceBluetooth;
-import eu.bodynodes.sensor.service.SensorServiceWifi;
+import eu.bodynodesdev.sensor.BnConstants;
+import eu.bodynodesdev.sensor.data.AppData;
+import eu.bodynodesdev.sensor.data.BnSensorAppData;
+import eu.bodynodesdev.sensor.R;
+import eu.bodynodesdev.sensor.services.SensorServiceBluetooth;
+import eu.bodynodesdev.sensor.services.SensorServiceWifi;
 
 public class MainSensorActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener {
 
