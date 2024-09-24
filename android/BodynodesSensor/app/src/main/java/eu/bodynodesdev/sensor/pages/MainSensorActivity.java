@@ -56,7 +56,8 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import eu.bodynodesdev.sensor.BnConstants;
+import eu.bodynodesdev.common.BnConstants;
+import eu.bodynodesdev.sensor.BnAppConstants;
 import eu.bodynodesdev.sensor.data.AppData;
 import eu.bodynodesdev.sensor.data.BnSensorAppData;
 import eu.bodynodesdev.sensor.R;
@@ -95,13 +96,13 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
         updateUI();
         checkService();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(BnConstants.ACTION_UPDATE_UI);
-        intentFilter.addAction(BnConstants.ACTION_RECEIVED);
+        intentFilter.addAction(BnAppConstants.ACTION_UPDATE_UI);
+        intentFilter.addAction(BnAppConstants.ACTION_RECEIVED);
         LocalBroadcastManager.getInstance(this).registerReceiver(mSensorReceiver, intentFilter);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.FOREGROUND_SERVICE}, BnConstants.FOREGROUND_SERVICE_PERMISSION_CODE);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.FOREGROUND_SERVICE}, BnAppConstants.FOREGROUND_SERVICE_PERMISSION_CODE);
             }
         }
     }
@@ -125,11 +126,11 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
     private final BroadcastReceiver mSensorReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals(BnConstants.ACTION_UPDATE_UI)) {
+            if(intent.getAction().equals(BnAppConstants.ACTION_UPDATE_UI)) {
                 updateUI();
-            } else if(intent.getAction().equals(BnConstants.ACTION_RECEIVED)){
+            } else if(intent.getAction().equals(BnAppConstants.ACTION_RECEIVED)){
                 //Toast.makeText(MainSensorActivity.this,intent.getStringExtra(BnConstants.INTENT_KEY_ACTION_BYTES),Toast.LENGTH_SHORT).show();
-                String jsonText = intent.getStringExtra(BnConstants.KEY_JSON_ACTION);
+                String jsonText = intent.getStringExtra(BnAppConstants.KEY_JSON_ACTION);
                 JSONObject actionJson;
                 try {
 
@@ -358,26 +359,26 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
         switch (id){
             case R.id.main_sensor_index_finger_right:
                 intArray = new int[]{90, 90, 90, 90, 90, sending, 0, 0, 0};
-                intent = new Intent(BnConstants.ACTION_GLOVE_SENSOR_MESSAGE);
-                intent.putExtra(BnConstants.GLOVE_SENSOR_DATA, intArray);
+                intent = new Intent(BnAppConstants.ACTION_GLOVE_SENSOR_MESSAGE);
+                intent.putExtra(BnAppConstants.GLOVE_SENSOR_DATA, intArray);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                 return true;
             case R.id.main_sensor_middle_finger_right:
                 intArray = new int[]{90, 90, 90, 90, 90, 0, sending, 0, 0};
-                intent = new Intent(BnConstants.ACTION_GLOVE_SENSOR_MESSAGE);
-                intent.putExtra(BnConstants.GLOVE_SENSOR_DATA, intArray);
+                intent = new Intent(BnAppConstants.ACTION_GLOVE_SENSOR_MESSAGE);
+                intent.putExtra(BnAppConstants.GLOVE_SENSOR_DATA, intArray);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                 return true;
             case R.id.main_sensor_ring_finger_right:
                 intArray = new int[]{90, 90, 90, 90, 90, 0, 0, sending, 0};
-                intent = new Intent(BnConstants.ACTION_GLOVE_SENSOR_MESSAGE);
-                intent.putExtra(BnConstants.GLOVE_SENSOR_DATA, intArray);
+                intent = new Intent(BnAppConstants.ACTION_GLOVE_SENSOR_MESSAGE);
+                intent.putExtra(BnAppConstants.GLOVE_SENSOR_DATA, intArray);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                 return true;
             case R.id.main_sensor_little_finger_right:
                 intArray = new int[]{90, 90, 90, 90, 90, 0, 0, 0, sending};
-                intent = new Intent(BnConstants.ACTION_GLOVE_SENSOR_MESSAGE);
-                intent.putExtra(BnConstants.GLOVE_SENSOR_DATA, intArray);
+                intent = new Intent(BnAppConstants.ACTION_GLOVE_SENSOR_MESSAGE);
+                intent.putExtra(BnAppConstants.GLOVE_SENSOR_DATA, intArray);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                 return true;
             case R.id.main_sensor_thumb_right:
@@ -401,10 +402,10 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
 
                 if (AppData.isCommunicationWifi(this) &&
                         ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, BnConstants.WIFI_PERMISSION_CODE);
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, BnAppConstants.WIFI_PERMISSION_CODE);
                 } else if(AppData.isCommunicationBluetooth(this) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
                         ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED){
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, BnConstants.BLUETOOTH_PERMISSION_CODE);
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, BnAppConstants.BLUETOOTH_PERMISSION_CODE);
                 } else {
                     startSersorService();
                 }
@@ -417,7 +418,7 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
                 startActivity(intent);
                 break;
             case R.id.main_sensor_reset_button:
-                intent = new Intent(BnConstants.ACTION_RESET_MESSAGE);
+                intent = new Intent(BnAppConstants.ACTION_RESET_MESSAGE);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
             default:
                 break;
@@ -435,14 +436,14 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == BnConstants.WIFI_PERMISSION_CODE &&
+        if (requestCode == BnAppConstants.WIFI_PERMISSION_CODE &&
                 permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION)){
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startSersorService();
             } else {
                 Toast.makeText(this, R.string.wifi_permission_not_granted, Toast.LENGTH_SHORT).show();
             }
-        } else if(requestCode == BnConstants.FOREGROUND_SERVICE_PERMISSION_CODE) {
+        } else if(requestCode == BnAppConstants.FOREGROUND_SERVICE_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, R.string.notification_permission_not_granted, Toast.LENGTH_SHORT).show();
             }

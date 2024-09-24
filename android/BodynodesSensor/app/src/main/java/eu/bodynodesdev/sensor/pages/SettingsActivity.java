@@ -32,7 +32,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 
-import eu.bodynodesdev.sensor.BnConstants;
+import eu.bodynodesdev.common.BnConstants;
 import eu.bodynodesdev.sensor.R;
 import eu.bodynodesdev.sensor.data.AppData;
 import eu.bodynodesdev.sensor.data.BnSensorAppData;

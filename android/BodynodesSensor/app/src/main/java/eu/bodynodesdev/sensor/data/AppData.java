@@ -27,7 +27,8 @@ package eu.bodynodesdev.sensor.data;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import eu.bodynodesdev.sensor.BnConstants;
+import eu.bodynodesdev.common.BnConstants;
+import eu.bodynodesdev.sensor.BnAppConstants;
 
 public class AppData {
 
@@ -70,13 +71,13 @@ public class AppData {
     }
 
     public static int getCommunicationType(Context context){
-        SharedPreferences sharedPref = context.getSharedPreferences(BnConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
-        return sharedPref.getInt(BnConstants.COMMUNICATION_TYPE, BnConstants.COMMUNICATION_TYPE_WIFI);
+        SharedPreferences sharedPref = context.getSharedPreferences(BnAppConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
+        return sharedPref.getInt(BnAppConstants.COMMUNICATION_TYPE, BnConstants.COMMUNICATION_TYPE_WIFI);
     }
 
     public static void setCommunitcationType(Context context, int communicationType) {
-        SharedPreferences.Editor editor = context.getSharedPreferences(BnConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE).edit();
-        editor.putInt(BnConstants.COMMUNICATION_TYPE, communicationType);
+        SharedPreferences.Editor editor = context.getSharedPreferences(BnAppConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE).edit();
+        editor.putInt(BnAppConstants.COMMUNICATION_TYPE, communicationType);
         editor.apply();
     }
 
@@ -91,13 +92,13 @@ public class AppData {
     }
 
     public static int getSensorIntervalMs(Context context) {
-        SharedPreferences sharedPref = context.getSharedPreferences(BnConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
-        return sharedPref.getInt(BnConstants.SENSOR_INTERVAL_MS, BnConstants.SENSOR_READ_INTERVAL_MS);
+        SharedPreferences sharedPref = context.getSharedPreferences(BnAppConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
+        return sharedPref.getInt(BnAppConstants.SENSOR_INTERVAL_MS, BnConstants.SENSOR_READ_INTERVAL_MS);
     }
 
     public static void setSensorIntervalMs(Context context, int sensorIntervalMs) {
-        SharedPreferences.Editor editor = context.getSharedPreferences(BnConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE).edit();
-        editor.putInt(BnConstants.SENSOR_INTERVAL_MS, sensorIntervalMs);
+        SharedPreferences.Editor editor = context.getSharedPreferences(BnAppConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE).edit();
+        editor.putInt(BnAppConstants.SENSOR_INTERVAL_MS, sensorIntervalMs);
         editor.apply();
     }
 

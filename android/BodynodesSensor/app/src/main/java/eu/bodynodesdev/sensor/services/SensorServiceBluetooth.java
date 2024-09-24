@@ -63,8 +63,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
-import eu.bodynodesdev.sensor.BnConstants;
-import eu.bodynodesdev.sensor.BodynodesProtocol;
+import eu.bodynodesdev.common.BnConstants;
+import eu.bodynodesdev.sensor.BnAppConstants;
+import eu.bodynodesdev.common.BnProtocol;
 import eu.bodynodesdev.sensor.BodynodesUtils;
 import eu.bodynodesdev.sensor.R;
 import eu.bodynodesdev.sensor.data.AppData;
@@ -140,9 +141,9 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
 
     @SuppressLint("ForegroundServiceType")
     private void createNotification() {
-        String NOTIFICATION_CHANNEL_ID = BnConstants.NOTIFICATION_CHANNEL_ID;
+        String NOTIFICATION_CHANNEL_ID = BnAppConstants.NOTIFICATION_CHANNEL_ID;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            String channelName = BnConstants.NOTIFICATION_CHANNEL_NAME;
+            String channelName = BnAppConstants.NOTIFICATION_CHANNEL_NAME;
             NotificationChannel chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_NONE);
             chan.setLightColor(Color.BLUE);
             chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
@@ -156,14 +157,14 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
                     .setPriority(NotificationManager.IMPORTANCE_MIN)
                     .setCategory(Notification.CATEGORY_SERVICE)
                     .build();
-            ServiceCompat.startForeground(this, BnConstants.SENSOR_SERVICE_NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_REMOTE_MESSAGING);
+            ServiceCompat.startForeground(this, BnAppConstants.SENSOR_SERVICE_NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_REMOTE_MESSAGING);
         } else {
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
             Notification notification = notificationBuilder.setOngoing(true)
                     .setSmallIcon(R.drawable.bn_logo_topbar)
                     .setContentTitle(getText(R.string.app_name))
                     .build();
-            startForeground(BnConstants.SENSOR_SERVICE_NOTIFICATION_ID, notification);
+            startForeground(BnAppConstants.SENSOR_SERVICE_NOTIFICATION_ID, notification);
         }
 
     }
@@ -188,8 +189,8 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
             }
 
             IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(BnConstants.ACTION_GLOVE_SENSOR_MESSAGE);
-            intentFilter.addAction(BnConstants.ACTION_RESET_MESSAGE);
+            intentFilter.addAction(BnAppConstants.ACTION_GLOVE_SENSOR_MESSAGE);
+            intentFilter.addAction(BnAppConstants.ACTION_RESET_MESSAGE);
             LocalBroadcastManager.getInstance(this).registerReceiver(mSensorReceiver, intentFilter);
 
             run_connection_background();
@@ -251,26 +252,26 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
     private final BroadcastReceiver mSensorReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(BnConstants.ACTION_GLOVE_SENSOR_MESSAGE)) {
-                int[] gloveData = intent.getIntArrayExtra(BnConstants.GLOVE_SENSOR_DATA);
+            if (intent.getAction().equals(BnAppConstants.ACTION_GLOVE_SENSOR_MESSAGE)) {
+                int[] gloveData = intent.getIntArrayExtra(BnAppConstants.GLOVE_SENSOR_DATA);
                 Log.d(TAG, "Glove change");
                 JSONArray jsonArray = new JSONArray();
-                JSONObject jsonObject = BodynodesProtocol.makeMessageWifi(
+                JSONObject jsonObject = BnProtocol.makeMessageJson(
                         BnSensorAppData.getPlayerName(SensorServiceBluetooth.this),
                         BnSensorAppData.getGloveBodypart(SensorServiceBluetooth.this),
                         BnConstants.SENSORTYPE_GLOVE_TAG,
                         gloveData);
                 jsonArray.put(jsonObject);
                 sendMessageBluetooth(jsonArray.toString());
-            } else if(intent.getAction().equals(BnConstants.ACTION_RESET_MESSAGE)){
+            } else if(intent.getAction().equals(BnAppConstants.ACTION_RESET_MESSAGE)){
                 Log.d(TAG,"Reset message to send");
                 JSONArray jsonArray = new JSONArray();
-                JSONObject jsonObject1 = BodynodesProtocol.makeMessageWifi(
+                JSONObject jsonObject1 = BnProtocol.makeMessageJson(
                         BnSensorAppData.getPlayerName(SensorServiceBluetooth.this),
                         BnSensorAppData.getBodypart(SensorServiceBluetooth.this),
                         BnConstants.SENSORTYPE_ORIENTATION_ABS_TAG,
                         BnConstants.MESSAGE_VALUE_RESET_TAG);
-                JSONObject jsonObject2 = BodynodesProtocol.makeMessageWifi(
+                JSONObject jsonObject2 = BnProtocol.makeMessageJson(
                         BnSensorAppData.getPlayerName(SensorServiceBluetooth.this),
                         BnSensorAppData.getBodypart(SensorServiceBluetooth.this),
                         BnConstants.SENSORTYPE_ACCELERATION_REL_TAG,
@@ -314,8 +315,8 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
         String jsonText = mLastDataReceived.substring(indexOpen, indexClose + 1);
         mLastDataReceived = mLastDataReceived.substring(indexClose + 1);
         Log.d(TAG, "We received this json = "+jsonText);
-        Intent intent = new Intent(BnConstants.ACTION_RECEIVED);
-        intent.putExtra(BnConstants.KEY_JSON_ACTION,jsonText);
+        Intent intent = new Intent(BnAppConstants.ACTION_RECEIVED);
+        intent.putExtra(BnAppConstants.KEY_JSON_ACTION,jsonText);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         mLastDataReceived = "";
     }
@@ -402,13 +403,13 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
             sendACKN();
             if(checkForACKH()) {
                 AppData.setCommunicationConnected();
-                LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(BnConstants.ACTION_UPDATE_UI));
+                LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(BnAppConstants.ACTION_UPDATE_UI));
             }
             return false;
         } else if(AppData.isCommunicationDisconnected()){
             Log.d(TAG, "Disconnected");
             AppData.setCommunicationWaitingACK();
-            LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(BnConstants.ACTION_UPDATE_UI));
+            LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(BnAppConstants.ACTION_UPDATE_UI));
             return false;
         } else {
             // Connected to wifi and server
@@ -487,7 +488,7 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
         JSONArray jsonArray = new JSONArray();
         if(BnSensorAppData.isOrientationAbsSensorEnabled(this) && bigChangeValues(mOrientationAbs, mPrevOrientationAbs, 4, BnConstants.BIG_ORIENTATION_ABS_DIFF)){
             Log.d(TAG,"Orientation big change");
-            JSONObject jsonObject = BodynodesProtocol.makeMessageWifi(
+            JSONObject jsonObject = BnProtocol.makeMessageJson(
                     BnSensorAppData.getPlayerName(this),
                     BnSensorAppData.getBodypart(this),
                     BnConstants.SENSORTYPE_ORIENTATION_ABS_TAG,
@@ -497,7 +498,7 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
         }
         if(BnSensorAppData.isAccelerationRelSensorEnabled(this) && bigChangeValues(mAccelerationRel, mPrevAccelerationRel, 3, BnConstants.BIG_ACCELERATION_REL_DIFF)){
             Log.d(TAG,"Acceleration big change");
-            JSONObject jsonObject = BodynodesProtocol.makeMessageWifi(
+            JSONObject jsonObject = BnProtocol.makeMessageJson(
                     BnSensorAppData.getPlayerName(this),
                     BnSensorAppData.getBodypart(this),
                     BnConstants.SENSORTYPE_ACCELERATION_REL_TAG,
@@ -530,7 +531,7 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
                 }
 
                 AppData.setCommunicationState(BnConstants.COMMUNICATION_STATE_DISCONNECTED);
-                LocalBroadcastManager.getInstance(SensorServiceBluetooth.this).sendBroadcast(new Intent(BnConstants.ACTION_UPDATE_UI));
+                LocalBroadcastManager.getInstance(SensorServiceBluetooth.this).sendBroadcast(new Intent(BnAppConstants.ACTION_UPDATE_UI));
             }
         });
         thread.start();

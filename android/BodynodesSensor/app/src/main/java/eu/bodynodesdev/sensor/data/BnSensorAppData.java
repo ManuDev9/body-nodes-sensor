@@ -27,73 +27,74 @@ package eu.bodynodesdev.sensor.data;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import eu.bodynodesdev.sensor.BnConstants;
+import eu.bodynodesdev.common.BnConstants;
+import eu.bodynodesdev.sensor.BnAppConstants;
 
 public class BnSensorAppData {
 
     public static String getPlayerName(Context context){
-        SharedPreferences sharedPref = context.getSharedPreferences(BnConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
-        return sharedPref.getString(BnConstants.PLAYER_NAME, BnConstants.PLAYER_NAME_DEFAULT);
+        SharedPreferences sharedPref = context.getSharedPreferences(BnAppConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
+        return sharedPref.getString(BnAppConstants.PLAYER_NAME, BnConstants.PLAYER_NAME_DEFAULT);
     }
 
     public static void setPlayerName(Context context, String player) {
-        SharedPreferences.Editor editor = context.getSharedPreferences(BnConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE).edit();
-        editor.putString(BnConstants.PLAYER_NAME, player);
+        SharedPreferences.Editor editor = context.getSharedPreferences(BnAppConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE).edit();
+        editor.putString(BnAppConstants.PLAYER_NAME, player);
         editor.apply();
     }
 
     public static String getBodypart(Context context){
-        SharedPreferences sharedPref = context.getSharedPreferences(BnConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
-        return sharedPref.getString(BnConstants.BODYPART, BnConstants.BODY_KATANA_TAG);
+        SharedPreferences sharedPref = context.getSharedPreferences(BnAppConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
+        return sharedPref.getString(BnAppConstants.BODYPART, BnConstants.BODY_KATANA_TAG);
     }
 
     public static void setBodypart(Context context, String bodypart) {
-        SharedPreferences.Editor editor = context.getSharedPreferences(BnConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE).edit();
-        editor.putString(BnConstants.BODYPART, bodypart);
+        SharedPreferences.Editor editor = context.getSharedPreferences(BnAppConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE).edit();
+        editor.putString(BnAppConstants.BODYPART, bodypart);
         editor.apply();
     }
 
     public static String getGloveBodypart(Context context){
-        SharedPreferences sharedPref = context.getSharedPreferences(BnConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
-        return sharedPref.getString(BnConstants.GLOVE_BODYPART, BnConstants.BODYPART_HAND_LEFT_TAG);
+        SharedPreferences sharedPref = context.getSharedPreferences(BnAppConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
+        return sharedPref.getString(BnAppConstants.GLOVE_BODYPART, BnConstants.BODYPART_HAND_LEFT_TAG);
     }
 
     public static void setGloveBodypart(Context context, String bodypart) {
-        SharedPreferences.Editor editor = context.getSharedPreferences(BnConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE).edit();
-        editor.putString(BnConstants.GLOVE_BODYPART, bodypart);
+        SharedPreferences.Editor editor = context.getSharedPreferences(BnAppConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE).edit();
+        editor.putString(BnAppConstants.GLOVE_BODYPART, bodypart);
         editor.apply();
     }
 
     public static boolean isOrientationAbsSensorEnabled(Context context) {
-        SharedPreferences sharedPref = context.getSharedPreferences(BnConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
-        return sharedPref.getBoolean(BnConstants.ORIENTATION_ABSOLUTE_ENABLED, false);
+        SharedPreferences sharedPref = context.getSharedPreferences(BnAppConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
+        return sharedPref.getBoolean(BnAppConstants.ORIENTATION_ABSOLUTE_ENABLED, false);
     }
 
     public static void setOrientationAbsSensorEnabled(Context context, boolean orientationAbsSensorEnabled) {
-        SharedPreferences.Editor editor = context.getSharedPreferences(BnConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE).edit();
-        editor.putBoolean(BnConstants.ORIENTATION_ABSOLUTE_ENABLED, orientationAbsSensorEnabled);
+        SharedPreferences.Editor editor = context.getSharedPreferences(BnAppConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE).edit();
+        editor.putBoolean(BnAppConstants.ORIENTATION_ABSOLUTE_ENABLED, orientationAbsSensorEnabled);
         editor.apply();
     }
 
     public static boolean isAccelerationRelSensorEnabled(Context context) {
-        SharedPreferences sharedPref = context.getSharedPreferences(BnConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
-        return sharedPref.getBoolean(BnConstants.ACCELERATION_RELATIVE_ENABLED, false);
+        SharedPreferences sharedPref = context.getSharedPreferences(BnAppConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
+        return sharedPref.getBoolean(BnAppConstants.ACCELERATION_RELATIVE_ENABLED, false);
     }
 
     public static void setAccelerationRelSensorEnabled(Context context, boolean accelerationRelSensorEnabled) {
-        SharedPreferences.Editor editor = context.getSharedPreferences(BnConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE).edit();
-        editor.putBoolean(BnConstants.ACCELERATION_RELATIVE_ENABLED, accelerationRelSensorEnabled);
+        SharedPreferences.Editor editor = context.getSharedPreferences(BnAppConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE).edit();
+        editor.putBoolean(BnAppConstants.ACCELERATION_RELATIVE_ENABLED, accelerationRelSensorEnabled);
         editor.apply();
     }
 
     public static String getMulticastGroup(Context context){
-        SharedPreferences sharedPref = context.getSharedPreferences(BnConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
-        return sharedPref.getString(BnConstants.MULTICAST_GROUP, BnConstants.MULTICAST_GROUP_DEFAULT);
+        SharedPreferences sharedPref = context.getSharedPreferences(BnAppConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
+        return sharedPref.getString(BnAppConstants.MULTICAST_GROUP, BnConstants.MULTICAST_GROUP_DEFAULT);
     }
 
     public static void setMulticastGroup(Context context, String player) {
-        SharedPreferences.Editor editor = context.getSharedPreferences(BnConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE).edit();
-        editor.putString(BnConstants.MULTICAST_GROUP, player);
+        SharedPreferences.Editor editor = context.getSharedPreferences(BnAppConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE).edit();
+        editor.putString(BnAppConstants.MULTICAST_GROUP, player);
         editor.apply();
     }
 

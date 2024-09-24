@@ -49,7 +49,7 @@ public class BodynodesUtils {
 
     static {
         sBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        sBnReorientAxis.config( BnConstants.REORIENT_IO_AXIS, BnConstants.REORIENT_IO_SIGN );
+        sBnReorientAxis.config( BnAppConstants.REORIENT_IO_AXIS, BnAppConstants.REORIENT_IO_SIGN );
     }
 
     /**
