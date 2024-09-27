@@ -23,31 +23,19 @@
 */
 
 // General
-#include <Arduino.h>
+#include <Arduino.h> 
 #include <ArduinoJson.h>
-// Wifi
-#include <ESP8266WiFi.h>
-#include <WiFiUdp.h>
-// Memory
-#include <EEPROM.h>
 
-#include "bn_constants.h"
+#include "BnConstants.h"
 
 // Implements Specification Version Dev 1.0
-// Sensortypes: orientation_abs, acceleration_rel, glove
-// Board: ESP-12E
+// Sensortypes: orientation_abs, glove
+// Board: RedBear Duo (Native USB Port)
 
 #ifndef __BN_NODE_SPECIFIC_H
 #define __BN_NODE_SPECIFIC_H
 
-#define ARDUINO_ESP_12E 1
-
-extern "C" {
-    #include "user_interface.h"  // Required for wifi_station_connect() to work
-}
-#define FPM_SLEEP_MAX_TIME 0xFFFFFFF
-
-#define BODYNODE_BODYPART_HEX_DEFAULT BODYPART_UPPERARM_LEFT_HEX
+#define BODYNODE_BODYPART_HEX_DEFAULT BODYPART_LOWERLEG_RIGHT_HEX
 #define BODYNODE_PLAYER_TAG_DEFAULT  "mario"
 
 // #define BODYNODE_GLOVE_SENSOR
@@ -61,9 +49,8 @@ extern "C" {
 #else
   #undef BODYNODE_GLOVE_SENSOR
 #endif // BODYNODE_BODYPART_HEX != BODYPART_LOWERARM_RIGHT_HEX && BODYNODE_BODYPART_HEX != BODYPART_LOWERARM_LEFT_HEX
-#undef BODYNODE_GLOVE_SENSOR
 
-// #define BODYNODE_SHOE_SENSOR
+#define BODYNODE_SHOE_SENSOR
 
 // If BODYNODE_SHOE_SENSOR is defined then BODYNODE_BODYPART_SHOE_TAG will be defined in case the node is a lowerleg
 // Note that only forearm nodes can have gloves, therefore BODYNODE_GLOVE_SENSOR is undefined for the other cases
@@ -104,10 +91,14 @@ extern "C" {
 // PINS
 #define BUZZER_FREQ 1000 //Specified in Hz
 #define LED_DT_ON 30 // Duty cicle of LED ON
-#define STATUS_SENSOR_HMI_LED_P 2
-#define STATUS_CONNECTION_HMI_LED_P 0
-#define STATUS_CONNECTION_HMI_LED_M 0  // this is a trick that just works
-#define HAPTIC_MOTOR_PIN_P 14
+
+#define STATUS_SENSOR_HMI_LED_P      6
+#define STATUS_SENSOR_HMI_LED_M      5
+#define STATUS_CONNECTION_HMI_LED_P  3
+#define STATUS_CONNECTION_HMI_LED_M  2
+#define HAPTIC_MOTOR_PIN_P           10
+#define HAPTIC_MOTOR_PIN_M           11
+#define SHOE_SENSOR_PIN_P            19
 
 #define MAX_BUFF_LENGTH 100
 
@@ -137,7 +128,6 @@ extern "C" {
 
 // Set BODYNODE_BODYPART_TAG_DEFAULT
 #if BODYNODE_BODYPART_HEX_DEFAULT == BODYPART_HEAD_HEX
-  #define BODYNODE_BODYPART_TAG_DEFAULT BODYPART_HEAD_TAG
 #elif BODYNODE_BODYPART_HEX_DEFAULT == BODYPART_HAND_LEFT_HEX
   #define BODYNODE_BODYPART_TAG_DEFAULT BODYPART_HAND_LEFT_TAG
 #elif BODYNODE_BODYPART_HEX_DEFAULT == BODYPART_LOWERARM_LEFT_HEX
@@ -183,13 +173,12 @@ extern "C" {
 #define BN_NODE_SPECIFIC_BN_ACTUATOR_ACT_PIN_ON digitalWrite(HAPTIC_MOTOR_PIN_P, HIGH);
 #define BN_NODE_SPECIFIC_BN_ACTUATOR_ACT_PIN_OFF digitalWrite(HAPTIC_MOTOR_PIN_P, LOW);
 #define BN_NODE_SPECIFIC_BN_SENSOR_WRITE_STATUS_PIN_FUNCTION analogWrite
-#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_INIT_WIFI \
-  WiFi.disconnect(true);                                     \
-  WiFi.softAPdisconnect(false);                              \
-  WiFi.enableAP(false);
-#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_WRITE_STATUS_PIN_FUNCTION analogWrite
-#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_UDP_OBJ WiFiUDP
-#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_BEGIN_MULTICAST wnc_multicast_connector.beginMulticast(WiFi.localIP(), multicastIP, BODYNODES_MULTICAST_PORT); // Listen to the Multicast
+#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_INIT_WIFI WiFi.disconnect();
+#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_WRITE_STATUS_PIN_FUNCTION digitalWrite
+#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_UDP_OBJ UDP
+#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_BEGIN_MULTICAST \
+      wnc_multicast_connector.begin(BODYNODES_MULTICAST_PORT);     \
+      wnc_multicast_connector.joinMulticast(multicastIP); // Listen to the Multicast 
 
 // Other node specific utility functions that are defined in the same way
 bool tryConnectWifi(String ssid, String password);

@@ -22,7 +22,7 @@
 * SOFTWARE.
 */
 
-#include "bn_wifi_node_communicator.h"
+#include "BnWifiNodeCommunicator.h"
 
 void BnWifiNodeCommunicator::init(){
   BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_INIT_WIFI

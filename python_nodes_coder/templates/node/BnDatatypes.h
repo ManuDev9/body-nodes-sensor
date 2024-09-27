@@ -22,8 +22,8 @@
 * SOFTWARE.
 */
 
-#include "bn_constants.h"
-#include "bn_node_specific.h"
+#include "BnConstants.h"
+#include "BnNodeSpecific.h"
 
 #ifndef __BN_DATATYPES_H
 #define __BN_DATATYPES_H

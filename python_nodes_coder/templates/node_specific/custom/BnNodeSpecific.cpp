@@ -1,7 +1,7 @@
 /**
 * MIT License
-* 
-* Copyright (c) 2021-2024 Manuel Bottini
+*
+* Copyright (c) 2023-2024 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -22,27 +22,36 @@
 * SOFTWARE.
 */
 
-#include "bn_node_specific.h"
-#include "bn_datatypes.h"
+#include "BnNodeSpecific.h"
 
-#ifndef __BN_ACTUATOR_H__
-#define __BN_ACTUATOR_H__
+// Implements Specification Version Dev 1.0
+// Sensortypes: XXXX
+// Board: XXXX
 
-//Since there is only one actuator new actions will override old ones.
-struct BnVibration_struct {
-  unsigned long startTime_ms;
-  unsigned long duration_ms;
-} ;
+bool tryConnectWifi(String ssid, String password){
 
-class BnActuator {
-public:
-  void init();
-  void setAction(BnAction &action);
-  void performAction();
-  BnType getType();
+}
 
-private:
-  BnVibration_struct a_vibration;
-};
+void printWifiStatus() {
 
-#endif //__BN_ACTUATOR_H__
+}
+
+IPAddress getIPAdressFromStr(String ip_address_str) {
+
+}
+
+void persMemoryInit() {
+
+}
+
+void persMemoryCommit() {
+
+}
+
+void persMemoryRead(uint16_t address_, uint8_t *out_byte ) {
+
+}
+
+void persMemoryWrite(uint16_t address_, uint8_t in_byte ) {
+
+}

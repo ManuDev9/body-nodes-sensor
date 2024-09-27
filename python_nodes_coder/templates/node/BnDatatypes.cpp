@@ -22,7 +22,7 @@
 * SOFTWARE.
 */
 
-#include "bn_datatypes.h"
+#include "BnDatatypes.h"
 
 void BnIPConnectionData::setDisconnected(){ conn_status = CONNECTION_STATUS_NOT_CONNECTED; }
 void BnIPConnectionData::setWaitingACK(){ conn_status = CONNECTION_STATUS_WAITING_ACK; }

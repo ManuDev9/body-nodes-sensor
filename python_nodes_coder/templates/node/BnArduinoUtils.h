@@ -22,12 +22,12 @@
 * SOFTWARE.
 */
 
-#include "bn_constants.h"
-#include "bn_datatypes.h"
-#include "bn_node_specific.h"
+#include "BnConstants.h"
+#include "BnDatatypes.h"
+#include "BnNodeSpecific.h"
 
-#ifndef __BN_UTILS_H
-#define __BN_UTILS_H
+#ifndef __BN_ARDUINO_UTILS_H
+#define __BN_ARDUINO_UTILS_H
 
 class BnPersMemory {
 public:
@@ -63,4 +63,4 @@ private:
 
 };
 
-#endif //__BN_UTILS_H
+#endif //__BN_ARDUINO_UTILS_H

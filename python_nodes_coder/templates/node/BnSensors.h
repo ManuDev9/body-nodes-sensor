@@ -27,9 +27,9 @@
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
 
-#include "bn_node_specific.h"
-#include "bn_datatypes.h"
-#include "bn_utils.h"
+#include "BnNodeSpecific.h"
+#include "BnDatatypes.h"
+#include "BnArduinoUtils.h"
 
 #ifndef __BN_SENSORS_H__
 #define __BN_SENSORS_H__

@@ -2,7 +2,7 @@
 This project is for a script that can easily create Bodynodes projects for development environment.
 
 At the moment these are the platform the project supports.
-- Arduino: use the command "python3 BnPythonNodesCoderArduino.py h" to print the help and check how to run it
+- Arduino
 
 For example if you want to create your own hardware sensors and you have your own platform at home.
 You can find out more about the hardware and logical requirements in here: https://github.com/ManuDev9/body-nodes-specs
@@ -17,9 +17,17 @@ You just need to setup the files:
     - It should be inside the main project directory
     - Look inside the example folder to get an idea
     - Set "board" : "custom" to make use of a custom board
-  - bn_node_specific.h, bn_node_specific.cpp
+  - BnNodeSpecific.h, BnNodeSpecific.cpp
     - It gets created afterwards
     - It will need to change if you have a custom board or custom pins setup
+  - Example:
+
+        python3 BnPythonNodesCoderArduino.py examples/
+
+    - And the directory examples will be populated by files
+
+
+Use the command "python3 BnPythonNodesCoderArduino.py h" to print the help and check how to run it
 
 Have a look at the files you need and adapt them for your project in order to create your Bodynodes.
 

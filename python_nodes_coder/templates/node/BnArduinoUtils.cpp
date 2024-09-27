@@ -22,7 +22,7 @@
 * SOFTWARE.
 */
 
-#include "bn_utils.h"
+#include "BnArduinoUtils.h"
 
 void BnPersMemory::init(){
   persMemoryInit();

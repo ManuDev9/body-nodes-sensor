@@ -22,10 +22,10 @@
 * SOFTWARE.
 */
 
-#include "bn_node_specific.h"
+#include "BnNodeSpecific.h"
 #include <utility/imumaths.h>
-#include "bn_utils.h"
-#include "bn_datatypes.h"
+#include "BnArduinoUtils.h"
+#include "BnDatatypes.h"
 
 #ifndef __BN__WIFI_NODE_COMMUNICATOR_H__
 #define __BN__WIFI_NODE_COMMUNICATOR_H__

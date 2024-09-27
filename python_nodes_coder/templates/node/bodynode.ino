@@ -22,12 +22,12 @@
 * SOFTWARE.
 */
 
-#include "bn_node_specific.h"
-#include "bn_sensors.h"
+#include "BnNodeSpecific.h"
+#include "BnSensors.h"
 #include "__bn_node_communicator_header__"
-#include "bn_actuator.h"
-#include "bn_utils.h"
-#include "bn_datatypes.h"
+#include "BnActuator.h"
+#include "BnUtils.h"
+#include "BnDatatypes.h"
 
 BnActuator mActuator;
 BN_NODE_COMMUNICATOR mCommunicator;

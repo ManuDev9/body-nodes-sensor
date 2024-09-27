@@ -22,7 +22,7 @@
 * SOFTWARE.
 */
 
-#include "bn_actuator.h"
+#include "BnActuator.h"
 
 void BnActuator::init(){
   pinMode(HAPTIC_MOTOR_PIN_P, OUTPUT); 

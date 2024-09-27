@@ -22,7 +22,7 @@
 * SOFTWARE.
 */
 
-#include "bn_sensors.h"
+#include "BnSensors.h"
 
 void BnSensor::init(){
   s_enabled = true;

@@ -42,27 +42,27 @@ def main_node(project_path, config_json):
         print("Invalid 'type' = "+config_json["type"]+ " in bn_coder_config.json")
         return
     
-    files_to_take.append(template_type_folder+"bn_actuator.cpp")
-    files_to_take.append(template_type_folder+"bn_actuator.h")
-    files_to_take.append(template_type_folder+"bn_sensors.cpp")
-    files_to_take.append(template_type_folder+"bn_sensors.h")
+    files_to_take.append(template_type_folder+"BnActuator.cpp")
+    files_to_take.append(template_type_folder+"BnActuator.h")
+    files_to_take.append(template_type_folder+"BnDatatypes.cpp")
+    files_to_take.append(template_type_folder+"BnDatatypes.h")
+    files_to_take.append(template_type_folder+"BnSensors.cpp")
+    files_to_take.append(template_type_folder+"BnSensors.h")
+    files_to_take.append(template_type_folder+"BnArduinoUtils.cpp")
+    files_to_take.append(template_type_folder+"BnArduinoUtils.h")
     files_to_take.append(template_type_folder+"bodynode.ino")
 
     # Common files
-    template_common_folder = "templates/common/"
-    files_to_take.append(template_common_folder+"bn_datatypes.cpp")
-    files_to_take.append(template_common_folder+"bn_datatypes.h")
-    files_to_take.append(template_common_folder+"bn_utils.cpp")
-    files_to_take.append(template_common_folder+"bn_utils.h")
-    files_to_take.append(template_common_folder+"bn_constants.h")
+    template_common_folder = "../body-nodes-common/cpp/"
+    files_to_take.append(template_common_folder+"BnConstants.h")
 
     # Node communicator
     bn_node_communicator_header = None
     if config_json["node_communicator"] == "wifi":
         template_node_communicator_folder = "templates/node/"
-        files_to_take.append(template_node_communicator_folder+"bn_wifi_node_communicator.cpp")
-        files_to_take.append(template_node_communicator_folder+"bn_wifi_node_communicator.h")
-        bn_node_communicator_header = "bn_wifi_node_communicator.h"
+        files_to_take.append(template_node_communicator_folder+"BnWifiNodeCommunicator.cpp")
+        files_to_take.append(template_node_communicator_folder+"BnWifiNodeCommunicator.h")
+        bn_node_communicator_header = "BnWifiNodeCommunicator.h"
     else:
         print("Invalid 'node_communicator' = "+config_json["node_communicator"])
         return
@@ -70,16 +70,16 @@ def main_node(project_path, config_json):
     # Board
     if config_json["board"] == "esp-12e":
         template_board_folder = "templates/node_specific/esp-12e/"
-        files_to_take.append(template_board_folder+"bn_node_specific.cpp")
-        files_to_take.append(template_board_folder+"bn_node_specific.h")
+        files_to_take.append(template_board_folder+"BnNodeSpecific.cpp")
+        files_to_take.append(template_board_folder+"BnNodeSpecific.h")
     elif config_json["board"] == "redbear_duo":
         template_board_folder = "templates/node_specific/redbear_duo/"
-        files_to_take.append(template_board_folder+"bn_node_specific.cpp")
-        files_to_take.append(template_board_folder+"bn_node_specific.h")
+        files_to_take.append(template_board_folder+"BnNodeSpecific.cpp")
+        files_to_take.append(template_board_folder+"BnNodeSpecific.h")
     elif config_json["board"] == "custom":
         template_board_folder = "templates/node_specific/custom/"
-        files_to_take.append(template_board_folder+"bn_node_specific.cpp")
-        files_to_take.append(template_board_folder+"bn_node_specific.h")
+        files_to_take.append(template_board_folder+"BnNodeSpecific.cpp")
+        files_to_take.append(template_board_folder+"BnNodeSpecific.h")
     else:
         print("Invalid 'board' = "+config_json["board"])
         return
@@ -104,7 +104,7 @@ def main_node(project_path, config_json):
             with open(full_file_path, 'w') as file:
                 file.write(modified_content)
 
-        if config_json["sensors"]["glove"] == "yes" and file_name == "bn_node_specific.h":
+        if config_json["sensors"]["glove"] == "yes" and file_name == "BnNodeSpecific.h":
             # Enable glove sensor
             with open(full_file_path, 'r') as file:
                 file_content = file.read()
@@ -114,7 +114,7 @@ def main_node(project_path, config_json):
             with open(full_file_path, 'w') as file:
                 file.write(modified_content)
 
-        if config_json["sensors"]["shoe"] == "yes" and file_name == "bn_node_specific.h":
+        if config_json["sensors"]["shoe"] == "yes" and file_name == "BnNodeSpecific.h":
             # Enable shoe sensor
             with open(full_file_path, 'r') as file:
                 file_content = file.read()
@@ -198,7 +198,7 @@ def print_help():
     print("\nWhere:")
     print("\t- <project_path> is the path to the folder to the project.")
     print("\t\tThe project should contain a bn_coder_config.json")
-    print("\t\tYou will have to change and adapt bn_node_specific.h and bn_node_specific.cpp to your platform")
+    print("\t\tYou will have to change and adapt BnNodeSpecific.h and BnNodeSpecific.cpp to your platform")
 
 if __name__ == "__main__":
     # Setup required arguments

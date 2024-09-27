@@ -22,29 +22,51 @@
 * SOFTWARE.
 */
 
-#include "bn_node_specific.h"
-
-// Implements Specification Version Dev 1.0
-// Sensortypes: orientation_abs, acceleration_rel, glove
-// Board: ESP-12E
+#include "BnNodeSpecific.h"
 
 bool tryConnectWifi(String ssid, String password){
-  if(WiFi.status() == WL_CONNECTED) {
-    return true;
-  }
-  
   // attempt to connect to Wifi network:
   DEBUG_PRINT("Attempting to connect to Network named: ");
   // print the network name (SSID);
   DEBUG_PRINTLN(ssid);
-  WiFi.begin(ssid, password);
 
-  while (WiFi.status() != WL_CONNECTED && WiFi.status() != WL_CONNECT_FAILED) {
+  WiFi.off();
+  WiFi.on();
+  WiFi.clearCredentials();
+
+  bool my_wifi = false;
+  WiFiAccessPoint aps[20];
+  int found = WiFi.scan(aps, 20);
+  for (int i=0; i<found; i++) {
+      WiFiAccessPoint& ap = aps[i];
+      DEBUG_PRINT("SSID: ");
+      DEBUG_PRINT(ap.ssid);
+      DEBUG_PRINT(" | Security: ");
+      DEBUG_PRINT(ap.security);
+      DEBUG_PRINT(" | Channel: ");
+      DEBUG_PRINT(ap.channel);
+      DEBUG_PRINT(" | RSSI: ");
+      DEBUG_PRINTLN(ap.rssi);
+      String ap_ssid = ap.ssid; 
+      if(ap_ssid.indexOf(ssid)!=-1) {
+        my_wifi = true;
+      }
+  }
+  if(!my_wifi) {
+    DEBUG_PRINTLN("Couldn't find my wifi");
+    return false;
+  }
+  DEBUG_PRINTLN("Wifi found!"); 
+  
+  WiFi.setCredentials(ssid, password);
+  WiFi.connect();
+
+  while (WiFi.connecting()) {
     // print dots while we wait to connect
     DEBUG_PRINT(".");
     delay(500);
   }
-  bool conn = WiFi.status() == WL_CONNECTED;
+  bool conn = WiFi.ready();
 
   if(conn){
     DEBUG_PRINTLN("Waiting for an IP address");
@@ -56,23 +78,8 @@ bool tryConnectWifi(String ssid, String password){
     }
     DEBUG_PRINTLN("IP Address obtained");
     return true;
-  } else {
-    WiFi.mode(WIFI_STA);
-    WiFi.disconnect();
-    delay(1000);
-    int found = WiFi.scanNetworks();
-    for (int i=0; i<found; i++) {
-        DEBUG_PRINT("SSID: ");
-        DEBUG_PRINT(WiFi.SSID(i));
-        DEBUG_PRINT(" | Security: ");
-        DEBUG_PRINT(WiFi.encryptionType(i) == ENC_TYPE_NONE ? "open" : "something");
-        DEBUG_PRINT(" | Channel: ");
-        DEBUG_PRINT(WiFi.channel(i));
-        DEBUG_PRINT(" | RSSI: ");
-        DEBUG_PRINTLN(WiFi.RSSI(i));
-    }
-    return false;
   }
+  return false;
 }
 
 void printWifiStatus() {
@@ -84,7 +91,7 @@ void printWifiStatus() {
   IPAddress ip = WiFi.localIP();
   DEBUG_PRINT("IP Address: ");
   DEBUG_PRINTLN(ip);
-
+  
   DEBUG_PRINT("Gateway IP address for network ");
   DEBUG_PRINTLN(WiFi.gatewayIP());
 
@@ -96,17 +103,28 @@ void printWifiStatus() {
 }
 
 IPAddress getIPAdressFromStr(String ip_address_str) {
-  IPAddress ipAddress;
-  ipAddress.fromString(ip_address_str);
-  return ipAddress;
+  uint8_t len = ip_address_str.length()+1;
+  char tmp_buf[len];
+  char * tmp_p;
+  ip_address_str.toCharArray(tmp_buf, len);
+
+  tmp_p = strtok ( tmp_buf, "." );
+  uint8_t ip_address_0 = atoi(tmp_p);
+  tmp_p = strtok ( NULL, "." );
+  uint8_t ip_address_1 = atoi(tmp_p);
+  tmp_p = strtok ( NULL, "." );
+  uint8_t ip_address_2 = atoi(tmp_p);
+  tmp_p = strtok ( NULL, "." );
+  uint8_t ip_address_3 = atoi(tmp_p);
+  return IPAddress(ip_address_0, ip_address_1, ip_address_2, ip_address_3);
 }
 
 void persMemoryInit() {
-  EEPROM.begin(512);
+  // nothing
 }
 
 void persMemoryCommit() {
-  EEPROM.commit();
+  // nothing
 }
 
 void persMemoryRead(uint16_t address_, uint8_t *out_byte ) {

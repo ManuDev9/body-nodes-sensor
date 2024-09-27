@@ -31,7 +31,7 @@
 // Memory
 #include <EEPROM.h>
 
-#include "bn_constants.h"
+#include "BnConstants.h"
 
 // Implements Specification Version Dev 1.0
 // Sensortypes: orientation_abs, glove
