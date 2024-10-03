@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 #
 # MIT License
 # 
@@ -22,12 +24,25 @@
 # SOFTWARE.
 #
 
-#!/usr/bin/python3
 
 import shutil
 import sys
 import os
 import json
+
+# Example of JSON Config file:
+#{
+#  "type" : "node",
+#  "board" : "esp-12e",
+#  "node_communicator": "wifi",
+#  "sensors": {
+#    "acceleration_rel" : "no",
+#    "orientation_abs" : "yes",
+#    "glove" : "yes",
+#    "shoe" : "yes"
+#  }
+#}
+
 
 def main_node(project_path, config_json):
 
@@ -42,12 +57,15 @@ def main_node(project_path, config_json):
         print("Invalid 'type' = "+config_json["type"]+ " in bn_coder_config.json")
         return
     
-    files_to_take.append(template_type_folder+"BnActuator.cpp")
-    files_to_take.append(template_type_folder+"BnActuator.h")
+    files_to_take.append(template_type_folder+"BnHapticActuator.cpp")
+    files_to_take.append(template_type_folder+"BnHapticActuator.h")
     files_to_take.append(template_type_folder+"BnDatatypes.cpp")
     files_to_take.append(template_type_folder+"BnDatatypes.h")
-    files_to_take.append(template_type_folder+"BnSensors.cpp")
-    files_to_take.append(template_type_folder+"BnSensors.h")
+
+    if config_json["sensors"]["orientation_abs"] == "yes":
+        files_to_take.append(template_type_folder+"BnOrientationAbsSensor.cpp")
+        files_to_take.append(template_type_folder+"BnOrientationAbsSensor.h")
+
     files_to_take.append(template_type_folder+"BnArduinoUtils.cpp")
     files_to_take.append(template_type_folder+"BnArduinoUtils.h")
     files_to_take.append(template_type_folder+"bodynode.ino")
@@ -57,12 +75,10 @@ def main_node(project_path, config_json):
     files_to_take.append(template_common_folder+"BnConstants.h")
 
     # Node communicator
-    bn_node_communicator_header = None
     if config_json["node_communicator"] == "wifi":
         template_node_communicator_folder = "templates/node/"
         files_to_take.append(template_node_communicator_folder+"BnWifiNodeCommunicator.cpp")
         files_to_take.append(template_node_communicator_folder+"BnWifiNodeCommunicator.h")
-        bn_node_communicator_header = "BnWifiNodeCommunicator.h"
     else:
         print("Invalid 'node_communicator' = "+config_json["node_communicator"])
         return
@@ -94,35 +110,36 @@ def main_node(project_path, config_json):
         full_file_path = project_path+"/"+file_name
         shutil.copy( file_to_take, full_file_path )
 
-        if is_bodynodeino:
-            # Need to change __bn_node_communicator_header__
-            with open(full_file_path, 'r') as file:
-                file_content = file.read()
-            modified_content = file_content.replace(
-                    "__bn_node_communicator_header__",
-                    bn_node_communicator_header )
-            with open(full_file_path, 'w') as file:
-                file.write(modified_content)
+        if file_name == "BnNodeSpecific.h":
+            if config_json["node_communicator"] == "wifi":
+                # Enable wifi communicator
+                with open(full_file_path, 'r') as file:
+                    file_content = file.read()
+                modified_content = file_content.replace(
+                        "// #define WIFI_COMMUNICATION",
+                        "#define WIFI_COMMUNICATION" )
+                with open(full_file_path, 'w') as file:
+                    file.write(modified_content)
 
-        if config_json["sensors"]["glove"] == "yes" and file_name == "BnNodeSpecific.h":
-            # Enable glove sensor
-            with open(full_file_path, 'r') as file:
-                file_content = file.read()
-            modified_content = file_content.replace(
-                    "// #define BODYNODE_GLOVE_SENSOR",
-                    "#define BODYNODE_GLOVE_SENSOR" )
-            with open(full_file_path, 'w') as file:
-                file.write(modified_content)
+            if config_json["sensors"]["glove"] == "yes":
+                # Enable glove sensor
+                with open(full_file_path, 'r') as file:
+                    file_content = file.read()
+                modified_content = file_content.replace(
+                        "// #define BODYNODE_GLOVE_SENSOR",
+                        "#define BODYNODE_GLOVE_SENSOR" )
+                with open(full_file_path, 'w') as file:
+                    file.write(modified_content)
 
-        if config_json["sensors"]["shoe"] == "yes" and file_name == "BnNodeSpecific.h":
-            # Enable shoe sensor
-            with open(full_file_path, 'r') as file:
-                file_content = file.read()
-            modified_content = file_content.replace(
-                    "// #define BODYNODE_SHOE_SENSOR",
-                    "#define BODYNODE_SHOE_SENSOR" )
-            with open(full_file_path, 'w') as file:
-                file.write(modified_content)
+            if config_json["sensors"]["shoe"] == "yes" :
+                # Enable shoe sensor
+                with open(full_file_path, 'r') as file:
+                    file_content = file.read()
+                modified_content = file_content.replace(
+                        "// #define BODYNODE_SHOE_SENSOR",
+                        "#define BODYNODE_SHOE_SENSOR" )
+                with open(full_file_path, 'w') as file:
+                    file.write(modified_content)
 
 
 def main(project_path):

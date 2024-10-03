@@ -48,7 +48,11 @@ extern "C" {
 #define BODYNODE_BODYPART_HEX_DEFAULT BODYPART_UPPERARM_LEFT_HEX
 #define BODYNODE_PLAYER_TAG_DEFAULT  "mario"
 
-// #define BODYNODE_GLOVE_SENSOR
+// #define BLE_COMMUNICATION
+// #define WIFI_COMMUNICATION
+// #define BLUETOOTH_COMMUNICATION
+
+#define BODYNODE_GLOVE_SENSOR
 
 // If BODYNODE_GLOVE_SENSOR is defined then BODYNODE_BODYPART_GLOVE_TAG will be defined in case the node is a forearm
 // Note that only forearm nodes can have gloves, therefore BODYNODE_GLOVE_SENSOR is undefined for the other cases
@@ -61,7 +65,7 @@ extern "C" {
 #endif // BODYNODE_BODYPART_HEX != BODYPART_LOWERARM_RIGHT_HEX && BODYNODE_BODYPART_HEX != BODYPART_LOWERARM_LEFT_HEX
 #undef BODYNODE_GLOVE_SENSOR
 
-// #define BODYNODE_SHOE_SENSOR
+#define BODYNODE_SHOE_SENSOR
 
 // If BODYNODE_SHOE_SENSOR is defined then BODYNODE_BODYPART_SHOE_TAG will be defined in case the node is a lowerleg
 // Note that only forearm nodes can have gloves, therefore BODYNODE_GLOVE_SENSOR is undefined for the other cases
@@ -126,13 +130,6 @@ extern "C" {
  #define DEBUG_PRINTLN_DEC(x)
 #endif
 
-#define BODYNODES_PORT 12345
-#define BODYNODES_MULTICAST_PORT 12346
-#define BODYNODES_WIFI_SSID_DEFAULT "BodynodeHotspot"
-#define BODYNODES_WIFI_PASS_DEFAULT "bodynodes1"
-#define BODYNODES_MULTICASTGROUP_DEFAULT  "239.192.1.99"
-#define BODYNODES_MULTICASTMESSAGE_DEFAULT  "BN"
-
 // Set BODYNODE_BODYPART_TAG_DEFAULT
 #if BODYNODE_BODYPART_HEX_DEFAULT == BODYPART_HEAD_HEX
   #define BODYNODE_BODYPART_TAG_DEFAULT BODYPART_HEAD_TAG
@@ -178,9 +175,34 @@ extern "C" {
 // on the platform.
 // In order to debug, just take the content and put it directly on the funtion itself
 
-#define BN_NODE_SPECIFIC_BN_ACTUATOR_ACT_PIN_ON digitalWrite(HAPTIC_MOTOR_PIN_P, HIGH);
-#define BN_NODE_SPECIFIC_BN_ACTUATOR_ACT_PIN_OFF digitalWrite(HAPTIC_MOTOR_PIN_P, LOW);
-#define BN_NODE_SPECIFIC_BN_SENSOR_WRITE_STATUS_PIN_FUNCTION analogWrite
+#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_WRITE_STATUS_PIN_FUNCTION analogWrite
+
+// Other node specific utility functions that are defined in the same way
+void persMemoryInit();
+void persMemoryCommit();
+void persMemoryRead(uint16_t address_, uint8_t *out_byte );
+void persMemoryWrite(uint16_t address_, uint8_t in_byte );
+void BnHapticActuator_init();
+void BnHapticActuator_turnON(uint8_t strength);
+void BnHapticActuator_turnOFF();
+
+#ifdef BLE_COMMUNICATION
+
+#define BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_ACTUATOR_ACT_PIN_ON do{ digitalWrite(STATUS_CONNECTION_HMI_LED_P, LED_DT_ON); }while(0)
+#define BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_ACTUATOR_ACT_PIN_OFF do{ digitalWrite(STATUS_CONNECTION_HMI_LED_P, 0); }while(0)
+
+void BnBLENodeCommunicator_init();
+uint8_t BnBLENodeCommunicator_checkAllOk( uint8_t current_conn_status );
+void BnBLENodeCommunicator_sendAllMessages(JsonArray &bnc_messages_list);
+
+#endif // BLE_COMMUNICATION
+
+#ifdef WIFI_COMMUNICATION
+
+bool tryConnectWifi(String ssid, String password);
+void printWifiStatus();
+IPAddress getIPAdressFromStr(String ip_address_str);
+
 #define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_INIT_WIFI \
   WiFi.disconnect(true);                                     \
   WiFi.softAPdisconnect(false);                              \
@@ -189,13 +211,7 @@ extern "C" {
 #define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_UDP_OBJ WiFiUDP
 #define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_BEGIN_MULTICAST wnc_multicast_connector.beginMulticast(WiFi.localIP(), multicastIP, BODYNODES_MULTICAST_PORT); // Listen to the Multicast
 
-// Other node specific utility functions that are defined in the same way
-bool tryConnectWifi(String ssid, String password);
-void printWifiStatus();
-IPAddress getIPAdressFromStr(String ip_address_str);
-void persMemoryInit();
-void persMemoryCommit();
-void persMemoryRead(uint16_t address_, uint8_t *out_byte );
-void persMemoryWrite(uint16_t address_, uint8_t in_byte );
+#endif
+
 
 #endif //__BN_NODE_SPECIFIC_H

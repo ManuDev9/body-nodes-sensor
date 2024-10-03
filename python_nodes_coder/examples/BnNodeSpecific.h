@@ -23,26 +23,36 @@
 */
 
 // General
-#include <Arduino.h> 
+#include <Arduino.h>
 #include <ArduinoJson.h>
+// Wifi
+#include <ESP8266WiFi.h>
+#include <WiFiUdp.h>
+// Memory
+#include <EEPROM.h>
 
 #include "BnConstants.h"
 
 // Implements Specification Version Dev 1.0
 // Sensortypes: orientation_abs, glove
-// Board: RedBear Duo (Native USB Port)
+// Board: ESP-12E
 
 #ifndef __BN_NODE_SPECIFIC_H
 #define __BN_NODE_SPECIFIC_H
 
-#define BODYNODE_BODYPART_HEX_DEFAULT BODYPART_LOWERLEG_RIGHT_HEX
+extern "C" {
+    #include "user_interface.h"  // Required for wifi_station_connect() to work
+}
+#define FPM_SLEEP_MAX_TIME 0xFFFFFFF
+
+#define BODYNODE_BODYPART_HEX_DEFAULT BODYPART_UPPERARM_LEFT_HEX
 #define BODYNODE_PLAYER_TAG_DEFAULT  "mario"
 
 // #define BLE_COMMUNICATION
-// #define WIFI_COMMUNICATION
+#define WIFI_COMMUNICATION
 // #define BLUETOOTH_COMMUNICATION
 
-// #define BODYNODE_GLOVE_SENSOR
+#define BODYNODE_GLOVE_SENSOR
 
 // If BODYNODE_GLOVE_SENSOR is defined then BODYNODE_BODYPART_GLOVE_TAG will be defined in case the node is a forearm
 // Note that only forearm nodes can have gloves, therefore BODYNODE_GLOVE_SENSOR is undefined for the other cases
@@ -53,6 +63,7 @@
 #else
   #undef BODYNODE_GLOVE_SENSOR
 #endif // BODYNODE_BODYPART_HEX != BODYPART_LOWERARM_RIGHT_HEX && BODYNODE_BODYPART_HEX != BODYPART_LOWERARM_LEFT_HEX
+#undef BODYNODE_GLOVE_SENSOR
 
 #define BODYNODE_SHOE_SENSOR
 
@@ -95,14 +106,10 @@
 // PINS
 #define BUZZER_FREQ 1000 //Specified in Hz
 #define LED_DT_ON 30 // Duty cicle of LED ON
-
-#define STATUS_SENSOR_HMI_LED_P      6
-#define STATUS_SENSOR_HMI_LED_M      5
-#define STATUS_CONNECTION_HMI_LED_P  3
-#define STATUS_CONNECTION_HMI_LED_M  2
-#define HAPTIC_MOTOR_PIN_P           10
-#define HAPTIC_MOTOR_PIN_M           11
-#define SHOE_SENSOR_PIN_P            19
+#define STATUS_SENSOR_HMI_LED_P 2
+#define STATUS_CONNECTION_HMI_LED_P 0
+#define STATUS_CONNECTION_HMI_LED_M 0  // this is a trick that just works
+#define HAPTIC_MOTOR_PIN_P 14
 
 #define MAX_BUFF_LENGTH 100
 
@@ -123,15 +130,9 @@
  #define DEBUG_PRINTLN_DEC(x)
 #endif
 
-#define BODYNODES_PORT 12345
-#define BODYNODES_MULTICAST_PORT 12346
-#define BODYNODES_WIFI_SSID_DEFAULT "BodynodeHotspot"
-#define BODYNODES_WIFI_PASS_DEFAULT "bodynodes1"
-#define BODYNODES_MULTICASTGROUP_DEFAULT  "239.192.1.99"
-#define BODYNODES_MULTICASTMESSAGE_DEFAULT  "BN"
-
 // Set BODYNODE_BODYPART_TAG_DEFAULT
 #if BODYNODE_BODYPART_HEX_DEFAULT == BODYPART_HEAD_HEX
+  #define BODYNODE_BODYPART_TAG_DEFAULT BODYPART_HEAD_TAG
 #elif BODYNODE_BODYPART_HEX_DEFAULT == BODYPART_HAND_LEFT_HEX
   #define BODYNODE_BODYPART_TAG_DEFAULT BODYPART_HAND_LEFT_TAG
 #elif BODYNODE_BODYPART_HEX_DEFAULT == BODYPART_LOWERARM_LEFT_HEX
@@ -185,19 +186,10 @@ void BnHapticActuator_init();
 void BnHapticActuator_turnON(uint8_t strength);
 void BnHapticActuator_turnOFF();
 
-typedef union
-{
-    float number;
-    unsigned char bytes[4];
-} float_converter;
-
-typedef union
-{
-    uint32_t numberU;
-    int32_t numberS;
-} int_converter;
-
 #ifdef BLE_COMMUNICATION
+
+#define BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_ACTUATOR_ACT_PIN_ON do{ digitalWrite(STATUS_CONNECTION_HMI_LED_P, LED_DT_ON); }while(0)
+#define BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_ACTUATOR_ACT_PIN_OFF do{ digitalWrite(STATUS_CONNECTION_HMI_LED_P, 0); }while(0)
 
 void BnBLENodeCommunicator_init();
 uint8_t BnBLENodeCommunicator_checkAllOk( uint8_t current_conn_status );
@@ -211,13 +203,15 @@ bool tryConnectWifi(String ssid, String password);
 void printWifiStatus();
 IPAddress getIPAdressFromStr(String ip_address_str);
 
-#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_INIT_WIFI WiFi.disconnect();
-#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_WRITE_STATUS_PIN_FUNCTION digitalWrite
-#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_UDP_OBJ UDP
-#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_BEGIN_MULTICAST \
-      wnc_multicast_connector.begin(BODYNODES_MULTICAST_PORT);     \
-      wnc_multicast_connector.joinMulticast(multicastIP); // Listen to the Multicast 
+#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_INIT_WIFI \
+  WiFi.disconnect(true);                                     \
+  WiFi.softAPdisconnect(false);                              \
+  WiFi.enableAP(false);
+#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_WRITE_STATUS_PIN_FUNCTION analogWrite
+#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_UDP_OBJ WiFiUDP
+#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_BEGIN_MULTICAST wnc_multicast_connector.beginMulticast(WiFi.localIP(), multicastIP, BODYNODES_MULTICAST_PORT); // Listen to the Multicast
 
-#endif // WIFI_COMMUNICATION
+#endif
+
 
 #endif //__BN_NODE_SPECIFIC_H

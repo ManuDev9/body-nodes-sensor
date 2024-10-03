@@ -24,6 +24,8 @@
 
 #include "BnNodeSpecific.h"
 
+#ifdef WIFI_COMMUNICATION
+
 bool tryConnectWifi(String ssid, String password){
   // attempt to connect to Wifi network:
   DEBUG_PRINT("Attempting to connect to Network named: ");
@@ -119,6 +121,8 @@ IPAddress getIPAdressFromStr(String ip_address_str) {
   return IPAddress(ip_address_0, ip_address_1, ip_address_2, ip_address_3);
 }
 
+#endif // WIFI_COMMUNICATION
+
 void persMemoryInit() {
   // nothing
 }
@@ -135,4 +139,17 @@ void persMemoryRead(uint16_t address_, uint8_t *out_byte ) {
 
 void persMemoryWrite(uint16_t address_, uint8_t in_byte ) {
   EEPROM.write(address_, in_byte);
+}
+
+void BnHapticActuator_init() {
+    pinMode(HAPTIC_MOTOR_PIN_P, OUTPUT);
+}
+
+void BnHapticActuator_turnON(uint8_t strength) {
+    (void) strength;
+    digitalWrite(HAPTIC_MOTOR_PIN_P, HIGH);
+}
+
+void BnHapticActuator_turnOFF() {
+    digitalWrite(HAPTIC_MOTOR_PIN_P, LOW);
 }

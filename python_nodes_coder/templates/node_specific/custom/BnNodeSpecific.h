@@ -41,10 +41,12 @@ XXXXXX
 #ifndef __BN_NODE_SPECIFIC_H
 #define __BN_NODE_SPECIFIC_H
 
-
-
 #define BODYNODE_BODYPART_HEX_DEFAULT BODYPART_UPPERARM_LEFT_HEX
 #define BODYNODE_PLAYER_TAG_DEFAULT  "mario"
+
+// #define BLE_COMMUNICATION
+// #define WIFI_COMMUNICATION
+// #define BLUETOOTH_COMMUNICATION
 
 // #define BODYNODE_GLOVE_SENSOR
 
@@ -176,21 +178,46 @@ XXXXXX
 // on the platform.
 // In order to debug, just take the content and put it directly on the funtion itself
 
-#define BN_NODE_SPECIFIC_BN_ACTUATOR_ACT_PIN_ON                               XXXXX
-#define BN_NODE_SPECIFIC_BN_ACTUATOR_ACT_PIN_OFF                              XXXXX
+#define BN_NODE_SPECIFIC_BN_ACTUATOR_ACT_PIN_FUNCTION                         XXXXX
 #define BN_NODE_SPECIFIC_BN_SENSOR_WRITE_STATUS_PIN_FUNCTION                  XXXXX
+
+// Other node specific utility functions that are defined in the same way
+void persMemoryInit();
+void persMemoryCommit();
+void persMemoryRead(uint16_t address_, uint8_t *out_byte );
+void persMemoryWrite(uint16_t address_, uint8_t in_byte );
+
+typedef union
+{
+    float number;
+    unsigned char bytes[4];
+} float_converter;
+
+typedef union
+{
+    uint32_t numberU;
+    int32_t numberS;
+} int_converter;
+
+#ifdef BLE_COMMUNICATION
+
+void BnBLENodeCommunicator_init();
+uint8_t BnBLENodeCommunicator_checkAllOk( uint8_t current_conn_status );
+void BnBLENodeCommunicator_sendAllMessages(JsonArray &bnc_messages_list);
+
+#endif // BLE_COMMUNICATION
+
+#ifdef WIFI_COMMUNICATION
+
+bool tryConnectWifi(String ssid, String password);
+void printWifiStatus();
+IPAddress getIPAdressFromStr(String ip_address_str);
+
 #define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_INIT_WIFI                  XXXXX
 #define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_WRITE_STATUS_PIN_FUNCTION  XXXXX
 #define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_UDP_OBJ                    XXXXX
 #define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_BEGIN_MULTICAST            XXXXX
 
-// Other node specific utility functions that are defined in the same way
-bool tryConnectWifi(String ssid, String password);
-void printWifiStatus();
-IPAddress getIPAdressFromStr(String ip_address_str);
-void persMemoryInit();
-void persMemoryCommit();
-void persMemoryRead(uint16_t address_, uint8_t *out_byte );
-void persMemoryWrite(uint16_t address_, uint8_t in_byte );
+#endif
 
 #endif //__BN_NODE_SPECIFIC_H
