@@ -23,7 +23,9 @@
 */
 
 #include "BnNodeSpecific.h"
-#include <utility/imumaths.h>
+
+#ifdef WIFI_COMMUNICATION
+
 #include "BnArduinoUtils.h"
 #include "BnDatatypes.h"
 
@@ -35,8 +37,6 @@
 
 #define MAX_MESSAGE_BYTES 250
 #define MAX_ACTION_BYTES  250
-
-#define BN_NODE_COMMUNICATOR BnWifiNodeCommunicator
 
 class BnWifiNodeCommunicator {
 public:
@@ -75,3 +75,5 @@ private:
 };
 
 #endif //__BN__WIFI_NODE_COMMUNICATOR_H__
+
+#endif // WIFI_COMMUNICATION

@@ -24,6 +24,8 @@
 
 #include "BnWifiNodeCommunicator.h"
 
+#ifdef __BN__WIFI_NODE_COMMUNICATOR_H__
+
 void BnWifiNodeCommunicator::init(){
   BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_INIT_WIFI
 
@@ -291,3 +293,5 @@ bool BnWifiNodeCommunicator::hasHostInfo(){
   //DEBUG_PRINTLN(wnc_connection_data.has_ip_address);
   return wnc_connection_data.has_ip_address;
 }
+
+#endif // __BN__WIFI_NODE_COMMUNICATOR_H__

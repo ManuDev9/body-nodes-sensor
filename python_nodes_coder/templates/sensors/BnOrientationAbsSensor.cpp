@@ -24,6 +24,8 @@
 
 #include "BnOrientationAbsSensor.h"
 
+#ifdef __BN_ORIENTATION_ABS_SENSOR_H__
+
 void BnOrientationAbsSensor::init(){
     s_enabled = true;
     pinMode(STATUS_SENSOR_HMI_LED_P, OUTPUT);
@@ -223,94 +225,4 @@ void BnOrientationAbsSensor::realignAxis(float values[], float revalues[]){
     revalues[3] = MUL_AXIS_Z * revalues[3];
 }
 
-#ifdef BODYNODE_GLOVE_SENSOR
-
-void BnGloveSensorReaderSerial::init() {
-    Serial.begin(115200);
-    while (!Serial) {
-        delay (1000);
-    }
-    grs_lineDone = false;
-    grs_lineToPrint = "";
-    grs_enabled = true;
-}
-
-bool BnGloveSensorReaderSerial::checkAllOk() {
-    while(Serial.peek() != -1 && grs_lineDone == false) {
-        uint8_t byteVal = Serial.read();
-
-        // In ASCII encoding, \n is the Newline character 0x0A (decimal 10), \r is the Carriage Return character 0x0D (decimal 13).
-        if(byteVal == 13 || byteVal == 10) {
-            grs_lineDone = true;
-        } else {
-            grs_lineToPrint += String((char)(byteVal));
-        }
-        Serial.flush();
-    }
-    return grs_lineDone;
-}
-
-// 9 values are expected
-void BnGloveSensorReaderSerial::getData(int *values){
-    if(grs_lineDone == false){
-        return;
-    }
-    const int str_len = grs_lineToPrint.length() + 1;
-    char buf[str_len];
-    grs_lineToPrint.toCharArray(buf, str_len);
-    grs_lineToPrint = "";
-    grs_lineDone = false;
-
-    char *p_end = &buf[0];
-    for(uint8_t counter = 0; counter < 9; ++counter) {
-        values[counter] = (int)(strtol(p_end, &p_end, 10));
-    }
-}
-
-String BnGloveSensorReaderSerial::getType(){
-    return SENSORTYPE_GLOVE_TAG;
-}
-
-void BnGloveSensorReaderSerial::setEnable(bool enable_status){
-    grs_enabled = enable_status;
-}
-
-bool BnGloveSensorReaderSerial::isEnabled(){
-    return grs_enabled;
-}
-
-#endif /*BODYNODE_GLOVE_SENSOR*/
-
-#ifdef BODYNODE_SHOE_SENSOR
-
-void BnShoeSensor::init() {
-    ss_value = 0;
-    ss_pin = SHOE_SENSOR_PIN_P;
-    pinMode(STATUS_SENSOR_HMI_LED_M, INPUT);
-    ss_enabled = true;
-}
-
-bool BnShoeSensor::checkAllOk() {
-    return true;
-}
-
-// 1 value is expected
-void BnShoeSensor::getData(int *values){
-    values[0] = digitalRead(ss_pin);
-    DEBUG_PRINT("Reading from BnShoeSensor value = ");
-    DEBUG_PRINTLN(values[0]);
-}
-
-String BnShoeSensor::getType(){
-    return SENSORTYPE_SHOE_TAG;
-}
-
-void BnShoeSensor::setEnable(bool enable_status){
-    ss_enabled = enable_status;
-}
-
-bool BnShoeSensor::isEnabled(){
-    return ss_enabled;
-}
-
-#endif /*BODYNODE_SHOE_SENSOR*/
+#endif /*__BN_ORIENTATION_ABS_SENSOR_H__*/

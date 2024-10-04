@@ -24,6 +24,8 @@
 
 #include "BnHapticActuator.h"
 
+#ifdef __BN_HAPTIC_ACTUATOR_H__
+
 void BnHapticActuator::init(){
     BnHapticActuator_init();
     BnHapticActuator_turnOFF();
@@ -57,3 +59,5 @@ BnType BnHapticActuator::getType(){
     // It is well known for this Bodynode
     return ACTION_TYPE_HAPTIC_TAG;
 }
+
+#endif // __BN_HAPTIC_ACTUATOR_H__

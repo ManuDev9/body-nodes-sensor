@@ -36,13 +36,22 @@ import json
 #  "board" : "esp-12e",
 #  "node_communicator": "wifi",
 #  "sensors": {
-#    "acceleration_rel" : "no",
-#    "orientation_abs" : "yes",
-#    "glove" : "yes",
-#    "shoe" : "yes"
+#    "acceleration_rel" : "no",         # Possible values: "no"
+#    "orientation_abs" : "onboard",     # Possible values: "no", "onboard"
+#    "glove" : "serial",                # Possible values: "no", "serial", "onboard"
+#    "shoe" : "onboard"                 # Possible values: "no", "onboard"
 #  }
 #}
 
+
+def enable_field_in_file( full_file_path, field ):
+    with open(full_file_path, 'r') as file:
+        file_content = file.read()
+    modified_content = file_content.replace(
+            "// #define "+field,
+            "#define "+field )
+    with open(full_file_path, 'w') as file:
+        file.write(modified_content)
 
 def main_node(project_path, config_json):
 
@@ -57,26 +66,44 @@ def main_node(project_path, config_json):
         print("Invalid 'type' = "+config_json["type"]+ " in bn_coder_config.json")
         return
     
-    files_to_take.append(template_type_folder+"BnHapticActuator.cpp")
-    files_to_take.append(template_type_folder+"BnHapticActuator.h")
     files_to_take.append(template_type_folder+"BnDatatypes.cpp")
     files_to_take.append(template_type_folder+"BnDatatypes.h")
-
-    if config_json["sensors"]["orientation_abs"] == "yes":
-        files_to_take.append(template_type_folder+"BnOrientationAbsSensor.cpp")
-        files_to_take.append(template_type_folder+"BnOrientationAbsSensor.h")
-
     files_to_take.append(template_type_folder+"BnArduinoUtils.cpp")
     files_to_take.append(template_type_folder+"BnArduinoUtils.h")
     files_to_take.append(template_type_folder+"bodynode.ino")
+
+    # Actuators files
+    template_node_actuators_folder = "templates/actuators/"
+    if config_json["actuators"]["haptic"] == "yes":
+        files_to_take.append(template_node_actuators_folder+"BnHapticActuator.cpp")
+        files_to_take.append(template_node_actuators_folder+"BnHapticActuator.h")
+
+    # Sensors files
+    template_node_sensors_folder = "templates/sensors/"
+    if config_json["sensors"]["orientation_abs"] == "onboard":
+        files_to_take.append(template_node_sensors_folder+"BnOrientationAbsSensor.cpp")
+        files_to_take.append(template_node_sensors_folder+"BnOrientationAbsSensor.h")
+
+    if config_json["sensors"]["glove"] == "serial":
+        files_to_take.append(template_node_sensors_folder+"BnGloveSensorReaderSerial.cpp")
+        files_to_take.append(template_node_sensors_folder+"BnGloveSensorReaderSerial.h")
+
+    if config_json["sensors"]["glove"] == "onboard":
+        files_to_take.append(template_node_sensors_folder+"BnGloveSensor.cpp")
+        files_to_take.append(template_node_sensors_folder+"BnGloveSensor.h")
+
+    if config_json["sensors"]["shoe"] == "onboard":
+        files_to_take.append(template_node_sensors_folder+"BnShoeSensor.cpp")
+        files_to_take.append(template_node_sensors_folder+"BnShoeSensor.h")
+
 
     # Common files
     template_common_folder = "../body-nodes-common/cpp/"
     files_to_take.append(template_common_folder+"BnConstants.h")
 
     # Node communicator
+    template_node_communicator_folder = "templates/node_communicators/"
     if config_json["node_communicator"] == "wifi":
-        template_node_communicator_folder = "templates/node/"
         files_to_take.append(template_node_communicator_folder+"BnWifiNodeCommunicator.cpp")
         files_to_take.append(template_node_communicator_folder+"BnWifiNodeCommunicator.h")
     else:
@@ -112,34 +139,23 @@ def main_node(project_path, config_json):
 
         if file_name == "BnNodeSpecific.h":
             if config_json["node_communicator"] == "wifi":
-                # Enable wifi communicator
-                with open(full_file_path, 'r') as file:
-                    file_content = file.read()
-                modified_content = file_content.replace(
-                        "// #define WIFI_COMMUNICATION",
-                        "#define WIFI_COMMUNICATION" )
-                with open(full_file_path, 'w') as file:
-                    file.write(modified_content)
+                enable_field_in_file( full_file_path, "WIFI_COMMUNICATION" )
 
-            if config_json["sensors"]["glove"] == "yes":
-                # Enable glove sensor
-                with open(full_file_path, 'r') as file:
-                    file_content = file.read()
-                modified_content = file_content.replace(
-                        "// #define BODYNODE_GLOVE_SENSOR",
-                        "#define BODYNODE_GLOVE_SENSOR" )
-                with open(full_file_path, 'w') as file:
-                    file.write(modified_content)
+            if config_json["sensors"]["orientation_abs"] == "onboard":
+                enable_field_in_file( full_file_path, "ORIENTATION_ABS_SENSOR_ON_BOARD" )
 
-            if config_json["sensors"]["shoe"] == "yes" :
-                # Enable shoe sensor
-                with open(full_file_path, 'r') as file:
-                    file_content = file.read()
-                modified_content = file_content.replace(
-                        "// #define BODYNODE_SHOE_SENSOR",
-                        "#define BODYNODE_SHOE_SENSOR" )
-                with open(full_file_path, 'w') as file:
-                    file.write(modified_content)
+            if config_json["sensors"]["glove"] == "serial":
+                enable_field_in_file( full_file_path, "GLOVE_SENSOR_ON_SERIAL" )
+
+            if config_json["sensors"]["glove"] == "onboard":
+                enable_field_in_file( full_file_path, "GLOVE_SENSOR_ON_BOARD" )
+
+            if config_json["sensors"]["shoe"] == "onboard":
+                enable_field_in_file( full_file_path, "SHOE_SENSOR_ON_BOARD" )
+
+            if config_json["actuators"]["haptic"] == "yes":
+                enable_field_in_file( full_file_path, "HAPTIC_ACTUATOR_ON_BOARD" )
+
 
 
 def main(project_path):
@@ -206,8 +222,10 @@ def main(project_path):
     # There might be additional stuff, and it will just be ignored
 
     if config_json["type"] == "node":
-        print("Creating a Node project")
+        print("Creating an Arduino Bodynodes Sensor project")
         main_node(project_path, config_json)
+        print("Finished!")
+
 
 def print_help():
     print("You can run the tool in the following way:")

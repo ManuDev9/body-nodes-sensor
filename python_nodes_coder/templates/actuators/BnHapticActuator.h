@@ -22,38 +22,32 @@
 * SOFTWARE.
 */
 
-#include "BnHapticActuator.h"
+#include "BnNodeSpecific.h"
 
-void BnHapticActuator::init(){
-    BnHapticActuator_init();
-    BnHapticActuator_turnOFF();
-    a_vibration.startTime_ms = 0;
-    a_vibration.duration_ms = 0;
-}
+#ifdef HAPTIC_ACTUATOR_ON_BOARD
 
-void BnHapticActuator::setAction(BnAction &action){
-    if(action["type"] == ACTION_TYPE_HAPTIC_TAG){
-        uint16_t duration_ms = action["duration_ms"];
-        uint16_t strength = action["strength"];
-        DEBUG_PRINT("Haptic triggered with duration and strenght = ");
-        DEBUG_PRINTLN(duration_ms);
-        DEBUG_PRINTLN(strength);
-        a_vibration.startTime_ms = millis();
-        a_vibration.duration_ms = duration_ms;
-        a_vibration.strength = strength;
-    }
-}
+#include "BnDatatypes.h"
 
-void BnHapticActuator::performAction(){
-    if(millis()-a_vibration.startTime_ms < a_vibration.duration_ms){
-        DEBUG_PRINTLN("Doing something");
-        BnHapticActuator_turnON(a_vibration.strength);
-    } else {
-        BnHapticActuator_turnOFF();
-    }
-}
+#ifndef __BN_HAPTIC_ACTUATOR_H__
+#define __BN_HAPTIC_ACTUATOR_H__
 
-BnType BnHapticActuator::getType(){
-    // It is well known for this Bodynode
-    return ACTION_TYPE_HAPTIC_TAG;
-}
+struct BnVibration_struct {
+    unsigned long startTime_ms;
+    unsigned long duration_ms;
+    uint8_t strength;
+} ;
+
+class BnHapticActuator {
+public:
+    void init();
+    void setAction(BnAction &action);
+    void performAction();
+    BnType getType();
+
+private:
+    BnVibration_struct a_vibration;
+};
+
+#endif //__BN_HAPTIC_ACTUATOR_H__
+
+#endif // HAPTIC_ACTUATOR_ON_BOARD

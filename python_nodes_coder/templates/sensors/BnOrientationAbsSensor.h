@@ -22,12 +22,15 @@
 * SOFTWARE.
 */
 
+#include "BnNodeSpecific.h"
+
+#ifdef ORIENTATION_ABS_SENSOR_ON_BOARD
+
 // The Adafruit libraries are available for all boards
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
 
-#include "BnNodeSpecific.h"
 #include "BnDatatypes.h"
 #include "BnArduinoUtils.h"
 
@@ -60,55 +63,8 @@ private:
     float s_values[4];
 
 };
-
-#ifdef BODYNODE_GLOVE_SENSOR
-
-class BnGloveSensorReaderSerial {
-public:
-    // Initializes the reader
-    void init();
-    // Reads from the serial. Returns true if a full read has been received, false otherwise.
-    bool checkAllOk();
-    // Returns the data read
-    void getData(int *values);
-    // Returns the type of the sensor as string
-    String getType();
-    // Enable/Disable Sensor
-    void setEnable(bool enable_status);
-    // Returns if sensor is enabled or not
-    bool isEnabled();
-
-private:
-    boolean grs_lineDone;
-    String grs_lineToPrint;
-    bool grs_enabled;
-};
-
-#endif /*BODYNODE_GLOVE_SENSOR*/
-
-#ifdef BODYNODE_SHOE_SENSOR
-
-class BnShoeSensor {
-public:
-    // Initializes the reader
-    void init();
-    // Reads from the serial. Returns true if a full read has been received, false otherwise.
-    bool checkAllOk();
-    // Returns the data read
-    void getData(int *values);
-    // Returns the type of the sensor as string
-    String getType();
-    // Enable/Disable Sensor
-    void setEnable(bool enable_status);
-    // Returns if sensor is enabled or not
-    bool isEnabled();
-
-private:
-    int ss_value;
-    int ss_pin;
-    bool ss_enabled;
-};
-
-#endif /*BODYNODE_SHOE_SENSOR*/
-
 #endif /*__BN_ORIENTATION_ABS_SENSOR_H__*/
+
+#endif // ORIENTATION_ABS_SENSOR_ON_BOARD
+
+
