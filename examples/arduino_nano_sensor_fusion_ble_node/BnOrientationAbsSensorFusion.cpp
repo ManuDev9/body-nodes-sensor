@@ -1201,7 +1201,7 @@ void BnOrientationAbsSensor::init(){
 
     s_enabled = true;
     pinMode(STATUS_SENSOR_HMI_LED_P, OUTPUT);
-    BN_NODE_SPECIFIC_BN_ABSO_SENSOR_WRITE_STATUS_PIN_OFF;
+    BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_WRITE_STATUS_PIN_FUNCTION;
     s_statusSensorLED.on = false;
     s_statusSensorLED.lastToggle = millis();
 
@@ -1223,7 +1223,7 @@ void BnOrientationAbsSensor::setStatus(int sensor_status){
     if(sensor_status == SENSOR_STATUS_NOT_ACCESSIBLE) {
         s_sensorInit=false;
         DEBUG_PRINTLN("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
-        BN_NODE_SPECIFIC_BN_ABSO_SENSOR_WRITE_STATUS_PIN_ON;
+        BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_WRITE_STATUS_PIN_FUNCTION;
         s_statusSensorLED.on = true;
         s_statusSensorLED.lastToggle = millis();
     } else if(sensor_status == SENSOR_STATUS_CALIBRATING) {
@@ -1231,14 +1231,14 @@ void BnOrientationAbsSensor::setStatus(int sensor_status){
             s_statusSensorLED.lastToggle = millis();
             s_statusSensorLED.on = !s_statusSensorLED.on;
             if(s_statusSensorLED.on){
-                BN_NODE_SPECIFIC_BN_ABSO_SENSOR_WRITE_STATUS_PIN_ON;
+                BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_WRITE_STATUS_PIN_FUNCTION;
             } else {
-                BN_NODE_SPECIFIC_BN_ABSO_SENSOR_WRITE_STATUS_PIN_OFF;
+                BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_WRITE_STATUS_PIN_FUNCTION;
             }
         }
     } else if(sensor_status == SENSOR_STATUS_WORKING) {
         s_sensorInit=true;
-        BN_NODE_SPECIFIC_BN_ABSO_SENSOR_WRITE_STATUS_PIN_OFF;
+        BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_WRITE_STATUS_PIN_FUNCTION;
         s_statusSensorLED.on = false;
         s_statusSensorLED.lastToggle = millis();
     }

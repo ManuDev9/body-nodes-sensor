@@ -35,8 +35,8 @@
 #ifndef __BN_NODE_SPECIFIC_H
 #define __BN_NODE_SPECIFIC_H
 
-#define BODYNODE_BODYPART_HEX_DEFAULT BODYPART_LOWERARM_RIGHT_HEX
-#define BODYNODE_PLAYER_TAG_DEFAULT  "mario"
+#define BODYNODE_BODYPART_HEX_DEFAULT BODYPART_KATANA_HEX
+#define BODYNODE_PLAYER_TAG_DEFAULT  "1"
 
 #define BLE_COMMUNICATION
 // #define WIFI_COMMUNICATION
@@ -172,7 +172,7 @@
 // on the platform.
 // In order to debug, just take the content and put it directly on the funtion itself
 
-#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_WRITE_STATUS_PIN_FUNCTION analogWrite
+#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_WRITE_STATUS_PIN_FUNCTION 
 
 // Other node specific utility functions that are defined in the same way
 void persMemoryInit();
