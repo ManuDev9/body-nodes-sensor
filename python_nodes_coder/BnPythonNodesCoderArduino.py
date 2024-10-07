@@ -33,23 +33,26 @@ import json
 # Example of JSON Config file:
 #{
 #  "type" : "node",
-#  "board" : "esp-12e",
-#  "node_communicator": "wifi",
+#  "board" : "esp-12e",                 # Possible values: "esp-12e", "arduino_nano_33", "redbear_duo"
+#  "node_communicator": "wifi",         # Possible values: "wifi", "ble"
 #  "sensors": {
 #    "acceleration_rel" : "no",         # Possible values: "no"
-#    "orientation_abs" : "onboard",     # Possible values: "no", "onboard"
+#    "orientation_abs" : "onboard",     # Possible values: "no", "onboard", "sensorfusion"
 #    "glove" : "serial",                # Possible values: "no", "serial", "onboard"
 #    "shoe" : "onboard"                 # Possible values: "no", "onboard"
 #  }
 #}
 
 
-def enable_field_in_file( full_file_path, field ):
+def add_field_in_file( full_file_path, type, field ):
     with open(full_file_path, 'r') as file:
         file_content = file.read()
+        
+    tag = "// "+ type +" //"    
+    
     modified_content = file_content.replace(
-            "// #define "+field,
-            "#define "+field )
+            tag,
+            tag+"\n"+"#define "+field )
     with open(full_file_path, 'w') as file:
         file.write(modified_content)
 
@@ -83,7 +86,10 @@ def main_node(project_path, config_json):
     if config_json["sensors"]["orientation_abs"] == "onboard":
         files_to_take.append(template_node_sensors_folder+"BnOrientationAbsSensor.cpp")
         files_to_take.append(template_node_sensors_folder+"BnOrientationAbsSensor.h")
-
+    elif config_json["sensors"]["orientation_abs"] == "sensorfusion":
+        files_to_take.append(template_node_sensors_folder+"BnOrientationAbsSensorFusion.cpp")
+        files_to_take.append(template_node_sensors_folder+"BnOrientationAbsSensorFusion.h")
+    
     if config_json["sensors"]["glove"] == "serial":
         files_to_take.append(template_node_sensors_folder+"BnGloveSensorReaderSerial.cpp")
         files_to_take.append(template_node_sensors_folder+"BnGloveSensorReaderSerial.h")
@@ -96,7 +102,6 @@ def main_node(project_path, config_json):
         files_to_take.append(template_node_sensors_folder+"BnShoeSensor.cpp")
         files_to_take.append(template_node_sensors_folder+"BnShoeSensor.h")
 
-
     # Common files
     template_common_folder = "../body-nodes-common/cpp/"
     files_to_take.append(template_common_folder+"BnConstants.h")
@@ -106,21 +111,16 @@ def main_node(project_path, config_json):
     if config_json["node_communicator"] == "wifi":
         files_to_take.append(template_node_communicator_folder+"BnWifiNodeCommunicator.cpp")
         files_to_take.append(template_node_communicator_folder+"BnWifiNodeCommunicator.h")
+    elif config_json["node_communicator"] == "ble":
+        files_to_take.append(template_node_communicator_folder+"BnBLENodeCommunicator.cpp")
+        files_to_take.append(template_node_communicator_folder+"BnBLENodeCommunicator.h")
     else:
         print("Invalid 'node_communicator' = "+config_json["node_communicator"])
         return
 
     # Board
-    if config_json["board"] == "esp-12e":
-        template_board_folder = "templates/node_specific/esp-12e/"
-        files_to_take.append(template_board_folder+"BnNodeSpecific.cpp")
-        files_to_take.append(template_board_folder+"BnNodeSpecific.h")
-    elif config_json["board"] == "redbear_duo":
-        template_board_folder = "templates/node_specific/redbear_duo/"
-        files_to_take.append(template_board_folder+"BnNodeSpecific.cpp")
-        files_to_take.append(template_board_folder+"BnNodeSpecific.h")
-    elif config_json["board"] == "custom":
-        template_board_folder = "templates/node_specific/custom/"
+    template_board_folder = "templates/node_specific/"+config_json["board"] +"/"
+    if os.path.exists(template_board_folder) and os.path.isdir(template_board_folder):
         files_to_take.append(template_board_folder+"BnNodeSpecific.cpp")
         files_to_take.append(template_board_folder+"BnNodeSpecific.h")
     else:
@@ -139,22 +139,28 @@ def main_node(project_path, config_json):
 
         if file_name == "BnNodeSpecific.h":
             if config_json["node_communicator"] == "wifi":
-                enable_field_in_file( full_file_path, "WIFI_COMMUNICATION" )
+                add_field_in_file( full_file_path, "COMMUNICATION" ,"WIFI_COMMUNICATION" )
+
+            if config_json["node_communicator"] == "ble":
+                add_field_in_file( full_file_path, "COMMUNICATION", "BLE_COMMUNICATION" )
+
+            if config_json["sensors"]["orientation_abs"] == "sensorfusion":
+                add_field_in_file( full_file_path, "SENSORS", "ORIENTATION_ABS_SENSORFUSION" )
 
             if config_json["sensors"]["orientation_abs"] == "onboard":
-                enable_field_in_file( full_file_path, "ORIENTATION_ABS_SENSOR_ON_BOARD" )
+                add_field_in_file( full_file_path, "SENSORS", "ORIENTATION_ABS_SENSOR_ON_BOARD" )
 
             if config_json["sensors"]["glove"] == "serial":
-                enable_field_in_file( full_file_path, "GLOVE_SENSOR_ON_SERIAL" )
+                add_field_in_file( full_file_path, "SENSORS", "GLOVE_SENSOR_ON_SERIAL" )
 
             if config_json["sensors"]["glove"] == "onboard":
-                enable_field_in_file( full_file_path, "GLOVE_SENSOR_ON_BOARD" )
+                add_field_in_file( full_file_path, "SENSORS", "GLOVE_SENSOR_ON_BOARD" )
 
             if config_json["sensors"]["shoe"] == "onboard":
-                enable_field_in_file( full_file_path, "SHOE_SENSOR_ON_BOARD" )
+                add_field_in_file( full_file_path, "SENSORS", "SHOE_SENSOR_ON_BOARD" )
 
             if config_json["actuators"]["haptic"] == "yes":
-                enable_field_in_file( full_file_path, "HAPTIC_ACTUATOR_ON_BOARD" )
+                add_field_in_file( full_file_path, "ACTUATORS", "HAPTIC_ACTUATOR_ON_BOARD" )
 
 
 

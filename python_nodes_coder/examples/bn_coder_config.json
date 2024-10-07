@@ -1,14 +1,14 @@
 {
     "type" : "node",
-    "board" : "redbear_duo",
-    "node_communicator": "wifi",
+    "board" : "arduino_nano_33",
+    "node_communicator": "ble",
     "actuators": {
-        "haptic": "yes"
+        "haptic": "no"
     },
     "sensors": {
         "acceleration_rel" : "no",
-        "orientation_abs" : "onboard",
-        "glove" : "no",
-        "shoe" : "yes"
+        "orientation_abs" : "no",
+        "glove" : "serial",
+        "shoe" : "no"
     }
 }

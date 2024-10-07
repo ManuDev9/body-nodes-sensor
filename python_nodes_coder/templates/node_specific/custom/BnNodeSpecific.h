@@ -44,16 +44,11 @@ XXXXXX
 #define BODYNODE_BODYPART_HEX_DEFAULT BODYPART_UPPERARM_LEFT_HEX
 #define BODYNODE_PLAYER_TAG_DEFAULT  "mario"
 
-// #define BLE_COMMUNICATION
-// #define WIFI_COMMUNICATION
-// #define BLUETOOTH_COMMUNICATION
+// COMMUNICATION //
 
-// #define GLOVE_SENSOR_ON_SERIAL
-// #define GLOVE_SENSOR_ON_BOARD
-// #define ORIENTATION_ABS_SENSOR_ON_BOARD
-// #define SHOE_SENSOR_ON_BOARD
+// SENSORS //
 
-// #define HAPTIC_ACTUATOR_ON_BOARD
+// ACTUATORS //
 
 // Please remember to define the following as wanted to tag the bodypart on data related to GLOVE and/or SHOE sensors
 #define BODYNODE_BODYPART_GLOVE_TAG BODYPART_HAND_RIGHT_TAG

@@ -54,17 +54,17 @@ int filterDigitalValues[4][FILTER_SIZE];
 void initFilter(){
   // First value will be a -1, indicating that the filter has to be filled up
   for(uint8_t finger = 0; finger < 5; ++finger){
-    filterSensorValues[finger][0] == -1;
+    filterSensorValues[finger][0] = -1;
   }
   for(uint8_t finger = 0; finger < 4; ++finger){
-    filterDigitalValues[finger][0] == -1;
+    filterDigitalValues[finger][0] = -1;
   }
 }
 
 int filterSensorValue(uint8_t finger, int readSensorValue){
   if(filterSensorValues[finger][0] == -1){
     for(uint8_t filter_ix = 0; filter_ix < FILTER_SIZE; ++filter_ix){
-      filterSensorValues[finger][filter_ix] == readSensorValue;
+      filterSensorValues[finger][filter_ix] = readSensorValue;
     }
     return readSensorValue;
   }
@@ -81,7 +81,7 @@ int filterSensorValue(uint8_t finger, int readSensorValue){
 int filterDigitalValue(uint8_t finger, int readSensorValue){
   if(filterDigitalValues[finger][0] == -1){
     for(uint8_t filter_ix = 0; filter_ix < FILTER_SIZE; ++filter_ix){
-      filterDigitalValues[finger][filter_ix] == readSensorValue;
+      filterDigitalValues[finger][filter_ix] = readSensorValue;
     }
     return readSensorValue;
   }
@@ -120,7 +120,8 @@ void setup() {
     sensorValueMax[finger] = -1;
     sensorValueMin[finger] = -1;
   }
-
+  initFilter();
+  
   digitalValue[MIGNOLO] = 0;
   digitalValue[ANULARE] = 0;
   digitalValue[MEDIO] = 0;

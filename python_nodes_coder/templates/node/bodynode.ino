@@ -32,7 +32,7 @@ BnWifiNodeCommunicator mCommunicator;
 #endif // WIFI_COMMUNICATION
 
 #ifdef BLE_COMMUNICATION
-#include "BnBLENodeCommunicator.h"    // TODO
+#include "BnBLENodeCommunicator.h"
 BnBLENodeCommunicator mCommunicator;
 #endif // BLE_COMMUNICATION
 
@@ -48,10 +48,17 @@ float mLastSensorData_OA[4] = {0 ,0 ,0 ,0};
 float mBigDiff_OA[4] = {BIG_QUAT_DIFF ,BIG_QUAT_DIFF ,BIG_QUAT_DIFF ,BIG_QUAT_DIFF};
 #endif // ORIENTATION_ABS_SENSOR_ON_BOARD
 
+#ifdef ORIENTATION_ABS_SENSORFUSION
+#include "BnOrientationAbsSensorFusion.h"
+BnOrientationAbsSensorFusion mOASensor;
+float mLastSensorData_OA[4] = {0 ,0 ,0 ,0};
+float mBigDiff_OA[4] = {BIG_QUAT_DIFF ,BIG_QUAT_DIFF ,BIG_QUAT_DIFF ,BIG_QUAT_DIFF};
+#endif // ORIENTATION_ABS_SENSORFUSION
+
 #ifdef GLOVE_SENSOR_ON_SERIAL
 #include "BnGloveSensorReaderSerial.h"
 String mBodypartGloveName;
-BnGloveSensorReaderSerial mGloveSensorReaderSerial;
+BnGloveSensorReaderSerial mGloveSensor;
 int mLastSensorData_G[9] = {0 ,0 ,0 ,0, 0, 0 ,0 ,0 ,0};
 int mBigDiff_G[9] = {BIG_ANGLE_DIFF ,BIG_ANGLE_DIFF ,BIG_ANGLE_DIFF ,BIG_ANGLE_DIFF, BIG_ANGLE_DIFF, 0, 0, 0, 0};
 #endif // GLOVE_SENSOR_ON_SERIAL
@@ -117,20 +124,20 @@ void setup() {
     mHapticActuator.init();
 #endif // HAPTIC_ACTUATOR_ON_BOARD
 
-#ifdef ORIENTATION_ABS_SENSOR_ON_BOARD
+#ifdef ORIENTATION_ABS_SENSOR_ON_BOARD || ORIENTATION_ABS_SENSORFUSION
     mOASensor.init();
-#endif // ORIENTATION_ABS_SENSOR_ON_BOARD
+#endif // ORIENTATION_ABS_SENSOR_ON_BOARD || ORIENTATION_ABS_SENSORFUSION
 
     mCommunicator.init();
 
-#ifdef GLOVE_SENSOR_ON_SERIAL
-    mGloveSensorReaderSerial.init();
-    mBodypartGloveName = PersMemory::getValue(MEMORY_BODYPART_GLOVE_TAG);
-#endif /*GLOVE_SENSOR_ON_SERIAL*/
+#ifdef GLOVE_SENSOR_ON_SERIAL || GLOVE_SENSOR_ON_BOARD
+    mGloveSensor.init();
+    mBodypartGloveName = BnPersMemory::getValue(MEMORY_BODYPART_GLOVE_TAG);
+#endif /*GLOVE_SENSOR_ON_SERIAL || GLOVE_SENSOR_ON_BOARD*/
 
 #ifdef SHOE_SENSOR_ON_BOARD
     mShoeSensor.init();
-    mBodypartShoeName = PersMemory::getValue(MEMORY_BODYPART_SHOE_TAG);
+    mBodypartShoeName = BnPersMemory::getValue(MEMORY_BODYPART_SHOE_TAG);
 #endif /*SHOE_SENSOR_ON_BOARD*/
 
     mPlayerName = BnPersMemory::getValue(MEMORY_PLAYER_TAG);
@@ -140,7 +147,7 @@ void setup() {
 void loop() {
 
     if(mCommunicator.checkAllOk()){
-#ifdef ORIENTATION_ABS_SENSOR_ON_BOARD
+#ifdef ORIENTATION_ABS_SENSOR_ON_BOARD || ORIENTATION_ABS_SENSORFUSION
         if(!mOASensor.isCalibrated()){
             // You can decide to return
         }
@@ -166,18 +173,18 @@ void loop() {
                 mCommunicator.addMessage(message);
             }
         }
-#endif // ORIENTATION_ABS_SENSOR_ON_BOARD
+#endif // ORIENTATION_ABS_SENSOR_ON_BOARD || ORIENTATION_ABS_SENSORFUSION
 
-#ifdef GLOVE_SENSOR_ON_SERIAL
-        if(mGloveSensorReaderSerial.isEnabled() && mGloveSensorReaderSerial.checkAllOk()) {
+#ifdef GLOVE_SENSOR_ON_SERIAL || GLOVE_SENSOR_ON_BOARD
+        if(mGloveSensor.isEnabled() && mGloveSensor.checkAllOk()) {
             int values[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-            mGloveSensorReaderSerial.getData(values);
+            mGloveSensor.getData(values);
             if(bigChanges(values, mLastSensorData_G, 9, mBigDiff_G)) {
                 StaticJsonDocument<MAX_MESSAGE_BYTES> message_doc;
                 JsonObject message = message_doc.to<JsonObject>();;
                 message["player"] = mPlayerName;
                 message["bodypart"] = mBodypartGloveName;
-                message["sensortype"] = mGloveSensorReaderSerial.getType();
+                message["sensortype"] = mGloveSensor.getType();
                 for(uint8_t count=0; count<9;++count){
                     message["value"].add(values[count]);
                     mLastSensorData_G[count] = values[count];
@@ -185,7 +192,7 @@ void loop() {
                 mCommunicator.addMessage(message);
             }
         }
-#endif /*GLOVE_SENSOR_ON_SERIAL*/
+#endif /*GLOVE_SENSOR_ON_SERIAL || GLOVE_SENSOR_ON_BOARD */
 
 #ifdef SHOE_SENSOR_ON_BOARD
         if(mShoeSensor.isEnabled() && mShoeSensor.checkAllOk()) {
@@ -231,13 +238,13 @@ void loop() {
                 if(actionSensorType == SENSORTYPE_ORIENTATION_ABS_TAG) {
                     //DEBUG_PRINT("Setting enabled = ");
                     //DEBUG_PRINTLN(action[ACTION_ENABLESENSOR_ENABLE_TAG].as<bool>());
-#ifdef ORIENTATION_ABS_SENSOR_ON_BOARD
+#ifdef ORIENTATION_ABS_SENSOR_ON_BOARD || ORIENTATION_ABS_SENSORFUSION
                     mOASensor.setEnable(action[ACTION_ENABLESENSOR_ENABLE_TAG].as<bool>());
-#endif /*ORIENTATION_ABS_SENSOR_ON_BOARD*/
+#endif /*ORIENTATION_ABS_SENSOR_ON_BOARD || ORIENTATION_ABS_SENSORFUSION*/
                 } else if(actionSensorType == SENSORTYPE_GLOVE_TAG) {
-#ifdef GLOVE_SENSOR_ON_SERIAL
-                    mGloveSensorReaderSerial.setEnable(action[ACTION_ENABLESENSOR_ENABLE_TAG].as<bool>());
-#endif /*GLOVE_SENSOR_ON_SERIAL*/
+#ifdef GLOVE_SENSOR_ON_SERIAL || GLOVE_SENSOR_ON_BOARD 
+                    mGloveSensor.setEnable(action[ACTION_ENABLESENSOR_ENABLE_TAG].as<bool>());
+#endif /*GLOVE_SENSOR_ON_SERIAL || GLOVE_SENSOR_ON_BOARD */
                 } else if(actionSensorType == SENSORTYPE_SHOE_TAG) {
 #ifdef SHOE_SENSOR_ON_BOARD
                     mShoeSensor.setEnable(action[ACTION_ENABLESENSOR_ENABLE_TAG].as<bool>());
@@ -250,8 +257,10 @@ void loop() {
                 mBodypartName = action[ACTION_SETBODYPART_NEWBODYPART_TAG].as<String>();
                 BnPersMemory::setValue(MEMORY_BODYPART_TAG, mBodypartName);
             } else if(actionType == ACTION_TYPE_SETWIFI_TAG) {
+#ifdef WIFI_COMMUNICATION
                 mCommunicator.setConnectionParams(action);
                 mCommunicator.init();
+#endif // WIFI_COMMUNICATION
             }
         }
     }
