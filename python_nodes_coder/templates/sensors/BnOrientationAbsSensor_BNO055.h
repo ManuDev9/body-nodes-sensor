@@ -26,6 +26,9 @@
 
 #ifdef ORIENTATION_ABS_SENSOR_ON_BOARD
 
+#ifndef __BN_ORIENTATION_ABS_SENSOR_BNO055_H__
+#define __BN_ORIENTATION_ABS_SENSOR_BNO055_H__
+
 // The Adafruit libraries are available for all boards
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
@@ -33,9 +36,6 @@
 
 #include "BnDatatypes.h"
 #include "BnArduinoUtils.h"
-
-#ifndef __BN_ORIENTATION_ABS_SENSOR_H__
-#define __BN_ORIENTATION_ABS_SENSOR_H__
 
 class BnOrientationAbsSensor {
 public:
@@ -63,7 +63,7 @@ private:
     float s_values[4];
 
 };
-#endif /*__BN_ORIENTATION_ABS_SENSOR_H__*/
+#endif /*__BN_ORIENTATION_ABS_SENSOR_BNO055_H__*/
 
 #endif // ORIENTATION_ABS_SENSOR_ON_BOARD
 

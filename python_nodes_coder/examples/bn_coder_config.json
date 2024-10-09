@@ -1,14 +1,14 @@
 {
     "type" : "node",
-    "board" : "arduino_nano_33",
+    "board" : "mpnrf52840",
     "node_communicator": "ble",
     "actuators": {
         "haptic": "no"
     },
     "sensors": {
         "acceleration_rel" : "no",
-        "orientation_abs" : "no",
-        "glove" : "serial",
+        "orientation_abs" : "mpu6050_sf",
+        "glove" : "no",
         "shoe" : "no"
     }
 }

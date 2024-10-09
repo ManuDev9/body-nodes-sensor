@@ -22,9 +22,9 @@
 * SOFTWARE.
 */
 
-#include "BnOrientationAbsSensor.h"
+#include "BnOrientationAbsSensor_BNO055.h"
 
-#ifdef __BN_ORIENTATION_ABS_SENSOR_H__
+#ifdef __BN_ORIENTATION_ABS_SENSOR_BNO055_H__
 
 void BnOrientationAbsSensor::init(){
     s_enabled = true;
@@ -225,4 +225,4 @@ void BnOrientationAbsSensor::realignAxis(float values[], float revalues[]){
     revalues[3] = MUL_AXIS_Z * revalues[3];
 }
 
-#endif /*__BN_ORIENTATION_ABS_SENSOR_H__*/
+#endif /*__BN_ORIENTATION_ABS_SENSOR_BNO055_H__*/

@@ -58,9 +58,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "BnOrientationAbsSensorFusion.h"
+#include "BnOrientationAbsSensorFusion_MPU6050.h"
 
-#ifdef BN_ORIENTATION_ABS_SENSOR_FUSION_H
+#ifdef BN_ORIENTATION_ABS_SENSOR_FUSION_MPU6050_H
 
 #include <time.h>
 #include <cmath>
@@ -1195,8 +1195,8 @@ void BnSensorFusionMadgwickAHRS::getQuaternion(BnQuaternion &out) {
 
 ///////////////// BnOrientationAbsSensor START
 
-// You need to install the Arduino_LSM9DS1 package from Tools->Manage Libraries...
-#include <Arduino_LSM9DS1.h>
+// You need to install the Adafruit_MPU6050 package from Tools->Manage Libraries...
+#include "Adafruit_MPU6050.h"
 
 const uint32_t samplePeriod_ms = SENSOR_READ_INTERVAL_MS;
 const float gain = 0.8;
@@ -1204,9 +1204,14 @@ const float rescaleGyro = 0.02;
 const float signs_vals[] = {1.0, -1.0, 1.0};
 const BnVector axisSigns(3, signs_vals );
 
-BnOrientationAbsSensorFusion::BnOrientationAbsSensorFusion() : s_sensorfusion( samplePeriod_ms, gain, rescaleGyro, axisSigns ) { }
+BnOrientationAbsSensor::BnOrientationAbsSensor() : s_sensorfusion( samplePeriod_ms, gain, rescaleGyro, axisSigns ) { }
 
-void BnOrientationAbsSensorFusion::init(){
+// Note: You need to set the appropriate SDA and SCL pins on the BnNodeSpecific.h file (or anywhere is your project, but there is better)
+static TwoWire sMPU6050Wire(NRF_TWIM0, NRF_TWIS0, SPIM0_SPIS0_TWIM0_TWIS0_SPI0_TWI0_IRQn, MPU6050_PIN_SDA, MPU6050_PIN_SCL);
+static Adafruit_MPU6050 sMPU;
+
+
+void BnOrientationAbsSensor::init(){
 
     s_enabled = true;
     pinMode(STATUS_SENSOR_HMI_LED_P, OUTPUT);
@@ -1219,7 +1224,8 @@ void BnOrientationAbsSensorFusion::init(){
     s_lastReadSensorTime=millis();
     s_sensorReconnectionTime=millis();
     /* Initialise the sensor */
-    if(IMU.begin()) {
+    sMPU6050Wire.begin();
+    if (sMPU.begin(MPU6050_I2CADDR_DEFAULT, &sMPU6050Wire)) {
         setStatus(SENSOR_STATUS_WORKING);
     } else {
         setStatus(SENSOR_STATUS_NOT_ACCESSIBLE);
@@ -1228,10 +1234,10 @@ void BnOrientationAbsSensorFusion::init(){
     s_sensorfusion.init(initialQuat);
 }
 
-void BnOrientationAbsSensorFusion::setStatus(int sensor_status){
+void BnOrientationAbsSensor::setStatus(int sensor_status){
     if(sensor_status == SENSOR_STATUS_NOT_ACCESSIBLE) {
         s_sensorInit=false;
-        DEBUG_PRINTLN("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
+        DEBUG_PRINTLN("Ooops, no MPU6050 detected ... Check your board!");
         BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_WRITE_STATUS_PIN_FUNCTION;
         s_statusSensorLED.on = true;
         s_statusSensorLED.lastToggle = millis();
@@ -1253,14 +1259,15 @@ void BnOrientationAbsSensorFusion::setStatus(int sensor_status){
     }
 }
 
-bool BnOrientationAbsSensorFusion::checkAllOk(){
+bool BnOrientationAbsSensor::checkAllOk(){
     if(!s_sensorInit){
         if(millis()-s_sensorReconnectionTime<5000){
             return false;
         }
         DEBUG_PRINTLN("Sensor not connected");
         s_sensorReconnectionTime=millis();
-        if(IMU.begin()) {
+        sMPU6050Wire.begin();
+        if (sMPU.begin(MPU6050_I2CADDR_DEFAULT, &sMPU6050Wire)) {
             setStatus(SENSOR_STATUS_WORKING);
             return true;
         } else {
@@ -1272,31 +1279,23 @@ bool BnOrientationAbsSensorFusion::checkAllOk(){
         return false;
     }
 
-    if (!IMU.gyroscopeAvailable() || !IMU.accelerationAvailable() || !IMU.magneticFieldAvailable() ) {
-        return false;
-    }
+    sensors_event_t a, g, temp;
+    sMPU.getAccelerometerSensor()->getEvent(&a);    // outputs m/s^2
+    sMPU.getGyroSensor()->getEvent(&g);             // outputs in rad/s
 
-    float accx;
-    float accy;
-    float accz;
-    float magnx;
-    float magny;
-    float magnz;
-    float gyrox;
-    float gyroy;
-    float gyroz;
-
-    IMU.readAcceleration(accx, accy, accz); // outputs in g, convert to m/s^2
-    IMU.readMagneticField(magnx, magny, magnz);  // outputs in uT
-    IMU.readGyroscope(gyrox, gyroy, gyroz);  // outputs in dps, covert it to rad/s
+    float accx = a.acceleration.x;
+    float accy = a.acceleration.y;
+    float accz = a.acceleration.z;
+    float gyrox = g.gyro.x;
+    float gyroy = g.gyro.y;
+    float gyroz = g.gyro.z;
 
     const float accel1_vals[] = { accx, accy, accz };
-    const float magn1_vals[] = { magnx, magny, magnz};
     const float gyro1_vals[] = { gyrox, gyroy, gyroz};
 
     const BnVector accel1_vec(3, accel1_vals );
-    const BnVector magn1_vec(3, magn1_vals );
     const BnVector gyro1_vec(3, gyro1_vals );    
+    // The MPU6050 doesn't have a magnetometer
     //s_sensorfusion.updateMAGR(gyro1_vec, accel1_vec, magn1_vec, millis());
     s_sensorfusion.updateIMU(gyro1_vec, accel1_vec, millis());
 
@@ -1315,12 +1314,12 @@ bool BnOrientationAbsSensorFusion::checkAllOk(){
     return true;
 }
 
-bool BnOrientationAbsSensorFusion::isCalibrated(){
+bool BnOrientationAbsSensor::isCalibrated(){
     setStatus(SENSOR_STATUS_WORKING);
     return true;
 }
 
-BnSensorData BnOrientationAbsSensorFusion::getData(){
+BnSensorData BnOrientationAbsSensor::getData(){
   s_lastReadSensorTime=millis();
   /*
   DEBUG_PRINT("values = ");
@@ -1337,19 +1336,19 @@ BnSensorData BnOrientationAbsSensorFusion::getData(){
   return sensorData;
 }
 
-BnType BnOrientationAbsSensorFusion::getType(){
+BnType BnOrientationAbsSensor::getType(){
     return SENSORTYPE_ORIENTATION_ABS_TAG;
 }
 
-void BnOrientationAbsSensorFusion::setEnable(bool enable_status){
+void BnOrientationAbsSensor::setEnable(bool enable_status){
     s_enabled = enable_status;
 }
 
-bool BnOrientationAbsSensorFusion::isEnabled(){
+bool BnOrientationAbsSensor::isEnabled(){
     return s_enabled;
 }
 
-void BnOrientationAbsSensorFusion::realignAxis(float values[], float revalues[]){
+void BnOrientationAbsSensor::realignAxis(float values[], float revalues[]){
 
   // Axis W
   #if OUT_AXIS_W == SENSOR_AXIS_W
@@ -1403,5 +1402,5 @@ void BnOrientationAbsSensorFusion::realignAxis(float values[], float revalues[])
 
 ///////////////// BnOrientationAbsSensor END
 
-#endif // BN_ORIENTATION_ABS_SENSOR_FUSION_H
+#endif // BN_ORIENTATION_ABS_SENSOR_FUSION_MPU6050_H
 

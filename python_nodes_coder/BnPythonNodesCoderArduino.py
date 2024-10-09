@@ -33,11 +33,11 @@ import json
 # Example of JSON Config file:
 #{
 #  "type" : "node",
-#  "board" : "esp-12e",                 # Possible values: "esp-12e", "arduino_nano_33", "redbear_duo"
+#  "board" : "esp-12e",                 # Possible values: "esp-12e", "arduino_nano_33", "redbear_duo", "mpnrf52840"
 #  "node_communicator": "wifi",         # Possible values: "wifi", "ble"
 #  "sensors": {
 #    "acceleration_rel" : "no",         # Possible values: "no"
-#    "orientation_abs" : "onboard",     # Possible values: "no", "onboard", "sensorfusion"
+#    "orientation_abs" : "bno055",      # Possible values: "no", "bno055", "arduino_lsm9ds1_sf", "mpu6050"
 #    "glove" : "serial",                # Possible values: "no", "serial", "onboard"
 #    "shoe" : "onboard"                 # Possible values: "no", "onboard"
 #  }
@@ -56,11 +56,25 @@ def add_field_in_file( full_file_path, type, field ):
     with open(full_file_path, 'w') as file:
         file.write(modified_content)
 
+def add_include_in_file( full_file_path, type, field ):
+    with open(full_file_path, 'r') as file:
+        file_content = file.read()
+        
+    tag = "// "+ type +" //"    
+    
+    modified_content = file_content.replace(
+            tag,
+            tag+"\n"+"#include \""+field +"\"" )
+    with open(full_file_path, 'w') as file:
+        file.write(modified_content)
+
+
 def main_node(project_path, config_json):
 
     files_to_take = []
 
-    if project_path.endswith('/'):
+    project_path = os.path.normpath(project_path) 
+    if project_path.endswith(os.path.sep):  # os.path.sep is '/' on Unix and '\' on Windows
         project_path = project_path[:-1]
 
     # Type files
@@ -83,12 +97,19 @@ def main_node(project_path, config_json):
 
     # Sensors files
     template_node_sensors_folder = "templates/sensors/"
-    if config_json["sensors"]["orientation_abs"] == "onboard":
-        files_to_take.append(template_node_sensors_folder+"BnOrientationAbsSensor.cpp")
-        files_to_take.append(template_node_sensors_folder+"BnOrientationAbsSensor.h")
-    elif config_json["sensors"]["orientation_abs"] == "sensorfusion":
-        files_to_take.append(template_node_sensors_folder+"BnOrientationAbsSensorFusion.cpp")
-        files_to_take.append(template_node_sensors_folder+"BnOrientationAbsSensorFusion.h")
+    orientation_abs_sensor_header = None
+    if config_json["sensors"]["orientation_abs"] == "bno055":
+        files_to_take.append(template_node_sensors_folder+"BnOrientationAbsSensor_BNO055.cpp")
+        files_to_take.append(template_node_sensors_folder+"BnOrientationAbsSensor_BNO055.h")
+        orientation_abs_sensor_header = "BnOrientationAbsSensor_BNO055.h"
+    elif config_json["sensors"]["orientation_abs"] == "arduino_lsm9ds1_sf":
+        files_to_take.append(template_node_sensors_folder+"BnOrientationAbsSensorFusion_ArduinoLSM9DS1.cpp")
+        files_to_take.append(template_node_sensors_folder+"BnOrientationAbsSensorFusion_ArduinoLSM9DS1.h")
+        orientation_abs_sensor_header = "BnOrientationAbsSensorFusion_ArduinoLSM9DS1.h"
+    elif config_json["sensors"]["orientation_abs"] == "mpu6050_sf":
+        files_to_take.append(template_node_sensors_folder+"BnOrientationAbsSensorFusion_MPU6050.cpp")
+        files_to_take.append(template_node_sensors_folder+"BnOrientationAbsSensorFusion_MPU6050.h")
+        orientation_abs_sensor_header = "BnOrientationAbsSensorFusion_MPU6050.h"
     
     if config_json["sensors"]["glove"] == "serial":
         files_to_take.append(template_node_sensors_folder+"BnGloveSensorReaderSerial.cpp")
@@ -134,7 +155,7 @@ def main_node(project_path, config_json):
             file_name = os.path.basename(project_path)+".ino"
             is_bodynodeino = True
 
-        full_file_path = project_path+"/"+file_name
+        full_file_path = os.path.join(project_path, file_name)
         shutil.copy( file_to_take, full_file_path )
 
         if file_name == "BnNodeSpecific.h":
@@ -144,11 +165,8 @@ def main_node(project_path, config_json):
             if config_json["node_communicator"] == "ble":
                 add_field_in_file( full_file_path, "COMMUNICATION", "BLE_COMMUNICATION" )
 
-            if config_json["sensors"]["orientation_abs"] == "sensorfusion":
-                add_field_in_file( full_file_path, "SENSORS", "ORIENTATION_ABS_SENSORFUSION" )
-
-            if config_json["sensors"]["orientation_abs"] == "onboard":
-                add_field_in_file( full_file_path, "SENSORS", "ORIENTATION_ABS_SENSOR_ON_BOARD" )
+            if config_json["sensors"]["orientation_abs"] != "no":
+                add_field_in_file( full_file_path, "SENSORS", "ORIENTATION_ABS_SENSOR" )
 
             if config_json["sensors"]["glove"] == "serial":
                 add_field_in_file( full_file_path, "SENSORS", "GLOVE_SENSOR_ON_SERIAL" )
@@ -162,6 +180,10 @@ def main_node(project_path, config_json):
             if config_json["actuators"]["haptic"] == "yes":
                 add_field_in_file( full_file_path, "ACTUATORS", "HAPTIC_ACTUATOR_ON_BOARD" )
 
+        if is_bodynodeino:
+            if orientation_abs_sensor_header != None:
+                add_include_in_file( full_file_path, "ORIENTATION_ABS_SENSOR_HEADER", orientation_abs_sensor_header )
+            
 
 
 def main(project_path):

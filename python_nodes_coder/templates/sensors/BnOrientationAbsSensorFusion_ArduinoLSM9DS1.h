@@ -24,10 +24,10 @@
 
 #include "BnNodeSpecific.h"
 
-#ifdef ORIENTATION_ABS_SENSORFUSION
+#ifdef ORIENTATION_ABS_SENSOR
 
-#ifndef BN_ORIENTATION_ABS_SENSOR_FUSION_H
-#define BN_ORIENTATION_ABS_SENSOR_FUSION_H
+#ifndef BN_ORIENTATION_ABS_SENSOR_FUSION_ARDUINO_LSM9DS1_H
+#define BN_ORIENTATION_ABS_SENSOR_FUSION_ARDUINO_LSM9DS1_H
 
 #include "BnDatatypes.h"
 #include "stdio.h"
@@ -229,10 +229,10 @@ private:
 };
 
 
-class BnOrientationAbsSensorFusion {
+class BnOrientationAbsSensor {
 public:
 
-  BnOrientationAbsSensorFusion();
+  BnOrientationAbsSensor();
   void init();
   bool checkAllOk();
   bool isCalibrated();
@@ -255,6 +255,6 @@ private:
 
 };
 
-#endif // BN_ORIENTATION_ABS_SENSOR_FUSION_H
+#endif // BN_ORIENTATION_ABS_SENSOR_FUSION_ARDUINO_LSM9DS1_H
 
-#endif // ORIENTATION_ABS_SENSORFUSION
+#endif // ORIENTATION_ABS_SENSOR

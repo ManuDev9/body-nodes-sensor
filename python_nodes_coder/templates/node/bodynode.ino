@@ -41,19 +41,14 @@ BnBLENodeCommunicator mCommunicator;
 BnBluetoothNodeCommunicator mCommunicator;
 #endif // BLUETOOTH_COMMUNICATION
 
-#ifdef ORIENTATION_ABS_SENSOR_ON_BOARD
-#include "BnOrientationAbsSensor.h"
+#ifdef ORIENTATION_ABS_SENSOR
+
+// ORIENTATION_ABS_SENSOR_HEADER //
 BnOrientationAbsSensor mOASensor;
 float mLastSensorData_OA[4] = {0 ,0 ,0 ,0};
 float mBigDiff_OA[4] = {BIG_QUAT_DIFF ,BIG_QUAT_DIFF ,BIG_QUAT_DIFF ,BIG_QUAT_DIFF};
-#endif // ORIENTATION_ABS_SENSOR_ON_BOARD
 
-#ifdef ORIENTATION_ABS_SENSORFUSION
-#include "BnOrientationAbsSensorFusion.h"
-BnOrientationAbsSensorFusion mOASensor;
-float mLastSensorData_OA[4] = {0 ,0 ,0 ,0};
-float mBigDiff_OA[4] = {BIG_QUAT_DIFF ,BIG_QUAT_DIFF ,BIG_QUAT_DIFF ,BIG_QUAT_DIFF};
-#endif // ORIENTATION_ABS_SENSORFUSION
+#endif // ORIENTATION_ABS_SENSOR
 
 #ifdef GLOVE_SENSOR_ON_SERIAL
 #include "BnGloveSensorReaderSerial.h"
@@ -124,13 +119,13 @@ void setup() {
     mHapticActuator.init();
 #endif // HAPTIC_ACTUATOR_ON_BOARD
 
-#ifdef ORIENTATION_ABS_SENSOR_ON_BOARD || ORIENTATION_ABS_SENSORFUSION
+#ifdef ORIENTATION_ABS_SENSOR
     mOASensor.init();
-#endif // ORIENTATION_ABS_SENSOR_ON_BOARD || ORIENTATION_ABS_SENSORFUSION
+#endif // ORIENTATION_ABS_SENSOR
 
     mCommunicator.init();
 
-#ifdef GLOVE_SENSOR_ON_SERIAL || GLOVE_SENSOR_ON_BOARD
+#if defined(GLOVE_SENSOR_ON_SERIAL) || defined(GLOVE_SENSOR_ON_BOARD)
     mGloveSensor.init();
     mBodypartGloveName = BnPersMemory::getValue(MEMORY_BODYPART_GLOVE_TAG);
 #endif /*GLOVE_SENSOR_ON_SERIAL || GLOVE_SENSOR_ON_BOARD*/
@@ -147,7 +142,7 @@ void setup() {
 void loop() {
 
     if(mCommunicator.checkAllOk()){
-#ifdef ORIENTATION_ABS_SENSOR_ON_BOARD || ORIENTATION_ABS_SENSORFUSION
+#ifdef ORIENTATION_ABS_SENSOR
         if(!mOASensor.isCalibrated()){
             // You can decide to return
         }
@@ -173,9 +168,9 @@ void loop() {
                 mCommunicator.addMessage(message);
             }
         }
-#endif // ORIENTATION_ABS_SENSOR_ON_BOARD || ORIENTATION_ABS_SENSORFUSION
+#endif // ORIENTATION_ABS_SENSOR
 
-#ifdef GLOVE_SENSOR_ON_SERIAL || GLOVE_SENSOR_ON_BOARD
+#if defined(GLOVE_SENSOR_ON_SERIAL) || defined(GLOVE_SENSOR_ON_BOARD)
         if(mGloveSensor.isEnabled() && mGloveSensor.checkAllOk()) {
             int values[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
             mGloveSensor.getData(values);
@@ -238,11 +233,11 @@ void loop() {
                 if(actionSensorType == SENSORTYPE_ORIENTATION_ABS_TAG) {
                     //DEBUG_PRINT("Setting enabled = ");
                     //DEBUG_PRINTLN(action[ACTION_ENABLESENSOR_ENABLE_TAG].as<bool>());
-#ifdef ORIENTATION_ABS_SENSOR_ON_BOARD || ORIENTATION_ABS_SENSORFUSION
+#ifdef ORIENTATION_ABS_SENSOR
                     mOASensor.setEnable(action[ACTION_ENABLESENSOR_ENABLE_TAG].as<bool>());
-#endif /*ORIENTATION_ABS_SENSOR_ON_BOARD || ORIENTATION_ABS_SENSORFUSION*/
+#endif /*ORIENTATION_ABS_SENSOR*/
                 } else if(actionSensorType == SENSORTYPE_GLOVE_TAG) {
-#ifdef GLOVE_SENSOR_ON_SERIAL || GLOVE_SENSOR_ON_BOARD 
+#if defined(GLOVE_SENSOR_ON_SERIAL) || defined(GLOVE_SENSOR_ON_BOARD) 
                     mGloveSensor.setEnable(action[ACTION_ENABLESENSOR_ENABLE_TAG].as<bool>());
 #endif /*GLOVE_SENSOR_ON_SERIAL || GLOVE_SENSOR_ON_BOARD */
                 } else if(actionSensorType == SENSORTYPE_SHOE_TAG) {
