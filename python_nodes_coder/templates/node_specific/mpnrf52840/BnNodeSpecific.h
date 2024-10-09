@@ -78,10 +78,9 @@
 // PINS
 #define BUZZER_FREQ 1000 //Specified in Hz
 #define LED_DT_ON 30 // Duty cicle of LED ON
-#define STATUS_SENSOR_HMI_LED_P 2
-#define STATUS_CONNECTION_HMI_LED_P 0
-#define STATUS_CONNECTION_HMI_LED_M 0  // this is a trick that just works
-#define HAPTIC_MOTOR_PIN_P 14
+#define STATUS_SENSOR_HMI_LED_P 47   // P1.15 (32+15) from variant.cpp
+#define STATUS_CONNECTION_HMI_LED_P 20  // P0.20 from variant.cpp
+#define HAPTIC_MOTOR_PIN_P 32     // P1.00 from variant.cpp
 
 #define MAX_BUFF_LENGTH 100
 
@@ -159,7 +158,6 @@
 // on the platform.
 // In order to debug, just take the content and put it directly on the funtion itself
 
-#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_WRITE_STATUS_PIN_FUNCTION 
 
 // Other node specific utility functions that are defined in the same way
 void persMemoryInit();
@@ -169,6 +167,13 @@ void persMemoryWrite(uint16_t address_, uint8_t in_byte );
 void BnHapticActuator_init();
 void BnHapticActuator_turnON(uint8_t strength);
 void BnHapticActuator_turnOFF();
+
+void rawPinMode( uint32_t rawPin, uint32_t ulVal );
+void rawDigitalWrite( uint32_t rawPin, uint32_t ulVal );
+
+#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_SETUP do{ rawPinMode(STATUS_SENSOR_HMI_LED_P, OUTPUT); }while(0)
+#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_ON do{ rawDigitalWrite(STATUS_SENSOR_HMI_LED_P, LED_DT_ON); }while(0)
+#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_OFF do{ rawDigitalWrite(STATUS_SENSOR_HMI_LED_P, 0); }while(0)
 
 typedef union
 {
@@ -184,8 +189,9 @@ typedef union
 
 #ifdef BLE_COMMUNICATION
 
-#define BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_ACTUATOR_ACT_PIN_ON do{ digitalWrite(STATUS_CONNECTION_HMI_LED_P, LED_DT_ON); }while(0)
-#define BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_ACTUATOR_ACT_PIN_OFF do{ digitalWrite(STATUS_CONNECTION_HMI_LED_P, 0); }while(0)
+#define BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_HMI_SETUP do{ rawPinMode(STATUS_CONNECTION_HMI_LED_P, OUTPUT); }while(0)
+#define BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_HMI_LED_ON do{ rawDigitalWrite(STATUS_CONNECTION_HMI_LED_P, LED_DT_ON); }while(0)
+#define BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_HMI_LED_OFF do{ rawDigitalWrite(STATUS_CONNECTION_HMI_LED_P, 0); }while(0)
 
 void BnBLENodeCommunicator_init();
 uint8_t BnBLENodeCommunicator_checkAllOk( uint8_t current_conn_status );

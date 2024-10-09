@@ -34,6 +34,9 @@ void BnBLENodeCommunicator::init(){
     bnc_connection_data.last_sent_time = 0;
 
     bnc_messages_list = bnc_messages_doc.to<JsonArray>();
+
+    BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_HMI_SETUP;
+    BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_HMI_LED_OFF;
     BnBLENodeCommunicator_init();
 }
 
@@ -74,7 +77,7 @@ void BnBLENodeCommunicator::getActions(JsonArray &actions){
 
 void BnBLENodeCommunicator::checkStatus(){
     if(bnc_connection_data.isDisconnected()){
-        BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_ACTUATOR_ACT_PIN_OFF;
+        BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_HMI_LED_OFF;
         bnc_status_LED.on = false;
         bnc_status_LED.lastToggle = millis();
     } else if(bnc_connection_data.isWaitingACK()) {
@@ -82,13 +85,13 @@ void BnBLENodeCommunicator::checkStatus(){
           bnc_status_LED.lastToggle = millis();
           bnc_status_LED.on = !bnc_status_LED.on;
           if(bnc_status_LED.on){
-              BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_ACTUATOR_ACT_PIN_ON;
+              BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_HMI_LED_ON;
           } else {
-              BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_ACTUATOR_ACT_PIN_OFF;
+              BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_HMI_LED_OFF;
           }
         }
     } else {
-        BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_ACTUATOR_ACT_PIN_ON;
+        BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_HMI_LED_ON;
         bnc_status_LED.on = true;
         bnc_status_LED.lastToggle = millis();
     }

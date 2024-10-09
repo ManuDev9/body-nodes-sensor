@@ -36,7 +36,7 @@
 #define __BN_NODE_SPECIFIC_H
 
 #define BODYNODE_BODYPART_HEX_DEFAULT BODYPART_LOWERLEG_RIGHT_HEX
-#define BODYNODE_PLAYER_TAG_DEFAULT  "mario"
+#define BODYNODE_PLAYER_TAG_DEFAULT  "1"
 
 // COMMUNICATION //
 
@@ -168,6 +168,10 @@ void BnHapticActuator_init();
 void BnHapticActuator_turnON(uint8_t strength);
 void BnHapticActuator_turnOFF();
 
+#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_SETUP do{ pinMode(STATUS_SENSOR_HMI_LED_P, OUTPUT); }while(0)
+#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_ON do{ digitalWrite(STATUS_SENSOR_HMI_LED_P, LED_DT_ON); }while(0)
+#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_OFF do{ digitalWrite(STATUS_SENSOR_HMI_LED_P, 0); }while(0)
+
 typedef union
 {
     float number;
@@ -182,6 +186,10 @@ typedef union
 
 #ifdef BLE_COMMUNICATION
 
+#define BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_HMI_SETUP do{ pinMode(STATUS_CONNECTION_HMI_LED_P, OUTPUT); }while(0)
+#define BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_HMI_LED_ON do{ digitalWrite(STATUS_CONNECTION_HMI_LED_P, LED_DT_ON); }while(0)
+#define BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_HMI_LED_OFF do{ digitalWrite(STATUS_CONNECTION_HMI_LED_P, 0); }while(0)
+
 void BnBLENodeCommunicator_init();
 uint8_t BnBLENodeCommunicator_checkAllOk( uint8_t current_conn_status );
 void BnBLENodeCommunicator_sendAllMessages(JsonArray &bnc_messages_list);
@@ -190,12 +198,15 @@ void BnBLENodeCommunicator_sendAllMessages(JsonArray &bnc_messages_list);
 
 #ifdef WIFI_COMMUNICATION
 
+#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_HMI_SETUP do{ pinMode(STATUS_CONNECTION_HMI_LED_P, OUTPUT); }while(0)
+#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_HMI_LED_ON do{ digitalWrite(STATUS_CONNECTION_HMI_LED_P, LED_DT_ON); }while(0)
+#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_HMI_LED_OFF do{ digitalWrite(STATUS_CONNECTION_HMI_LED_P, 0); }while(0)
+
 bool tryConnectWifi(String ssid, String password);
 void printWifiStatus();
 IPAddress getIPAdressFromStr(String ip_address_str);
 
 #define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_INIT_WIFI WiFi.disconnect();
-#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_WRITE_STATUS_PIN_FUNCTION digitalWrite
 #define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_UDP_OBJ UDP
 #define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_BEGIN_MULTICAST \
       wnc_multicast_connector.begin(BODYNODES_MULTICAST_PORT);     \

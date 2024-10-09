@@ -159,14 +159,20 @@ XXXXXX
 // on the platform.
 // In order to debug, just take the content and put it directly on the funtion itself
 
-#define BN_NODE_SPECIFIC_BN_ACTUATOR_ACT_PIN_FUNCTION                         XXXXX
-#define BN_NODE_SPECIFIC_BN_SENSOR_WRITE_STATUS_PIN_FUNCTION                  XXXXX
 
 // Other node specific utility functions that are defined in the same way
 void persMemoryInit();
 void persMemoryCommit();
 void persMemoryRead(uint16_t address_, uint8_t *out_byte );
 void persMemoryWrite(uint16_t address_, uint8_t in_byte );
+
+void BnHapticActuator_init();
+void BnHapticActuator_turnON(uint8_t strength);
+void BnHapticActuator_turnOFF();
+
+#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_SETUP do{ pinMode(STATUS_SENSOR_HMI_LED_P, OUTPUT); }while(0)
+#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_ON do{ digitalWrite(STATUS_SENSOR_HMI_LED_P, LED_DT_ON); }while(0)
+#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_OFF do{ digitalWrite(STATUS_SENSOR_HMI_LED_P, 0); }while(0)
 
 typedef union
 {
@@ -182,6 +188,10 @@ typedef union
 
 #ifdef BLE_COMMUNICATION
 
+#define BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_HMI_SETUP do{ pinMode(STATUS_CONNECTION_HMI_LED_P, OUTPUT); }while(0)
+#define BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_HMI_LED_ON do{ digitalWrite(STATUS_CONNECTION_HMI_LED_P, LED_DT_ON); }while(0)
+#define BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_HMI_LED_OFF do{ digitalWrite(STATUS_CONNECTION_HMI_LED_P, 0); }while(0)
+
 void BnBLENodeCommunicator_init();
 uint8_t BnBLENodeCommunicator_checkAllOk( uint8_t current_conn_status );
 void BnBLENodeCommunicator_sendAllMessages(JsonArray &bnc_messages_list);
@@ -189,6 +199,10 @@ void BnBLENodeCommunicator_sendAllMessages(JsonArray &bnc_messages_list);
 #endif // BLE_COMMUNICATION
 
 #ifdef WIFI_COMMUNICATION
+
+#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_HMI_SETUP do{ pinMode(STATUS_CONNECTION_HMI_LED_P, OUTPUT); }while(0)
+#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_HMI_LED_ON do{ digitalWrite(STATUS_CONNECTION_HMI_LED_P, LED_DT_ON); }while(0)
+#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_HMI_LED_OFF do{ digitalWrite(STATUS_CONNECTION_HMI_LED_P, 0); }while(0)
 
 bool tryConnectWifi(String ssid, String password);
 void printWifiStatus();

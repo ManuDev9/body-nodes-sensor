@@ -1209,8 +1209,8 @@ BnOrientationAbsSensor::BnOrientationAbsSensorFusion() : s_sensorfusion( sampleP
 void BnOrientationAbsSensor::init(){
 
     s_enabled = true;
-    pinMode(STATUS_SENSOR_HMI_LED_P, OUTPUT);
-    BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_WRITE_STATUS_PIN_FUNCTION;
+    BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_SETUP;
+    BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_ON;
     s_statusSensorLED.on = false;
     s_statusSensorLED.lastToggle = millis();
 
@@ -1232,7 +1232,7 @@ void BnOrientationAbsSensor::setStatus(int sensor_status){
     if(sensor_status == SENSOR_STATUS_NOT_ACCESSIBLE) {
         s_sensorInit=false;
         DEBUG_PRINTLN("Ooops, no LSM9DS1 detected ... Check your board!");
-        BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_WRITE_STATUS_PIN_FUNCTION;
+        BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_ON;
         s_statusSensorLED.on = true;
         s_statusSensorLED.lastToggle = millis();
     } else if(sensor_status == SENSOR_STATUS_CALIBRATING) {
@@ -1240,14 +1240,14 @@ void BnOrientationAbsSensor::setStatus(int sensor_status){
             s_statusSensorLED.lastToggle = millis();
             s_statusSensorLED.on = !s_statusSensorLED.on;
             if(s_statusSensorLED.on){
-                BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_WRITE_STATUS_PIN_FUNCTION;
+                BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_ON;
             } else {
-                BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_WRITE_STATUS_PIN_FUNCTION;
+                BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_OFF;
             }
         }
     } else if(sensor_status == SENSOR_STATUS_WORKING) {
         s_sensorInit=true;
-        BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_WRITE_STATUS_PIN_FUNCTION;
+        BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_OFF;
         s_statusSensorLED.on = false;
         s_statusSensorLED.lastToggle = millis();
     }

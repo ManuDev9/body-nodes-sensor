@@ -46,7 +46,7 @@ extern "C" {
 #define FPM_SLEEP_MAX_TIME 0xFFFFFFF
 
 #define BODYNODE_BODYPART_HEX_DEFAULT BODYPART_UPPERARM_LEFT_HEX
-#define BODYNODE_PLAYER_TAG_DEFAULT  "mario"
+#define BODYNODE_PLAYER_TAG_DEFAULT  "1"
 
 // COMMUNICATION //
 
@@ -89,7 +89,6 @@ extern "C" {
 #define LED_DT_ON 30 // Duty cicle of LED ON
 #define STATUS_SENSOR_HMI_LED_P 2
 #define STATUS_CONNECTION_HMI_LED_P 0
-#define STATUS_CONNECTION_HMI_LED_M 0  // this is a trick that just works
 #define HAPTIC_MOTOR_PIN_P 14
 
 #define MAX_BUFF_LENGTH 100
@@ -156,7 +155,9 @@ extern "C" {
 // on the platform.
 // In order to debug, just take the content and put it directly on the funtion itself
 
-#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_WRITE_STATUS_PIN_FUNCTION analogWrite
+#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_SETUP do{ pinMode(STATUS_SENSOR_HMI_LED_P, OUTPUT); }while(0)
+#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_ON do{ digitalWrite(STATUS_SENSOR_HMI_LED_P, LED_DT_ON); }while(0)
+#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_OFF do{ digitalWrite(STATUS_SENSOR_HMI_LED_P, 0); }while(0)
 
 // Other node specific utility functions that are defined in the same way
 void persMemoryInit();
@@ -169,8 +170,10 @@ void BnHapticActuator_turnOFF();
 
 #ifdef BLE_COMMUNICATION
 
-#define BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_ACTUATOR_ACT_PIN_ON do{ digitalWrite(STATUS_CONNECTION_HMI_LED_P, LED_DT_ON); }while(0)
-#define BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_ACTUATOR_ACT_PIN_OFF do{ digitalWrite(STATUS_CONNECTION_HMI_LED_P, 0); }while(0)
+#define BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_HMI_SETUP do{ pinMode(STATUS_CONNECTION_HMI_LED_P, OUTPUT); }while(0)
+#define BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_HMI_LED_ON do{ digitalWrite(STATUS_CONNECTION_HMI_LED_P, LED_DT_ON); }while(0)
+#define BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_HMI_LED_OFF do{ digitalWrite(STATUS_CONNECTION_HMI_LED_P, 0); }while(0)
+
 
 void BnBLENodeCommunicator_init();
 uint8_t BnBLENodeCommunicator_checkAllOk( uint8_t current_conn_status );
@@ -180,6 +183,10 @@ void BnBLENodeCommunicator_sendAllMessages(JsonArray &bnc_messages_list);
 
 #ifdef WIFI_COMMUNICATION
 
+#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_HMI_SETUP do{ pinMode(STATUS_CONNECTION_HMI_LED_P, OUTPUT); }while(0)
+#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_HMI_LED_ON do{ digitalWrite(STATUS_CONNECTION_HMI_LED_P, LED_DT_ON); }while(0)
+#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_HMI_LED_OFF do{ digitalWrite(STATUS_CONNECTION_HMI_LED_P, 0); }while(0)
+
 bool tryConnectWifi(String ssid, String password);
 void printWifiStatus();
 IPAddress getIPAdressFromStr(String ip_address_str);
@@ -188,7 +195,6 @@ IPAddress getIPAdressFromStr(String ip_address_str);
   WiFi.disconnect(true);                                     \
   WiFi.softAPdisconnect(false);                              \
   WiFi.enableAP(false);
-#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_WRITE_STATUS_PIN_FUNCTION analogWrite
 #define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_UDP_OBJ WiFiUDP
 #define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_BEGIN_MULTICAST wnc_multicast_connector.beginMulticast(WiFi.localIP(), multicastIP, BODYNODES_MULTICAST_PORT); // Listen to the Multicast
 
