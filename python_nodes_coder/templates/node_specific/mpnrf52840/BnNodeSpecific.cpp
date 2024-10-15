@@ -386,35 +386,33 @@ void BnBLENodeCommunicator_init(){
     // Add characteristics to the service
     sPlayerChara.setProperties( CHR_PROPS_READ ); // Read properties 
     sPlayerChara.setPermission( SECMODE_OPEN, SECMODE_NO_ACCESS );
-    sPlayerChara.setFixedLen( CHARA_MAX_LENGTH );  
     sPlayerChara.begin( );
 
     sBodypartChara.setProperties( CHR_PROPS_READ ); // Read properties
     sBodypartChara.setPermission( SECMODE_OPEN, SECMODE_NO_ACCESS );
-    sBodypartChara.setFixedLen( CHARA_MAX_LENGTH );  
     sBodypartChara.begin( );
 
     sOrientationAbsChara.setProperties( CHR_PROPS_NOTIFY ); // Notify properties  
     sOrientationAbsChara.setPermission( SECMODE_OPEN, SECMODE_NO_ACCESS ); 
-    sOrientationAbsChara.setFixedLen( CHARA_MAX_LENGTH );  
+    sOrientationAbsChara.setFixedLen( 16 );  
     sOrientationAbsChara.begin( );
 
     sAccelerationRelChara.setProperties( CHR_PROPS_NOTIFY ); // Notify properties  
     sAccelerationRelChara.setPermission( SECMODE_OPEN, SECMODE_NO_ACCESS ); 
-    sAccelerationRelChara.setFixedLen( CHARA_MAX_LENGTH );  
+    sAccelerationRelChara.setFixedLen( 12 );  
     sAccelerationRelChara.begin( );
 
 #ifdef GLOVE_SENSOR_ON_BOARD
     sGloveChara.setProperties( CHR_PROPS_NOTIFY ); // Notify properties  
     sGloveChara.setPermission( SECMODE_OPEN, SECMODE_NO_ACCESS ); 
-    sGloveChara.setFixedLen( CHARA_MAX_LENGTH );  
+    sGloveChara.setFixedLen( 9 );  
     sGloveChara.begin( );
 #endif /*GLOVE_SENSOR_ON_BOARD*/
 
 #ifdef SHOE_SENSOR_ON_BOARD
     sShoeChara.setProperties( CHR_PROPS_NOTIFY ); // Notify properties  
     sShoeChara.setPermission( SECMODE_OPEN, SECMODE_NO_ACCESS ); 
-    sShoeChara.setFixedLen( CHARA_MAX_LENGTH );  
+    sShoeChara.setFixedLen( 1 );  
     sShoeChara.begin( );
 #endif /*SHOE_SENSOR_ON_BOARD*/
     

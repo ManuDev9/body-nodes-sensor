@@ -43,7 +43,7 @@ float mLastSensorData_OA[4] = {0 ,0 ,0 ,0};
 float mBigDiff_OA[4] = {BIG_QUAT_DIFF ,BIG_QUAT_DIFF ,BIG_QUAT_DIFF ,BIG_QUAT_DIFF};
 
 float mLastSensorData_Gy[3] = {0 ,0 ,0};
-float mBigDiff_Gy[3] = {0.1 ,0.1 ,0.1};
+float mBigDiff_Gy[3] = {0.05 ,0.05 ,0.05};
 
 #endif // ORIENTATION_ABS_SENSOR
 
@@ -140,7 +140,7 @@ void loop() {
                 message["sensortype"] = "angularvelocity_rel";
                 for(uint8_t count=0; count<3;++count){
                     message["value"].add(valuesg[count]);
-                    mLastSensorData_Gy[count] = valuesg[count];
+                    //mLastSensorData_Gy[count] = valuesg[count];  I am keeping them at zero, since angular valocity is a rate
                 }
 
                 //DEBUG_PRINT("message = ");
