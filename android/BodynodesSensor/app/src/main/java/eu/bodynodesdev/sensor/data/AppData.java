@@ -72,7 +72,7 @@ public class AppData {
 
     public static int getCommunicationType(Context context){
         SharedPreferences sharedPref = context.getSharedPreferences(BnAppConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
-        return sharedPref.getInt(BnAppConstants.COMMUNICATION_TYPE, BnConstants.COMMUNICATION_TYPE_WIFI);
+        return sharedPref.getInt(BnAppConstants.COMMUNICATION_TYPE, BnAppConstants.COMMUNICATION_TYPE_WIFI);
     }
 
     public static void setCommunitcationType(Context context, int communicationType) {
@@ -83,12 +83,12 @@ public class AppData {
 
     public static boolean isCommunicationWifi(Context context) {
         int communicationType = getCommunicationType(context);
-        return communicationType == BnConstants.COMMUNICATION_TYPE_WIFI;
+        return communicationType == BnAppConstants.COMMUNICATION_TYPE_WIFI;
     }
 
     public static boolean isCommunicationBluetooth(Context context) {
         int communicationType = getCommunicationType(context);
-        return communicationType == BnConstants.COMMUNICATION_TYPE_BLUETOOTH;
+        return communicationType == BnAppConstants.COMMUNICATION_TYPE_BLUETOOTH;
     }
 
     public static int getSensorIntervalMs(Context context) {

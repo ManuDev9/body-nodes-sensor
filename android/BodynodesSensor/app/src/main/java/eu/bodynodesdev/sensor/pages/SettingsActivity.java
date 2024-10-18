@@ -33,6 +33,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 
 import eu.bodynodesdev.common.BnConstants;
+import eu.bodynodesdev.sensor.BnAppConstants;
 import eu.bodynodesdev.sensor.R;
 import eu.bodynodesdev.sensor.data.AppData;
 import eu.bodynodesdev.sensor.data.BnSensorAppData;
@@ -61,10 +62,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void initUIfromData() {
-        if(AppData.getCommunicationType(this) == BnConstants.COMMUNICATION_TYPE_BLUETOOTH) {
+        if(AppData.getCommunicationType(this) == BnAppConstants.COMMUNICATION_TYPE_BLUETOOTH) {
             mConnectionTypeBluetoothRadio.setChecked(true);
             mConnectionTypeWifiRadio.setChecked(false);
-        } else if(AppData.getCommunicationType(this) == BnConstants.COMMUNICATION_TYPE_WIFI){
+        } else if(AppData.getCommunicationType(this) == BnAppConstants.COMMUNICATION_TYPE_WIFI){
             mConnectionTypeBluetoothRadio.setChecked(false);
             mConnectionTypeWifiRadio.setChecked(true);
         }
@@ -109,9 +110,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 BnSensorAppData.setMulticastGroup(this, mWifiMulticastGroupEdit.getText().toString());
                 AppData.setSensorIntervalMs(this, Integer.parseInt(mSensorIntervalMsEdit.getText().toString()));
                 if(mConnectionTypeBluetoothRadio.isChecked()){
-                    AppData.setCommunitcationType(this, BnConstants.COMMUNICATION_TYPE_BLUETOOTH);
+                    AppData.setCommunitcationType(this, BnAppConstants.COMMUNICATION_TYPE_BLUETOOTH);
                 } else if(mConnectionTypeWifiRadio.isChecked()){
-                    AppData.setCommunitcationType(this, BnConstants.COMMUNICATION_TYPE_WIFI);
+                    AppData.setCommunitcationType(this, BnAppConstants.COMMUNICATION_TYPE_WIFI);
                 }
 
                 if(mGloveBodypartLeftHandRadio.isChecked()){

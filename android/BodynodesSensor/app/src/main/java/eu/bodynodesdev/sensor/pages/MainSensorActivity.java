@@ -285,9 +285,9 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
         BnSensorAppData.setAccelerationRelSensorEnabled(this, mAccelerationRelCheckbox.isChecked());
 
         Intent sensorServiceIntent = null;
-        if(AppData.getCommunicationType(this) == BnConstants.COMMUNICATION_TYPE_WIFI) {
+        if(AppData.getCommunicationType(this) == BnAppConstants.COMMUNICATION_TYPE_WIFI) {
             sensorServiceIntent = new Intent(this, SensorServiceWifi.class);
-        } else if(AppData.getCommunicationType(this) == BnConstants.COMMUNICATION_TYPE_BLUETOOTH) {
+        } else if(AppData.getCommunicationType(this) == BnAppConstants.COMMUNICATION_TYPE_BLUETOOTH) {
             sensorServiceIntent = new Intent(this, SensorServiceBluetooth.class);
         } else {
             Log.d(TAG, "Cannot start because communication type is not implemented");
@@ -308,9 +308,9 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void stopSersorService(){
-        if(AppData.getCommunicationType(this) == BnConstants.COMMUNICATION_TYPE_WIFI) {
+        if(AppData.getCommunicationType(this) == BnAppConstants.COMMUNICATION_TYPE_WIFI) {
             stopService(new Intent(this, SensorServiceWifi.class));
-        } else if(AppData.getCommunicationType(this) == BnConstants.COMMUNICATION_TYPE_BLUETOOTH) {
+        } else if(AppData.getCommunicationType(this) == BnAppConstants.COMMUNICATION_TYPE_BLUETOOTH) {
             stopService(new Intent(this, SensorServiceBluetooth.class));
         }
         sensorServiceOFFUI();

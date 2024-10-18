@@ -34,7 +34,7 @@ public class BnSensorAppData {
 
     public static String getPlayerName(Context context){
         SharedPreferences sharedPref = context.getSharedPreferences(BnAppConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
-        return sharedPref.getString(BnAppConstants.PLAYER_NAME, BnConstants.PLAYER_NAME_DEFAULT);
+        return sharedPref.getString(BnAppConstants.PLAYER_NAME, BnAppConstants.PLAYER_NAME_DEFAULT);
     }
 
     public static void setPlayerName(Context context, String player) {
@@ -45,7 +45,7 @@ public class BnSensorAppData {
 
     public static String getBodypart(Context context){
         SharedPreferences sharedPref = context.getSharedPreferences(BnAppConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
-        return sharedPref.getString(BnAppConstants.BODYPART, BnConstants.BODY_KATANA_TAG);
+        return sharedPref.getString(BnAppConstants.BODYPART, BnConstants.BODYPART_KATANA_TAG);
     }
 
     public static void setBodypart(Context context, String bodypart) {
@@ -89,7 +89,7 @@ public class BnSensorAppData {
 
     public static String getMulticastGroup(Context context){
         SharedPreferences sharedPref = context.getSharedPreferences(BnAppConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
-        return sharedPref.getString(BnAppConstants.MULTICAST_GROUP, BnConstants.MULTICAST_GROUP_DEFAULT);
+        return sharedPref.getString(BnAppConstants.MULTICAST_GROUP, BnConstants.BODYNODES_MULTICASTGROUP_DEFAULT);
     }
 
     public static void setMulticastGroup(Context context, String player) {

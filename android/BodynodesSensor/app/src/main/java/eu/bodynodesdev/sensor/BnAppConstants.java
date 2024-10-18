@@ -26,9 +26,18 @@ package eu.bodynodesdev.sensor;
 
 
 public class BnAppConstants {
-    
+
+
+    public static final String PLAYER_NAME_DEFAULT = "1";
+
     public final static String NOTIFICATION_CHANNEL_ID = "eu.bodynodesdev.sensor";
     public final static String NOTIFICATION_CHANNEL_NAME = "Bodynodes Service";
+
+    public static final int  COMMUNICATION_TYPE_WIFI = 0;
+    public static final int  COMMUNICATION_TYPE_BLUETOOTH = 1;
+    public static final int  COMMUNICATION_TYPE_BLE = 2;
+
+    public static final float BIG_ORIENTATION_ABS_DIFF = 0.04f;
 
     public static final int WIFI_PERMISSION_CODE                = 10000;
     public static final int FOREGROUND_SERVICE_PERMISSION_CODE  = 10001;
@@ -41,12 +50,8 @@ public class BnAppConstants {
     public static final String ACTION_RECEIVED = "eu.bodynodesdev.sensor.ACTION_RECEIVED";
     public static final String KEY_JSON_ACTION = "JSON_ACTION";
     
-    public static final int[] REORIENT_IO_AXIS = new int[]{ 1, 2, 3, 0 };
-    public static final int[] REORIENT_IO_SIGN = new int[]{ -1, 1, -1, -1 };
-
-    public static final int AR_OUT_AXIS_X = 0;
-    public static final int AR_OUT_AXIS_Y = 1;
-    public static final int AR_OUT_AXIS_Z = 2;
+    public static final int[] REORIENT_IO_AXIS = new int[]{ 0, 2, 3, 1 };
+    public static final int[] REORIENT_IO_SIGN = new int[]{ 1, 1, -1, 1 };
 
     // SHARED REFS TAGS
     public static final String BODYNODES_SHARED_PREFS = "BODYNODESDEV_SHARED_PREFS";

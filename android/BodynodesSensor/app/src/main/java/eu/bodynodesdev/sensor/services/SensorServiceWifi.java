@@ -49,6 +49,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -61,7 +62,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import eu.bodynodesdev.common.BnConstants;
-import eu.bodynodesdev.common.BnProtocol;
 
 import eu.bodynodesdev.sensor.BnAppConstants;
 import eu.bodynodesdev.sensor.BodynodesUtils;
@@ -129,7 +129,7 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
                 mSensorManager.registerListener(this, mAccelerationRelSensor, AppData.getSensorIntervalMs(this) * 1000);
             }
         }
-        if (AppData.getCommunicationType(this) == BnConstants.COMMUNICATION_TYPE_WIFI) {
+        if (AppData.getCommunicationType(this) == BnAppConstants.COMMUNICATION_TYPE_WIFI) {
             init();
         } else {
             Log.i(TAG,"Wrong communication type for " + TAG);
@@ -237,8 +237,8 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         if(sensorEvent.sensor.getType() == Sensor.TYPE_GAME_ROTATION_VECTOR ) {
-            //Log.i(TAG, "onSensorChanged values = [ " + values[0] + ", " + values[1] + ", " + values[2] + ", " + values[3] + " ]");
             float[] values = sensorEvent.values;
+            //Log.i(TAG, "onSensorChanged values = [ " + values[0] + ", " + values[1] + ", " + values[2] + ", " + values[3] + " ]");
             BodynodesUtils.realignQuat(values, mOrientationAbs);
         } else if(sensorEvent.sensor.getType() == ACCELETATION_TYPE) {
             //Log.i(TAG, "onSensorChanged values = [ " + values[0] + ", " + values[1] + ", " + values[2] + " ]");
@@ -254,29 +254,46 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
                 int[] gloveData = intent.getIntArrayExtra(BnAppConstants.GLOVE_SENSOR_DATA);
                 Log.d(TAG,"Glove data to send");
                 JSONArray jsonArray = new JSONArray();
-                JSONObject jsonObject = BnProtocol.makeMessageJson(
-                        BnSensorAppData.getPlayerName(SensorServiceWifi.this),
-                        BnSensorAppData.getGloveBodypart(SensorServiceWifi.this),
-                        BnConstants.SENSORTYPE_GLOVE_TAG,
-                        gloveData);
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put( BnConstants.MESSAGE_PLAYER_TAG,
+                            BnSensorAppData.getPlayerName(SensorServiceWifi.this));
+                    jsonObject.put( BnConstants.MESSAGE_BODYPART_TAG,
+                            BnSensorAppData.getGloveBodypart(SensorServiceWifi.this));
+                    jsonObject.put( BnConstants.MESSAGE_SENSORTYPE_TAG,
+                            BnConstants.SENSORTYPE_GLOVE_TAG);
+                    jsonObject.put( BnConstants.MESSAGE_VALUE_TAG,
+                            gloveData);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return;
+                }
+
                 jsonArray.put(jsonObject);
-                sendMessageWifiUdp(jsonArray.toString());
+                sendMessages(jsonArray.toString());
             } else if(intent.getAction().equals(BnAppConstants.ACTION_RESET_MESSAGE)){
                 Log.d(TAG,"Reset message to send");
                 JSONArray jsonArray = new JSONArray();
-                JSONObject jsonObject1 = BnProtocol.makeMessageJson(
-                        BnSensorAppData.getPlayerName(SensorServiceWifi.this),
-                        BnSensorAppData.getBodypart(SensorServiceWifi.this),
-                        BnConstants.SENSORTYPE_ORIENTATION_ABS_TAG,
-                        BnConstants.MESSAGE_VALUE_RESET_TAG);
-                JSONObject jsonObject2 = BnProtocol.makeMessageJson(
-                        BnSensorAppData.getPlayerName(SensorServiceWifi.this),
-                        BnSensorAppData.getBodypart(SensorServiceWifi.this),
-                        BnConstants.SENSORTYPE_ACCELERATION_REL_TAG,
-                        BnConstants.MESSAGE_VALUE_RESET_TAG);
-                jsonArray.put(jsonObject1);
-                jsonArray.put(jsonObject2);
-                sendMessageWifiUdp(jsonArray.toString());
+
+                int[] gloveData = {0,0,0,0,0, 1, 0 ,0,0};
+                Log.d(TAG,"Glove data to send");
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put( BnConstants.MESSAGE_PLAYER_TAG,
+                            BnSensorAppData.getPlayerName(SensorServiceWifi.this));
+                    jsonObject.put( BnConstants.MESSAGE_BODYPART_TAG,
+                            BnSensorAppData.getBodypart(SensorServiceWifi.this));
+                    jsonObject.put( BnConstants.MESSAGE_SENSORTYPE_TAG,
+                            BnConstants.SENSORTYPE_GLOVE_TAG);
+                    jsonObject.put( BnConstants.MESSAGE_VALUE_TAG,
+                            gloveData);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return;
+                }
+
+                jsonArray.put(jsonObject);
+                sendMessages(jsonArray.toString());
             }
         }
     };
@@ -363,7 +380,7 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
     }
 
     private boolean checkAllOk() {
-        if(AppData.getCommunicationType(this) != BnConstants.COMMUNICATION_TYPE_WIFI) {
+        if(AppData.getCommunicationType(this) != BnAppConstants.COMMUNICATION_TYPE_WIFI) {
             Log.d(TAG, "Wrong communication type");
             return false;
         }
@@ -424,8 +441,8 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
     }
 
     private void sendSensorData() {
-        if(AppData.getCommunicationType(this) == BnConstants.COMMUNICATION_TYPE_WIFI){
-            sendSensorDataViaWifiUdp();
+        if(AppData.getCommunicationType(this) == BnAppConstants.COMMUNICATION_TYPE_WIFI){
+            sendSensorDataVia();
         } else {
             Log.w(TAG,"Communication type not properly set");
         }
@@ -478,32 +495,62 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
         return mServerIpAddress != null;
     }
 
-    private void sendSensorDataViaWifiUdp() {
+    private void sendSensorDataVia() {
         //Log.d(TAG,"sendSensorDataViaWifi");
         boolean anydataToSend = false;
         JSONArray jsonArray = new JSONArray();
-        if(BnSensorAppData.isOrientationAbsSensorEnabled(this) && bigChangeValues(mOrientationAbs, mPrevOrientationAbs, 4, BnConstants.BIG_ORIENTATION_ABS_DIFF)){
+        if(BnSensorAppData.isOrientationAbsSensorEnabled(this) && bigChangeValues(mOrientationAbs, mPrevOrientationAbs, 4,
+                BnAppConstants.BIG_ORIENTATION_ABS_DIFF)){
             Log.d(TAG,"Orientation big change");
-            JSONObject jsonObject = BnProtocol.makeMessageJson(
-                    BnSensorAppData.getPlayerName(this),
-                    BnSensorAppData.getBodypart(this),
-                    BnConstants.SENSORTYPE_ORIENTATION_ABS_TAG,
-                    mOrientationAbs);
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put( BnConstants.MESSAGE_PLAYER_TAG,
+                        BnSensorAppData.getPlayerName(SensorServiceWifi.this));
+                jsonObject.put( BnConstants.MESSAGE_BODYPART_TAG,
+                        BnSensorAppData.getBodypart(SensorServiceWifi.this));
+                jsonObject.put( BnConstants.MESSAGE_SENSORTYPE_TAG,
+                        BnConstants.SENSORTYPE_ORIENTATION_ABS_TAG);
+
+                JSONArray jsonArrayValues = new JSONArray();
+                jsonArrayValues.put(mOrientationAbs[0]);
+                jsonArrayValues.put(mOrientationAbs[1]);
+                jsonArrayValues.put(mOrientationAbs[2]);
+                jsonArrayValues.put(mOrientationAbs[3]);
+                jsonObject.put( BnConstants.MESSAGE_VALUE_TAG,
+                        jsonArrayValues);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return;
+            }
+
             jsonArray.put(jsonObject);
             anydataToSend = true;
         }
-        if(BnSensorAppData.isAccelerationRelSensorEnabled(this) && bigChangeValues(mAccelerationRel, mPrevAccelerationRel, 3, BnConstants.BIG_ACCELERATION_REL_DIFF)){
+        if(BnSensorAppData.isAccelerationRelSensorEnabled(this) && bigChangeValues(mAccelerationRel, mPrevAccelerationRel, 3,
+                BnAppConstants.BIG_ORIENTATION_ABS_DIFF)){
             Log.d(TAG,"Acceleration big change");
-            JSONObject jsonObject = BnProtocol.makeMessageJson(
-                    BnSensorAppData.getPlayerName(this),
-                    BnSensorAppData.getBodypart(this),
-                    BnConstants.SENSORTYPE_ACCELERATION_REL_TAG,
-                    mAccelerationRel);
+
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put( BnConstants.MESSAGE_PLAYER_TAG,
+                        BnSensorAppData.getPlayerName(SensorServiceWifi.this));
+                jsonObject.put( BnConstants.MESSAGE_BODYPART_TAG,
+                        BnSensorAppData.getBodypart(SensorServiceWifi.this));
+                jsonObject.put( BnConstants.MESSAGE_SENSORTYPE_TAG,
+                        BnConstants.SENSORTYPE_ACCELERATION_REL_TAG);
+                jsonObject.put( BnConstants.MESSAGE_VALUE_TAG,
+                        mAccelerationRel);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return;
+            }
+
             jsonArray.put(jsonObject);
             anydataToSend = true;
         }
         if(anydataToSend) {
-            sendMessageWifiUdp(jsonArray.toString());
+            sendMessages(jsonArray.toString());
         }
     }
 
@@ -530,7 +577,7 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
         thread.start();
     }
 
-    private void sendMessageWifiUdp(String msg) {
+    private void sendMessages(String msg) {
 
         new Thread(new Runnable() {
             @Override
