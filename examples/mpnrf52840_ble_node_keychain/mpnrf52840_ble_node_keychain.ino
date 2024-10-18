@@ -58,8 +58,10 @@ BnHapticActuator mHapticActuator;
 String mPlayerName;
 String mBodypartName;
 
-#define BUTTON_LEFT_PIN (32+13)
-#define BUTTON_RIGHT_PIN (32+11)
+//#define BUTTON_LEFT_PIN (32+13)
+
+#define BUTTON_LEFT_PIN (32+4)
+#define BUTTON_RIGHT_PIN (10)
 
 template<typename T>
 bool bigChanges(T values[], T prev_values[], uint8_t num_values, T big_difference[]) {
@@ -96,8 +98,6 @@ void setup() {
 
     rawPinMode(BUTTON_LEFT_PIN, INPUT_PULLDOWN);
     rawPinMode(BUTTON_RIGHT_PIN, INPUT_PULLDOWN);
-
- 
 
 }
 
@@ -147,7 +147,7 @@ void loop() {
                 //String output;
                 //serializeJson(message, output);
                 //DEBUG_PRINTLN(output);
-                mCommunicator.addMessage(message);
+                //mCommunicator.addMessage(message);
             }
 
         }
@@ -225,4 +225,5 @@ void loop() {
 #ifdef HAPTIC_ACTUATOR_ON_BOARD
     mHapticActuator.performAction();
 #endif // HAPTIC_ACTUATOR_ON_BOARD
+    delay(SENSOR_READ_INTERVAL_MS);
 }

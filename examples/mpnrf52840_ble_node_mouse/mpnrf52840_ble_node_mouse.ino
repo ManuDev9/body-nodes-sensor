@@ -43,7 +43,7 @@ float mLastSensorData_OA[4] = {0 ,0 ,0 ,0};
 float mBigDiff_OA[4] = {BIG_QUAT_DIFF ,BIG_QUAT_DIFF ,BIG_QUAT_DIFF ,BIG_QUAT_DIFF};
 
 float mLastSensorData_Gy[3] = {0 ,0 ,0};
-float mBigDiff_Gy[3] = {0.05 ,0.05 ,0.05};
+float mBigDiff_Gy[3] = {0.13 ,0.13 ,0.13};
 
 #endif // ORIENTATION_ABS_SENSOR
 
@@ -58,8 +58,10 @@ BnHapticActuator mHapticActuator;
 String mPlayerName;
 String mBodypartName;
 
-#define BUTTON_LEFT_PIN (32+13)
-#define BUTTON_RIGHT_PIN (32+11)
+//#define BUTTON_LEFT_PIN (32+13)
+
+#define BUTTON_LEFT_PIN (32+4)
+#define BUTTON_RIGHT_PIN (10)
 
 template<typename T>
 bool bigChanges(T values[], T prev_values[], uint8_t num_values, T big_difference[]) {
@@ -78,6 +80,7 @@ bool bigChanges(T values[], T prev_values[], uint8_t num_values, T big_differenc
 void setup() {
     //Initialize the serial and wait for the port to open
     Serial.begin(921600);
+    Serial.println("Hello");
 
     BnPersMemory::init();
 
@@ -97,39 +100,43 @@ void setup() {
     rawPinMode(BUTTON_LEFT_PIN, INPUT_PULLDOWN);
     rawPinMode(BUTTON_RIGHT_PIN, INPUT_PULLDOWN);
 
- 
+    // Setting up the player and bodypart in the communicator
+    StaticJsonDocument<MAX_MESSAGE_BYTES> message_doc; 
+    JsonObject message = message_doc.to<JsonObject>();;
+    message["player"] = mPlayerName;
+    message["bodypart"] = mBodypartName;
+    message["sensortype"] = "angularvelocity_rel";
+    for(uint8_t count=0; count<3;++count){
+        message["value"].add(0.f);
+    }
+    mCommunicator.addMessage(message);
+
+    rawPinMode(32+6, OUTPUT);
+    rawDigitalWrite( 32+6, LOW );
+
+    pinMode(20, INPUT); // Somehow this gets redirected to A1 and P0.29
 
 }
 
 void loop() {
-
+    Serial.println("Hello");
+    
     if(mCommunicator.checkAllOk()){
+
+      int val = analogRead( 20 ); //this is a small trick to make sure that the person is holding the keychain
+      //if( val > 25){
+      //  delay(10);
+      //  return;
+      //}
+      DEBUG_PRINTLN(val);
+
 #ifdef ORIENTATION_ABS_SENSOR
         if(!mOASensor.isCalibrated()){
             // You can decide to return
         }
 
         if(mOASensor.isEnabled() && mOASensor.checkAllOk()) {
-            float values[4] = {0, 0, 0, 0};
-            mOASensor.getData().getValues(values);
-            if(bigChanges(values, mLastSensorData_OA, 4, mBigDiff_OA)) {
-                StaticJsonDocument<MAX_MESSAGE_BYTES> message_doc;
-                JsonObject message = message_doc.to<JsonObject>();;
-                message["player"] = mPlayerName;
-                message["bodypart"] = mBodypartName;
-                message["sensortype"] = mOASensor.getType();
-                for(uint8_t count=0; count<4;++count){
-                    message["value"].add(values[count]);
-                    mLastSensorData_OA[count] = values[count];
-                }
-
-                //DEBUG_PRINT("message = ");
-                //String output;
-                //serializeJson(message, output);
-                //DEBUG_PRINTLN(output);
-                mCommunicator.addMessage(message);
-            }
-
+            // Not absolute orientation for the mouse
             float valuesg[3] = {0, 0, 0};
             mOASensor.getGyro(valuesg);
             if(bigChanges(valuesg, mLastSensorData_Gy, 3, mBigDiff_Gy)) {
@@ -225,4 +232,5 @@ void loop() {
 #ifdef HAPTIC_ACTUATOR_ON_BOARD
     mHapticActuator.performAction();
 #endif // HAPTIC_ACTUATOR_ON_BOARD
+    delay(SENSOR_READ_INTERVAL_MS);
 }

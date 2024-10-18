@@ -80,7 +80,7 @@
 
 // PINS
 #define BUZZER_FREQ 1000 //Specified in Hz
-#define LED_DT_ON 30 // Duty cicle of LED ON
+#define LED_DT_ON 1
 #define STATUS_SENSOR_HMI_LED_P 47   // P1.15 (32+15) from variant.cpp
 #define STATUS_CONNECTION_HMI_LED_P 20  // P0.20 from variant.cpp
 #define HAPTIC_MOTOR_PIN_P 32     // P1.00 from variant.cpp

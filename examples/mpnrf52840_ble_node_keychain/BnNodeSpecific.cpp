@@ -467,8 +467,8 @@ void BnBLENodeCommunicator_sendAllMessages(JsonArray &bnc_messages_list){
         
         if(sensortype_str == SENSORTYPE_ORIENTATION_ABS_TAG) {
             uint8_t bytes_message[16];
-            //convertStringArrayToFloatBytes(value_str.c_str(), value_str.length(), bytes_message, 4);
-            //sOrientationAbsChara.notify(&bytes_message, 16);
+            convertStringArrayToFloatBytes(value_str.c_str(), value_str.length(), bytes_message, 4);
+            sOrientationAbsChara.notify(&bytes_message, 16);
         } else if(sensortype_str == SENSORTYPE_ACCELERATION_REL_TAG) {
             uint8_t bytes_message[12];
             convertStringArrayToFloatBytes(value_str.c_str(), value_str.length(), bytes_message, 3);
@@ -485,10 +485,6 @@ void BnBLENodeCommunicator_sendAllMessages(JsonArray &bnc_messages_list){
             convertStringArrayToFloatBytes(value_str.c_str(), value_str.length(), bytes_message, 3);
             sAngularvelocityRelChara.notify(&bytes_message, 12);
         } 
-    }
-    uint8_t num_messages = bnc_messages_list.size();
-    for (uint8_t index = 0; index<num_messages; ++index) {
-        bnc_messages_list.remove(0);
     }
 
 }

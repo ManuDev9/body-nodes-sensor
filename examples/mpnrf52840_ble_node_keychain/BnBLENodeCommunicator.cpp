@@ -55,6 +55,11 @@ bool BnBLENodeCommunicator::checkAllOk(){
 void BnBLENodeCommunicator::sendAllMessages(){
     BnBLENodeCommunicator_sendAllMessages(bnc_messages_list);
     bnc_connection_data.last_sent_time = millis();
+    uint8_t num_messages = bnc_messages_list.size();
+    for (uint8_t index = 0; index<num_messages; ++index) {
+        bnc_messages_list.remove(0);
+    }
+
     bnc_messages_doc.garbageCollect();
 }
 
