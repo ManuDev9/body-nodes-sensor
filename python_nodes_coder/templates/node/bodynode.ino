@@ -26,6 +26,11 @@
 #include "BnArduinoUtils.h"
 #include "BnDatatypes.h"
 
+#if defined(BN_NODE_SPECIFIC_MAIN_FILE_INIT)
+BN_NODE_SPECIFIC_MAIN_FILE_INIT
+#endif
+
+
 #ifdef WIFI_COMMUNICATION
 #include "BnWifiNodeCommunicator.h"
 BnWifiNodeCommunicator mCommunicator;

@@ -313,7 +313,6 @@ void rawPinMode( uint32_t rawPin, uint32_t ulMode )
 
 //////////////
 
-
 #ifdef BLE_COMMUNICATION
 
 #include <bluefruit.h>

@@ -35,12 +35,14 @@
 #ifndef __BN_NODE_SPECIFIC_H
 #define __BN_NODE_SPECIFIC_H
 
-#define BODYNODE_BODYPART_HEX_DEFAULT BODYPART_LOWERLEG_RIGHT_HEX
+#define BODYNODE_BODYPART_HEX_DEFAULT BODYPART_LOWERARM_RIGHT_HEX
 #define BODYNODE_PLAYER_TAG_DEFAULT  "1"
 
 // COMMUNICATION //
+#define BLE_COMMUNICATION
 
 // SENSORS //
+#define ORIENTATION_ABS_SENSOR
 
 // ACTUATORS //
 
@@ -60,24 +62,21 @@
 // Device Specific Axis Configuration
 // Use the program "sensor_test" and check the "bodynodes universal orientation specs" to build your axis configuration,
 // so that your node can easily integrate with any system.
-#define SENSOR_AXIS_W 0
-#define SENSOR_AXIS_X 1
-#define SENSOR_AXIS_Y 2
-#define SENSOR_AXIS_Z 3
 
-#define OUT_AXIS_W SENSOR_AXIS_Z
-#define OUT_AXIS_X SENSOR_AXIS_Y
-#define OUT_AXIS_Y SENSOR_AXIS_X
-#define OUT_AXIS_Z SENSOR_AXIS_W
+// The BNO055 sure is weird with these orientations by default
+#define OUT_AXIS_W 2
+#define OUT_AXIS_X 0
+#define OUT_AXIS_Y 3
+#define OUT_AXIS_Z 1
 
-#define MUL_AXIS_W -1
-#define MUL_AXIS_X 1
+#define MUL_AXIS_W 1
+#define MUL_AXIS_X -1
 #define MUL_AXIS_Y -1
-#define MUL_AXIS_Z 1
+#define MUL_AXIS_Z -1
 
 // PINS
 #define BUZZER_FREQ 1000 //Specified in Hz
-#define LED_DT_ON 30 // Duty cicle of LED ON
+#define LED_DT_ON 1 // Duty cicle of LED ON
 
 #define STATUS_SENSOR_HMI_LED_P      6
 #define STATUS_SENSOR_HMI_LED_M      5
@@ -157,6 +156,10 @@
 // on the platform.
 // In order to debug, just take the content and put it directly on the funtion itself
 
+#if defined(ARDUINO)
+  #define BN_NODE_SPECIFIC_MAIN_FILE_INIT SYSTEM_MODE(MANUAL);
+#endif
+
 #define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_WRITE_STATUS_PIN_FUNCTION analogWrite
 
 // Other node specific utility functions that are defined in the same way
@@ -168,9 +171,9 @@ void BnHapticActuator_init();
 void BnHapticActuator_turnON(uint8_t strength);
 void BnHapticActuator_turnOFF();
 
-#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_SETUP do{ pinMode(STATUS_SENSOR_HMI_LED_P, OUTPUT); }while(0)
-#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_ON do{ digitalWrite(STATUS_SENSOR_HMI_LED_P, LED_DT_ON); }while(0)
-#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_OFF do{ digitalWrite(STATUS_SENSOR_HMI_LED_P, 0); }while(0)
+#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_SETUP do{ pinMode(STATUS_SENSOR_HMI_LED_P, OUTPUT); pinMode(STATUS_SENSOR_HMI_LED_M, OUTPUT); digitalWrite(STATUS_SENSOR_HMI_LED_M, LOW); }while(0)
+#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_ON do{ digitalWrite(STATUS_SENSOR_HMI_LED_P, HIGH); }while(0)
+#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_OFF do{ digitalWrite(STATUS_SENSOR_HMI_LED_P, LOW); }while(0)
 
 typedef union
 {
@@ -186,8 +189,25 @@ typedef union
 
 #ifdef BLE_COMMUNICATION
 
-#define BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_HMI_SETUP do{ pinMode(STATUS_CONNECTION_HMI_LED_P, OUTPUT); }while(0)
-#define BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_HMI_LED_ON do{ digitalWrite(STATUS_CONNECTION_HMI_LED_P, LED_DT_ON); }while(0)
+#define BLE_MAX_RETRIES 3
+#define BLE_SCAN_TIME_MS 30000
+
+#define BLE_MIN_INTERVAL    0x0006 // 7.5ms (7.5 / 1.25)
+#define BLE_MAX_INTERVAL    0x0018 // 30ms (30 / 1.25)
+#define BLE_SLAVE_LATENCY              0x0000 // No slave latency.
+#define BLE_CONN_SUPERVISION_TIMEOUT   0x03E8 // 10s.
+#define BLE_PERIPHERAL_APPEARANCE  BLE_APPEARANCE_UNKNOWN
+
+#define BODYNODES_BLE_DEVICE_NAME_TAG "Bodynode"
+#define BLE_CHARACTERISTIC_ORIABS_MAX_LEN 16
+#define BLE_CHARACTERISTIC_ACCREL_MAX_LEN 12
+#define BLE_CHARACTERISTIC_ANGVELREL_MAX_LEN 12
+#define BLE_CHARACTERISTIC_GLOVE_MAX_LEN 9
+#define BLE_CHARACTERISTIC_SHOE_MAX_LEN 1
+#define BLE_CHARACTERISTIC_MAX_LEN 20
+
+#define BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_HMI_SETUP do{ pinMode(STATUS_CONNECTION_HMI_LED_P, OUTPUT); pinMode(STATUS_CONNECTION_HMI_LED_M, OUTPUT); digitalWrite(STATUS_CONNECTION_HMI_LED_P, 0); }while(0)
+#define BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_HMI_LED_ON do{ digitalWrite(STATUS_CONNECTION_HMI_LED_P, HIGH); }while(0)
 #define BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_HMI_LED_OFF do{ digitalWrite(STATUS_CONNECTION_HMI_LED_P, 0); }while(0)
 
 void BnBLENodeCommunicator_init();

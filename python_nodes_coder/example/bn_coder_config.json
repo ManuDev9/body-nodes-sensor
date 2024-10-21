@@ -1,13 +1,13 @@
 {
     "type" : "node",
-    "board" : "mpnrf52840",
+    "board" : "redbear_duo",
     "node_communicator": "ble",
     "actuators": {
         "haptic": "no"
     },
     "sensors": {
         "acceleration_rel" : "no",
-        "orientation_abs" : "mpu6050_sf",
+        "orientation_abs" : "bno055",
         "glove" : "no",
         "shoe" : "no"
     }

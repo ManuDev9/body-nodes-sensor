@@ -96,7 +96,12 @@ bool BnOrientationAbsSensor::checkAllOk(){
     sensors_event_t event;
     s_BNO.getEvent(&event);
     imu::Quaternion sensor_quat = s_BNO.getQuat();
-    float svalues[4] = { sensor_quat.w(), sensor_quat.x(), sensor_quat.y(), sensor_quat.z() };
+    float svalues[4] = { 
+        static_cast<float>( sensor_quat.w() ),
+        static_cast<float>( sensor_quat.x() ),
+        static_cast<float>( sensor_quat.y() ),
+        static_cast<float>( sensor_quat.z() )
+    };
     float tvalues[4];
     realignAxis(svalues, tvalues);
 
