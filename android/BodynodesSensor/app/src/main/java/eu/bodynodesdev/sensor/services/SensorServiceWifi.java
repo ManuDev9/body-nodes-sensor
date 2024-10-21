@@ -275,7 +275,8 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
                 Log.d(TAG,"Reset message to send");
                 JSONArray jsonArray = new JSONArray();
 
-                int[] gloveData = {0,0,0,0,0, 1, 0 ,0,0};
+                int[] gloveData = {0,0,0,0,0, 0, 0 ,0,0};
+                gloveData[BnConstants.GLOVE_TOUCH_INDICE_INDEX] = 1;
                 Log.d(TAG,"Glove data to send");
                 JSONObject jsonObject = new JSONObject();
                 try {

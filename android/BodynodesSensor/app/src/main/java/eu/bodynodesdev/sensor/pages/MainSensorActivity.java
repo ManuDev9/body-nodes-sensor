@@ -354,29 +354,29 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
             sending = 1;
         }
 
-        int[] intArray;
+        int[] intArray = new int[]{90, 90, 90, 90, 90, 0, 0, 0, 0};
         Intent intent;
         switch (id){
             case R.id.main_sensor_index_finger_right:
-                intArray = new int[]{90, 90, 90, 90, 90, sending, 0, 0, 0};
+                intArray[BnConstants.GLOVE_TOUCH_INDICE_INDEX] = sending;
                 intent = new Intent(BnAppConstants.ACTION_GLOVE_SENSOR_MESSAGE);
                 intent.putExtra(BnAppConstants.GLOVE_SENSOR_DATA, intArray);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                 return true;
             case R.id.main_sensor_middle_finger_right:
-                intArray = new int[]{90, 90, 90, 90, 90, 0, sending, 0, 0};
+                intArray[BnConstants.GLOVE_TOUCH_MEDIO_INDEX] = sending;
                 intent = new Intent(BnAppConstants.ACTION_GLOVE_SENSOR_MESSAGE);
                 intent.putExtra(BnAppConstants.GLOVE_SENSOR_DATA, intArray);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                 return true;
             case R.id.main_sensor_ring_finger_right:
-                intArray = new int[]{90, 90, 90, 90, 90, 0, 0, sending, 0};
+                intArray[BnConstants.GLOVE_TOUCH_ANULARE_INDEX] = sending;
                 intent = new Intent(BnAppConstants.ACTION_GLOVE_SENSOR_MESSAGE);
                 intent.putExtra(BnAppConstants.GLOVE_SENSOR_DATA, intArray);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                 return true;
             case R.id.main_sensor_little_finger_right:
-                intArray = new int[]{90, 90, 90, 90, 90, 0, 0, 0, sending};
+                intArray[BnConstants.GLOVE_TOUCH_MIGNOLO_INDEX] = sending;
                 intent = new Intent(BnAppConstants.ACTION_GLOVE_SENSOR_MESSAGE);
                 intent.putExtra(BnAppConstants.GLOVE_SENSOR_DATA, intArray);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
