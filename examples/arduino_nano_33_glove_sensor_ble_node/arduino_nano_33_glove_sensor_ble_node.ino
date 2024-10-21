@@ -177,6 +177,7 @@ void loop() {
         if(mGloveSensorReaderSerial.isEnabled() && mGloveSensorReaderSerial.checkAllOk()) {
             int values[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
             mGloveSensorReaderSerial.getData(values);
+            
             if(bigChanges(values, mLastSensorData_G, 9, mBigDiff_G)) {
                 StaticJsonDocument<MAX_MESSAGE_BYTES> message_doc;
                 JsonObject message = message_doc.to<JsonObject>();;

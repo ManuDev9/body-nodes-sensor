@@ -58,7 +58,7 @@ BnHapticActuator mHapticActuator;
 String mPlayerName;
 String mBodypartName;
 
-//#define BUTTON_LEFT_PIN (32+13)
+//#define BUTTON_LEFT_PIN (32+13) // Keychain 0
 
 #define BUTTON_LEFT_PIN (32+4)
 #define BUTTON_RIGHT_PIN (10)
@@ -149,23 +149,20 @@ void loop() {
                 //DEBUG_PRINTLN(output);
                 //mCommunicator.addMessage(message);
             }
-
         }
-
-      
 
 #endif // ORIENTATION_ABS_SENSOR
 
         // Check button
         int buttonLeft = rawDigitalRead( BUTTON_LEFT_PIN );
         int buttonRight = rawDigitalRead( BUTTON_RIGHT_PIN );
-
+        
         int values[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
         if (buttonLeft > 0){
-            values[5] = 1;
+            values[8] = 1;
         }
         if (buttonRight > 0){
-            values[6] = 1;
+            values[7] = 1;
         }
         
         if(bigChanges(values, mLastSensorData_G, 9, mBigDiff_G)) {
