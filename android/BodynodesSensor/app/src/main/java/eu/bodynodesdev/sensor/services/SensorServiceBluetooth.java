@@ -264,8 +264,13 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
                             BnSensorAppData.getGloveBodypart(SensorServiceBluetooth.this));
                     jsonObject.put( BnConstants.MESSAGE_SENSORTYPE_TAG,
                             BnConstants.SENSORTYPE_GLOVE_TAG);
+
+                    JSONArray jsonArrayValues = new JSONArray();
+                    for( int count = 0; count < gloveData.length; count++ ) {
+                        jsonArrayValues.put(gloveData[count]);
+                    }
                     jsonObject.put( BnConstants.MESSAGE_VALUE_TAG,
-                            gloveData);
+                            jsonArrayValues);
                 } catch (JSONException e) {
                     e.printStackTrace();
                     return;
@@ -285,11 +290,17 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
                     jsonObject.put( BnConstants.MESSAGE_PLAYER_TAG,
                             BnSensorAppData.getPlayerName(SensorServiceBluetooth.this));
                     jsonObject.put( BnConstants.MESSAGE_BODYPART_TAG,
-                            BnSensorAppData.getBodypart(SensorServiceBluetooth.this));
+                            BnSensorAppData.getGloveBodypart(SensorServiceBluetooth.this));
                     jsonObject.put( BnConstants.MESSAGE_SENSORTYPE_TAG,
                             BnConstants.SENSORTYPE_GLOVE_TAG);
+
+                    JSONArray jsonArrayValues = new JSONArray();
+                    for( int count = 0; count < gloveData.length; count++ ) {
+                        jsonArrayValues.put(gloveData[count]);
+                    }
                     jsonObject.put( BnConstants.MESSAGE_VALUE_TAG,
-                            gloveData);
+                            jsonArrayValues);
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                     return;

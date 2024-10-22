@@ -354,7 +354,7 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
             sending = 1;
         }
 
-        int[] intArray = new int[]{90, 90, 90, 90, 90, 0, 0, 0, 0};
+        int[] intArray = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
         Intent intent;
         switch (id){
             case R.id.main_sensor_index_finger_right:

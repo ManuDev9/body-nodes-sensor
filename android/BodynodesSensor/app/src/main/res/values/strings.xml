@@ -57,6 +57,7 @@
     <string name="settings_sensor_interval_string">Sensor interval (ms):</string>
     <string name="settings_glovebodypart_hand_left_string">Left Hand</string>
     <string name="settings_glovebodypart_hand_right_string">Right Hand</string>
+    <string name="settings_glovebodypart_katana_string">Katana</string>
     <string name="wifi_multicast_group_string">Wifi Multicast Group</string>
 
 </resources>

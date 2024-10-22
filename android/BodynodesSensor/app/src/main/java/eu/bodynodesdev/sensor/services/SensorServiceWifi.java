@@ -262,8 +262,13 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
                             BnSensorAppData.getGloveBodypart(SensorServiceWifi.this));
                     jsonObject.put( BnConstants.MESSAGE_SENSORTYPE_TAG,
                             BnConstants.SENSORTYPE_GLOVE_TAG);
+
+                    JSONArray jsonArrayValues = new JSONArray();
+                    for( int count = 0; count < gloveData.length; count++ ) {
+                        jsonArrayValues.put(gloveData[count]);
+                    }
                     jsonObject.put( BnConstants.MESSAGE_VALUE_TAG,
-                            gloveData);
+                            jsonArrayValues);
                 } catch (JSONException e) {
                     e.printStackTrace();
                     return;
@@ -274,7 +279,6 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
             } else if(intent.getAction().equals(BnAppConstants.ACTION_RESET_MESSAGE)){
                 Log.d(TAG,"Reset message to send");
                 JSONArray jsonArray = new JSONArray();
-
                 int[] gloveData = {0,0,0,0,0, 0, 0 ,0,0};
                 gloveData[BnConstants.GLOVE_TOUCH_INDICE_INDEX] = 1;
                 Log.d(TAG,"Glove data to send");
@@ -283,11 +287,44 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
                     jsonObject.put( BnConstants.MESSAGE_PLAYER_TAG,
                             BnSensorAppData.getPlayerName(SensorServiceWifi.this));
                     jsonObject.put( BnConstants.MESSAGE_BODYPART_TAG,
-                            BnSensorAppData.getBodypart(SensorServiceWifi.this));
+                            BnSensorAppData.getGloveBodypart(SensorServiceWifi.this));
                     jsonObject.put( BnConstants.MESSAGE_SENSORTYPE_TAG,
                             BnConstants.SENSORTYPE_GLOVE_TAG);
+
+                    JSONArray jsonArrayValues = new JSONArray();
+                    for( int count = 0; count < gloveData.length; count++ ) {
+                        jsonArrayValues.put(gloveData[count]);
+                    }
                     jsonObject.put( BnConstants.MESSAGE_VALUE_TAG,
-                            gloveData);
+                            jsonArrayValues);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return;
+                }
+
+                jsonArray.put(jsonObject);
+                sendMessages(jsonArray.toString());
+
+                jsonArray = new JSONArray();
+                gloveData[BnConstants.GLOVE_TOUCH_INDICE_INDEX] = 0;
+                Log.d(TAG,"Glove data to send");
+                jsonObject = new JSONObject();
+                try {
+                    jsonObject.put( BnConstants.MESSAGE_PLAYER_TAG,
+                            BnSensorAppData.getPlayerName(SensorServiceWifi.this));
+                    jsonObject.put( BnConstants.MESSAGE_BODYPART_TAG,
+                            BnSensorAppData.getGloveBodypart(SensorServiceWifi.this));
+                    jsonObject.put( BnConstants.MESSAGE_SENSORTYPE_TAG,
+                            BnConstants.SENSORTYPE_GLOVE_TAG);
+
+                    JSONArray jsonArrayValues = new JSONArray();
+                    for( int count = 0; count < gloveData.length; count++ ) {
+                        jsonArrayValues.put(gloveData[count]);
+                    }
+                    jsonObject.put( BnConstants.MESSAGE_VALUE_TAG,
+                            jsonArrayValues);
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                     return;

@@ -46,6 +46,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private EditText mSensorIntervalMsEdit;
     private RadioButton mGloveBodypartLeftHandRadio;
     private RadioButton mGloveBodypartRightHandRadio;
+    private RadioButton mGloveBodypartKatanaRadio;
     private RadioButton mConnectionTypeBluetoothRadio;
     private RadioButton mConnectionTypeWifiRadio;
     private Button mSaveButton;
@@ -73,9 +74,15 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         if( BnConstants.BODYPART_HAND_LEFT_TAG.equals(BnSensorAppData.getGloveBodypart(this)) ) {
             mGloveBodypartLeftHandRadio.setChecked(true);
             mGloveBodypartRightHandRadio.setChecked(false);
+            mGloveBodypartKatanaRadio.setChecked(false);
         } else if( BnConstants.BODYPART_HAND_RIGHT_TAG.equals(BnSensorAppData.getGloveBodypart(this)) ){
             mGloveBodypartLeftHandRadio.setChecked(false);
             mGloveBodypartRightHandRadio.setChecked(true);
+            mGloveBodypartKatanaRadio.setChecked(false);
+        } else if( BnConstants.BODYPART_KATANA_TAG.equals(BnSensorAppData.getGloveBodypart(this)) ){
+            mGloveBodypartLeftHandRadio.setChecked(false);
+            mGloveBodypartRightHandRadio.setChecked(false);
+            mGloveBodypartKatanaRadio.setChecked(true);
         }
 
         mPlayerNameEdit.setText(BnSensorAppData.getPlayerName(this));
@@ -95,6 +102,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         mSensorIntervalMsEdit = findViewById(R.id.settings_sensor_interval_ms_edit);
         mGloveBodypartLeftHandRadio = findViewById(R.id.settings_connection_type_glovebodypart_left_radio);
         mGloveBodypartRightHandRadio = findViewById(R.id.settings_connection_type_glovebodypart_right_radio);
+        mGloveBodypartKatanaRadio = findViewById(R.id.settings_connection_type_glovebodypart_katana_radio);
         mConnectionTypeBluetoothRadio = findViewById(R.id.settings_connection_type_bluetooth_radio);
         mConnectionTypeWifiRadio = findViewById(R.id.settings_connection_type_wifi_radio);
         mSaveButton = findViewById(R.id.settings_save_button);
@@ -119,6 +127,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                     BnSensorAppData.setGloveBodypart(this, BnConstants.BODYPART_HAND_LEFT_TAG);
                 } else if(mGloveBodypartRightHandRadio.isChecked()){
                     BnSensorAppData.setGloveBodypart(this, BnConstants.BODYPART_HAND_RIGHT_TAG);
+                } else if(mGloveBodypartKatanaRadio.isChecked()){
+                    BnSensorAppData.setGloveBodypart(this, BnConstants.BODYPART_KATANA_TAG);
                 }
 
                 finish();
