@@ -137,7 +137,7 @@ void loop() {
                 JsonObject message = message_doc.to<JsonObject>();;
                 message["player"] = mPlayerName;
                 message["bodypart"] = mBodypartName;
-                message["sensortype"] = "angularvelocity_rel";
+                message["sensortype"] = SENSORTYPE_ANGULARVELOCITY_REL_TAG;
                 for(uint8_t count=0; count<3;++count){
                     message["value"].add(valuesg[count]);
                     mLastSensorData_Gy[count] = valuesg[count];
@@ -147,7 +147,7 @@ void loop() {
                 //String output;
                 //serializeJson(message, output);
                 //DEBUG_PRINTLN(output);
-                //mCommunicator.addMessage(message);
+                mCommunicator.addMessage(message);
             }
         }
 
@@ -222,5 +222,5 @@ void loop() {
 #ifdef HAPTIC_ACTUATOR_ON_BOARD
     mHapticActuator.performAction();
 #endif // HAPTIC_ACTUATOR_ON_BOARD
-    delay(SENSOR_READ_INTERVAL_MS);
+    //delay(SENSOR_READ_INTERVAL_MS);
 }

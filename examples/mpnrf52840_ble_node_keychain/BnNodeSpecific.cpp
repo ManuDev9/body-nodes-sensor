@@ -340,7 +340,7 @@ static BLECharacteristic sAccelerationRelChara(BLE_BODYNODES_CHARA_ACCELERATION_
 static BLECharacteristic sGloveChara(BLE_BODYNODES_CHARA_GLOVE_VALUE_UUID);
 static BLECharacteristic sShoeChara(BLE_BODYNODES_CHARA_SHOE_UUID);
 
-static BLECharacteristic sAngularvelocityRelChara("0000CCA7-0000-1000-8000-00805F9B34FB");
+static BLECharacteristic sAngularvelocityRelChara(BLE_BODYNODES_CHARA_ANGULARVELOCITY_REL_VALUE_UUID);
 
 // This boolean just forces the Player and Bodypart to be set once
 // This is by specifications. The reason is that BLE communication is quite unique in nature and it is just
@@ -480,7 +480,7 @@ void BnBLENodeCommunicator_sendAllMessages(JsonArray &bnc_messages_list){
         } else if(sensortype_str == SENSORTYPE_SHOE_TAG) {
             //TODO sShoeChara.write(message_json[MESSAGE_VALUE_TAG].as<String>().c_str());
             //TODO sShoeChara.notify(&bytes_message, 1);
-        } else if(sensortype_str == "angularvelocity_rel") {
+        } else if(sensortype_str == SENSORTYPE_ANGULARVELOCITY_REL_TAG) {
             uint8_t bytes_message[12];
             convertStringArrayToFloatBytes(value_str.c_str(), value_str.length(), bytes_message, 3);
             sAngularvelocityRelChara.notify(&bytes_message, 12);
