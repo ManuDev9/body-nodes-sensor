@@ -22,9 +22,9 @@
 * SOFTWARE.
 */
 
-#include "BnOrientationAbsSensor_BNO055.h"
+#include "BnOrientationAbsSensor.h"
 
-#ifdef __BN_ORIENTATION_ABS_SENSOR_BNO055_H__
+#ifdef __BN_ORIENTATION_ABS_SENSOR_H__
 
 void BnOrientationAbsSensor::init(){
     s_enabled = true;
@@ -33,19 +33,16 @@ void BnOrientationAbsSensor::init(){
     s_statusSensorLED.on = false;
     s_statusSensorLED.lastToggle = millis();
 
-    s_lastQuat = imu::Quaternion(-1,-1,-1,-1);
-    s_BNO = Adafruit_BNO055(55, BNO055_ADDRESS_B);
     s_sensorInit=false;
     s_lastReadSensorTime=millis();
     s_sensorReconnectionTime=millis();
     /* Initialise the sensor */
-    if(s_BNO.begin(s_BNO.OPERATION_MODE_NDOF_FMC_OFF)) {
+    if(s_isensor.init()) {
          s_firstZeros=true;
          setStatus(SENSOR_STATUS_WORKING);
     } else {
          setStatus(SENSOR_STATUS_NOT_ACCESSIBLE);
     }
-    s_BNO.setExtCrystalUse(true);
 }
 
 void BnOrientationAbsSensor::setStatus(int sensor_status){
@@ -80,7 +77,7 @@ bool BnOrientationAbsSensor::checkAllOk(){
         }
         DEBUG_PRINTLN("Sensor not connected");
         s_sensorReconnectionTime=millis();
-        if(s_BNO.begin(s_BNO.OPERATION_MODE_NDOF_FMC_OFF)) {
+        if(s_isensor.init()) {
             setStatus(SENSOR_STATUS_WORKING);
             s_firstZeros=true;
             return true;
@@ -93,15 +90,12 @@ bool BnOrientationAbsSensor::checkAllOk(){
         return false;
     }
 
-    sensors_event_t event;
-    s_BNO.getEvent(&event);
-    imu::Quaternion sensor_quat = s_BNO.getQuat();
-    float svalues[4] = { 
-        static_cast<float>( sensor_quat.w() ),
-        static_cast<float>( sensor_quat.x() ),
-        static_cast<float>( sensor_quat.y() ),
-        static_cast<float>( sensor_quat.z() )
-    };
+
+    float svalues[4];
+    if( !s_isensor.getData(svalues, ISENSOR_DATATYPE_ABSOLUTEORIENTATION) ) {
+        return false;
+    }
+    
     float tvalues[4];
     realignAxis(svalues, tvalues);
 
@@ -125,27 +119,12 @@ bool BnOrientationAbsSensor::checkAllOk(){
 }
 
 bool BnOrientationAbsSensor::isCalibrated(){
-    uint8_t sys;
-    uint8_t gyro;
-    uint8_t accel;
-    uint8_t mag;
-    s_BNO.getCalibration(&sys, &gyro, &accel, &mag);
-    if(sys < 2){
-        /*
-        DEBUG_PRINT("Calibration sys = ");
-        DEBUG_PRINT_DEC(sys);
-        DEBUG_PRINT(" , gyro = ");
-        DEBUG_PRINT_DEC(gyro);
-        DEBUG_PRINT(" , accel = ");
-        DEBUG_PRINT_DEC(accel);
-        DEBUG_PRINT(" , mag = ");
-        DEBUG_PRINTLN_DEC(mag);
-        */
-        setStatus(SENSOR_STATUS_CALIBRATING);
-        return false;
-    } else {
+    if( s_isensor.isCalibrated() ){
         setStatus(SENSOR_STATUS_WORKING);
         return true;
+    } else {
+        setStatus(SENSOR_STATUS_CALIBRATING);
+        return false;
     }
 }
 
@@ -180,54 +159,10 @@ bool BnOrientationAbsSensor::isEnabled(){
 
 void BnOrientationAbsSensor::realignAxis(float values[], float revalues[]){
 
-    // Axis W
-    #if OUT_AXIS_W == SENSOR_AXIS_W
-    revalues[0] = values[0];
-    #elif OUT_AXIS_W == SENSOR_AXIS_X
-    revalues[0] = values[1];
-    #elif OUT_AXIS_W == SENSOR_AXIS_Y
-    revalues[0] = values[2];
-    #elif OUT_AXIS_W == SENSOR_AXIS_Z
-    revalues[0] = values[3];
-    #endif
-
-    // Axis X
-    #if OUT_AXIS_X == SENSOR_AXIS_W
-    revalues[1] = values[0];
-    #elif OUT_AXIS_X == SENSOR_AXIS_X
-    revalues[1] = values[1];
-    #elif OUT_AXIS_X == SENSOR_AXIS_Y
-    revalues[1] = values[2];
-    #elif OUT_AXIS_X == SENSOR_AXIS_Z
-    revalues[1] = values[3];
-    #endif
-
-    // Axis Y
-    #if OUT_AXIS_Y == SENSOR_AXIS_W
-    revalues[2] = values[0];
-    #elif OUT_AXIS_Y == SENSOR_AXIS_X
-    revalues[2] = values[1];
-    #elif OUT_AXIS_Y == SENSOR_AXIS_Y
-    revalues[2] = values[2];
-    #elif OUT_AXIS_Y == SENSOR_AXIS_Z
-    revalues[2] = values[3];
-    #endif
-
-    // Axis Z
-    #if OUT_AXIS_Z == SENSOR_AXIS_W
-    revalues[3] = values[0];
-    #elif OUT_AXIS_Z == SENSOR_AXIS_X
-    revalues[3] = values[1];
-    #elif OUT_AXIS_Z == SENSOR_AXIS_Y
-    revalues[3] = values[2];
-    #elif OUT_AXIS_Z == SENSOR_AXIS_Z
-    revalues[3] = values[3];
-    #endif
-
-    revalues[0] = MUL_AXIS_W * revalues[0];
-    revalues[1] = MUL_AXIS_X * revalues[1];
-    revalues[2] = MUL_AXIS_Y * revalues[2];
-    revalues[3] = MUL_AXIS_Z * revalues[3];
+    revalues[0] = MUL_AXIS_W * revalues[OUT_AXIS_W];
+    revalues[1] = MUL_AXIS_X * revalues[OUT_AXIS_X];
+    revalues[2] = MUL_AXIS_Y * revalues[OUT_AXIS_Y];
+    revalues[3] = MUL_AXIS_Z * revalues[OUT_AXIS_Z];
 }
 
-#endif /*__BN_ORIENTATION_ABS_SENSOR_BNO055_H__*/
+#endif /*__BN_ORIENTATION_ABS_SENSOR_H__*/

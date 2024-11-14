@@ -1,13 +1,14 @@
 {
     "type" : "node",
-    "board" : "mpnrf52840",
-    "node_communicator": "ble",
+    "board" : "esp-12e",
+    "node_communicator": "wifi",
     "actuators": {
         "haptic": "no"
     },
-    "sensors": {
+    "isensor": "bno055",
+    "esensors": {
         "acceleration_rel" : "no",
-        "orientation_abs" : "mpu6050_sf",
+        "orientation_abs" : "onboard",
         "glove" : "no",
         "shoe" : "no"
     }

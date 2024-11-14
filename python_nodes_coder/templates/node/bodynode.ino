@@ -47,8 +47,7 @@ BnBluetoothNodeCommunicator mCommunicator;
 #endif // BLUETOOTH_COMMUNICATION
 
 #ifdef ORIENTATION_ABS_SENSOR
-
-// ORIENTATION_ABS_SENSOR_HEADER //
+#include "BnOrientationAbsSensor.h"
 BnOrientationAbsSensor mOASensor;
 float mLastSensorData_OA[4] = {0 ,0 ,0 ,0};
 float mBigDiff_OA[4] = {BIG_QUAT_DIFF ,BIG_QUAT_DIFF ,BIG_QUAT_DIFF ,BIG_QUAT_DIFF};

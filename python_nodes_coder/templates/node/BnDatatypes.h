@@ -30,6 +30,12 @@
 
 #define MAX_RECEIVED_BYTES_LENGTH 150
 
+// Internal Sensors Data Types
+#define ISENSOR_DATATYPE_ACCELEROMETER          0
+#define ISENSOR_DATATYPE_GYROSCOPE              1
+#define ISENSOR_DATATYPE_MAGNETOMETER           2
+#define ISENSOR_DATATYPE_ABSOLUTEORIENTATION    3
+
 struct BnStatusLED {
   bool on;
   unsigned long lastToggle;
