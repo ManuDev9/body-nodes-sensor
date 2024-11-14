@@ -1279,7 +1279,7 @@ bool BnOrientationAbsSensor::checkAllOk(){
 
     IMU.readAcceleration(accx, accy, accz); // outputs in g, convert to m/s^2
     IMU.readMagneticField(magnx, magny, magnz);  // outputs in uT
-    IMU.readGyroscope(gyrox, gyroy, gyroz);  // outputs in dps, covert it to rad/s
+    IMU.readGyroscope(gyrox, gyroy, gyroz);  // outputs in dps, convert it to rad/s
 
     const float accel1_vals[] = { accx, accy, accz };
     const float magn1_vals[] = { magnx, magny, magnz};

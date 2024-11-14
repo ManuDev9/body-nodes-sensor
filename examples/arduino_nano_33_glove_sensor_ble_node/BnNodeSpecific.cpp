@@ -147,7 +147,7 @@ void BnBLENodeCommunicator_init(){
         DEBUG_PRINTLN("BLE failed to initialize!");
     }
     
-    BLE.setLocalName(BLE_BODYNODES_NAME);
+    BLE.setLocalName("Bodynod0");
     BLE.setAdvertisedService(sBodynodesService);
     
     // Add characteristics to the service

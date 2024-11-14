@@ -197,6 +197,11 @@ void loop() {
         if(mGloveSensor.isEnabled() && mGloveSensor.checkAllOk()) {
             int values[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
             mGloveSensor.getData(values);
+            values[0] = 0; 
+            values[1] = 0; 
+            values[2] = 0; 
+            values[3] = 0; 
+            values[4] = 0; 
             if(bigChanges(values, mLastSensorData_G, 9, mBigDiff_G)) {
                 StaticJsonDocument<MAX_MESSAGE_BYTES> message_doc;
                 JsonObject message = message_doc.to<JsonObject>();;
@@ -289,4 +294,5 @@ void loop() {
 #ifdef HAPTIC_ACTUATOR_ON_BOARD
     mHapticActuator.performAction();
 #endif // HAPTIC_ACTUATOR_ON_BOARD
+  delay(SENSOR_READ_INTERVAL_MS);
 }

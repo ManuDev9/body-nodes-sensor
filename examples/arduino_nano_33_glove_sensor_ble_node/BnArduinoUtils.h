@@ -38,7 +38,7 @@ public:
 private:
   BnPersMemory(){};
 
-  static constexpr uint8_t pm_checkkey[5] = {0x00, 0x00, 0x00, 0x00, 0x02};
+  static constexpr uint8_t pm_checkkey[5] = {0x00, 0x00, 0x00, 0x00, 0x00};
 
   static constexpr uint16_t pm_player_addr_nbytes = 50;
   static constexpr uint16_t pm_player_addr_chars = 51;
