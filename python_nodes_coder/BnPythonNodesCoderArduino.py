@@ -37,7 +37,7 @@ import json
 #  "node_communicator": "wifi",         # Possible values: "wifi", "ble"
 #  "sensors": {
 #    "acceleration_rel" : "no",         # Possible values: "no"
-#    "orientation_abs" : "bno055",      # Possible values: "no", "bno055", "arduino_lsm9ds1_sf", "mpu6050"
+#    "orientation_abs" : "bno055",      # Possible values: "no", "bno055", "arduino_lsm9ds1_sf", "mpu6050_sf"
 #    "glove" : "serial",                # Possible values: "no", "serial", "onboard"
 #    "shoe" : "onboard"                 # Possible values: "no", "onboard"
 #  }

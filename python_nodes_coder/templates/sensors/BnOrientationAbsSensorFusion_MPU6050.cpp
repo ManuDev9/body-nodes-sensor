@@ -1201,7 +1201,7 @@ void BnSensorFusionMadgwickAHRS::getQuaternion(BnQuaternion &out) {
 const uint32_t samplePeriod_ms = SENSOR_READ_INTERVAL_MS;
 const float gain = 0.8;
 const float rescaleGyro = 0.02;
-const float signs_vals[] = {1.0, -1.0, 1.0};
+const float signs_vals[] = {-1.0, -1.0, 1.0};
 const BnVector axisSigns(3, signs_vals );
 
 BnOrientationAbsSensor::BnOrientationAbsSensor() : s_sensorfusion( samplePeriod_ms, gain, rescaleGyro, axisSigns ) { }
