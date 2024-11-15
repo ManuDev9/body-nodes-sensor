@@ -35,11 +35,12 @@ import json
 #  "board" : "esp-12e",                 # Possible values: "esp-12e", "arduino_nano_33", "redbear_duo", "mpnrf52840"
 #  "node_communicator": "wifi",         # Possible values: "wifi", "ble"
 #  "actuators": {
-#      "haptic": "no"                   # Possible values: "yes", "no"
+#      "haptic": "no"                   # Possible values: "no", "yes"
 #  },
 #  "isensors": "mpu6050",               # Possible values: "no", "bno055", "arduino_lsm9ds1", "mpu6050"
 #  "esensors": {
-#    "acceleration_rel" : "no",         # Possible values: "no"
+#    "acceleration_rel" : "no",         # Possible values: "no", "yes"
+#    "angularvelocity_rel" : "no",      # Possible values: "no"
 #    "orientation_abs" : "fusion",      # Possible values: "no", "onboard", "fusion"
 #    "glove" : "serial",                # Possible values: "no", "serial", "onboard"
 #    "shoe" : "onboard"                 # Possible values: "no", "onboard"
@@ -109,11 +110,20 @@ def main_node(project_path, config_json):
 
     # External Sensors files
     template_node_esensors_folder = "templates/esensors/"
-    files_to_take.append(template_node_esensors_folder+"BnOrientationAbsSensor.h")
     if config_json["esensors"]["orientation_abs"] == "onboard":
+        files_to_take.append(template_node_esensors_folder+"BnOrientationAbsSensor.h")
         files_to_take.append(template_node_esensors_folder+"BnOrientationAbsSensorOnBoard.cpp")
     elif config_json["esensors"]["orientation_abs"] == "fusion":
+        files_to_take.append(template_node_esensors_folder+"BnOrientationAbsSensor.h")
         files_to_take.append(template_node_esensors_folder+"BnOrientationAbsSensorFusion.cpp")
+
+    if config_json["esensors"]["acceleration_rel"] == "yes":
+        files_to_take.append(template_node_esensors_folder+"BnAccelerationRelSensor.h")
+        files_to_take.append(template_node_esensors_folder+"BnAccelerationRelSensor.cpp")
+
+    if config_json["esensors"]["angularvelocity_rel"] == "yes":
+        files_to_take.append(template_node_esensors_folder+"BnAngularVelocityRelSensor.h")
+        files_to_take.append(template_node_esensors_folder+"BnAngularVelocityRelSensor.cpp")
     
     if config_json["esensors"]["glove"] == "serial":
         files_to_take.append(template_node_esensors_folder+"BnGloveSensorReaderSerial.cpp")
@@ -169,8 +179,14 @@ def main_node(project_path, config_json):
             if config_json["node_communicator"] == "ble":
                 add_field_in_file( full_file_path, "COMMUNICATION", "BLE_COMMUNICATION" )
 
+            if config_json["esensors"]["acceleration_rel"] != "no":
+                add_field_in_file( full_file_path, "SENSORS", "ACCELERATION_REL_SENSOR" )
+
             if config_json["esensors"]["orientation_abs"] != "no":
                 add_field_in_file( full_file_path, "SENSORS", "ORIENTATION_ABS_SENSOR" )
+
+            if config_json["esensors"]["angularvelocity_rel"] != "no":
+                add_field_in_file( full_file_path, "SENSORS", "ANGULARVELOCITY_REL_SENSOR" )
 
             if config_json["esensors"]["glove"] == "serial":
                 add_field_in_file( full_file_path, "SENSORS", "GLOVE_SENSOR_ON_SERIAL" )
@@ -249,6 +265,9 @@ def main(project_path):
         return
     if "acceleration_rel" not in config_json["esensors"]:
         print("Missing field 'acceleration_rel' for 'sensors' in bn_coder_config.json")
+        return
+    if "angularvelocity_rel" not in config_json["esensors"]:
+        print("Missing field 'angularvelocity_rel' for 'sensors' in bn_coder_config.json")
         return
     if "orientation_abs" not in config_json["esensors"]:
         print("Missing field 'orientation_abs' for 'sensors' in bn_coder_config.json")

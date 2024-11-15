@@ -1,13 +1,14 @@
 {
     "type" : "node",
-    "board" : "esp-12e",
-    "node_communicator": "wifi",
+    "board" : "redbear_duo",
+    "node_communicator": "ble",
     "actuators": {
         "haptic": "no"
     },
     "isensor": "bno055",
     "esensors": {
-        "acceleration_rel" : "no",
+        "acceleration_rel" : "yes",
+        "angularvelocity_rel" : "yes",
         "orientation_abs" : "onboard",
         "glove" : "no",
         "shoe" : "no"

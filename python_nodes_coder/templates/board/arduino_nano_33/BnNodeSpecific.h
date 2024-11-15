@@ -59,20 +59,32 @@
 // Device Specific Axis Configuration
 // Use the program "sensor_test" and check the "bodynodes universal orientation specs" to build your axis configuration,
 // so that your node can easily integrate with any system.
-#define SENSOR_AXIS_W 0
-#define SENSOR_AXIS_X 1
-#define SENSOR_AXIS_Y 2
-#define SENSOR_AXIS_Z 3
 
-#define OUT_AXIS_W SENSOR_AXIS_W
-#define OUT_AXIS_X SENSOR_AXIS_X
-#define OUT_AXIS_Y SENSOR_AXIS_Y
-#define OUT_AXIS_Z SENSOR_AXIS_Z
+#define OUT_AXIS_W_ORIE 0
+#define OUT_AXIS_X_ORIE 1
+#define OUT_AXIS_Y_ORIE 2
+#define OUT_AXIS_Z_ORIE 3
 
-#define MUL_AXIS_W 1
-#define MUL_AXIS_X 1
-#define MUL_AXIS_Y 1
-#define MUL_AXIS_Z 1
+#define MUL_AXIS_W_ORIE 1
+#define MUL_AXIS_X_ORIE 1
+#define MUL_AXIS_Y_ORIE 1
+#define MUL_AXIS_Z_ORIE 1
+
+#define OUT_AXIS_X_ACC 0
+#define OUT_AXIS_Y_ACC 1
+#define OUT_AXIS_Z_ACC 2
+
+#define MUL_AXIS_X_ACC 1
+#define MUL_AXIS_Y_ACC 1
+#define MUL_AXIS_Z_ACC 1
+
+#define OUT_AXIS_X_ANGVEL 0
+#define OUT_AXIS_Y_ANGVEL 1
+#define OUT_AXIS_Z_ANGVEL 2
+
+#define MUL_AXIS_X_ANGVEL 1
+#define MUL_AXIS_Y_ANGVEL 1
+#define MUL_AXIS_Z_ANGVEL 1
 
 // PINS
 #define BUZZER_FREQ 1000 //Specified in Hz

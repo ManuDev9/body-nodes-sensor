@@ -1394,9 +1394,6 @@ void BnSensorFusionMadgwickAHRS::getQuaternion(BnQuaternion &out) {
 
 ///////////////// BnOrientationAbsSensor START
 
-// You need to install the Adafruit_MPU6050 package from Tools->Manage Libraries...
-#include "Adafruit_MPU6050.h"
-
 const uint32_t samplePeriod_ms = SENSOR_READ_INTERVAL_MS;
 const float gain = 0.8;
 const float rescaleGyro = 0.02;
@@ -1542,10 +1539,10 @@ bool BnOrientationAbsSensor::isEnabled(){
 
 void BnOrientationAbsSensor::realignAxis(float values[], float revalues[]){
 
-  revalues[0] = MUL_AXIS_W * revalues[OUT_AXIS_W];
-  revalues[1] = MUL_AXIS_X * revalues[OUT_AXIS_X];
-  revalues[2] = MUL_AXIS_Y * revalues[OUT_AXIS_Y];
-  revalues[3] = MUL_AXIS_Z * revalues[OUT_AXIS_Z];
+  revalues[0] = MUL_AXIS_W_ORIE * revalues[OUT_AXIS_W_ORIE];
+  revalues[1] = MUL_AXIS_X_ORIE * revalues[OUT_AXIS_X_ORIE];
+  revalues[2] = MUL_AXIS_Y_ORIE * revalues[OUT_AXIS_Y_ORIE];
+  revalues[3] = MUL_AXIS_Z_ORIE * revalues[OUT_AXIS_Z_ORIE];
 }
 
 ///////////////// BnOrientationAbsSensor END

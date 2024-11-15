@@ -30,19 +30,22 @@
 #include "Adafruit_BNO055.h"
 
 static Adafruit_BNO055 s_BNO;
+static bool sIsInit = false;
 
 bool BnISensor::init(){
+    if(sIsInit){
+        return true;
+    }
 
     s_BNO = Adafruit_BNO055(55, BNO055_ADDRESS_B);
     /* Initialise the sensor */
-    bool init;
     if(s_BNO.begin(s_BNO.OPERATION_MODE_NDOF_FMC_OFF)) {
-        init = true;
+        sIsInit = true;
     } else {
-        init = false;
+        sIsInit = false;
     }
     s_BNO.setExtCrystalUse(true);
-    return init;
+    return sIsInit;
 }
 
 bool BnISensor::isCalibrated(){

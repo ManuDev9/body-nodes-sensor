@@ -51,8 +51,21 @@ BnBluetoothNodeCommunicator mCommunicator;
 BnOrientationAbsSensor mOASensor;
 float mLastSensorData_OA[4] = {0 ,0 ,0 ,0};
 float mBigDiff_OA[4] = {BIG_QUAT_DIFF ,BIG_QUAT_DIFF ,BIG_QUAT_DIFF ,BIG_QUAT_DIFF};
-
 #endif // ORIENTATION_ABS_SENSOR
+
+#ifdef ACCELERATION_REL_SENSOR
+#include "BnAccelerationRelSensor.h"
+BnAccelerationRelSensor mARSensor;
+float mLastSensorData_AR[3] = {0 ,0 ,0};
+float mBigDiff_AR[3] = {BIG_QUAT_DIFF ,BIG_QUAT_DIFF ,BIG_QUAT_DIFF};
+#endif // ACCELERATION_REL_SENSOR
+
+#ifdef ANGULARVELOCITY_REL_SENSOR
+#include "BnAngularVelocityRelSensor.h"
+BnAngularVelocityRelSensor mAVRSensor;
+float mLastSensorData_AVR[3] = {0 ,0 ,0};
+float mBigDiff_AVR[3] = {BIG_QUAT_DIFF ,BIG_QUAT_DIFF ,BIG_QUAT_DIFF};
+#endif // ANGULARVELOCITY_REL_SENSOR
 
 #ifdef GLOVE_SENSOR_ON_SERIAL
 #include "BnGloveSensorReaderSerial.h"
@@ -126,6 +139,12 @@ void setup() {
 #ifdef ORIENTATION_ABS_SENSOR
     mOASensor.init();
 #endif // ORIENTATION_ABS_SENSOR
+#ifdef ACCELERATION_REL_SENSOR
+    mARSensor.init();
+#endif // ACCELERATION_REL_SENSOR
+#ifdef ANGULARVELOCITY_REL_SENSOR
+    mAVRSensor.init();
+#endif // ANGULARVELOCITY_REL_SENSOR
 
     mCommunicator.init();
 
@@ -173,6 +192,54 @@ void loop() {
             }
         }
 #endif // ORIENTATION_ABS_SENSOR
+
+#ifdef ACCELERATION_REL_SENSOR
+        if(!mOASensor.isCalibrated()){
+            // You can decide to return
+        }
+
+        if(mARSensor.isEnabled() && mARSensor.checkAllOk()) {
+            float values[3] = {0, 0, 0};
+            mARSensor.getData().getValues(values);
+            if(bigChanges(values, mLastSensorData_AR, 3, mBigDiff_AR)) {
+                StaticJsonDocument<MAX_MESSAGE_BYTES> message_doc;
+                JsonObject message = message_doc.to<JsonObject>();;
+                message["player"] = mPlayerName;
+                message["bodypart"] = mBodypartName;
+                message["sensortype"] = mARSensor.getType();
+                for(uint8_t count=0; count<4;++count){
+                    message["value"].add(values[count]);
+                    mLastSensorData_AR[count] = values[count];
+                }
+
+                mCommunicator.addMessage(message);
+            }
+        }
+#endif // ACCELERATION_REL_SENSOR
+
+#ifdef ANGULARVELOCITY_REL_SENSOR
+        if(!mAVRSensor.isCalibrated()){
+            // You can decide to return
+        }
+
+        if(mAVRSensor.isEnabled() && mAVRSensor.checkAllOk()) {
+            float values[3] = {0, 0, 0};
+            mAVRSensor.getData().getValues(values);
+            if(bigChanges(values, mLastSensorData_AVR, 3, mBigDiff_AVR)) {
+                StaticJsonDocument<MAX_MESSAGE_BYTES> message_doc;
+                JsonObject message = message_doc.to<JsonObject>();;
+                message["player"] = mPlayerName;
+                message["bodypart"] = mBodypartName;
+                message["sensortype"] = mAVRSensor.getType();
+                for(uint8_t count=0; count<4;++count){
+                    message["value"].add(values[count]);
+                    mLastSensorData_AVR[count] = values[count];
+                }
+
+                mCommunicator.addMessage(message);
+            }
+        }
+#endif // ANGULARVELOCITY_REL_SENSOR
 
 #if defined(GLOVE_SENSOR_ON_SERIAL) || defined(GLOVE_SENSOR_ON_BOARD)
         if(mGloveSensor.isEnabled() && mGloveSensor.checkAllOk()) {

@@ -29,10 +29,21 @@
 // You need to install the Arduino_LSM9DS1 package from Tools->Manage Libraries...
 #include "Arduino_LSM9DS1.h"
 
+static bool sIsInit = false;
+
 bool BnISensor::init(){
 
+    if(sIsInit){
+        return true;
+    }
+
     /* Initialise the sensor */
-    return IMU.begin();
+    if( IMU.begin() ){
+        sIsInit = true;
+    } else {
+        sIsInit = false;
+    }
+    return sIsInit;
 }
 
 bool BnISensor::isCalibrated(){

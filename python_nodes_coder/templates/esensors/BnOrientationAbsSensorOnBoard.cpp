@@ -159,10 +159,10 @@ bool BnOrientationAbsSensor::isEnabled(){
 
 void BnOrientationAbsSensor::realignAxis(float values[], float revalues[]){
 
-    revalues[0] = MUL_AXIS_W * revalues[OUT_AXIS_W];
-    revalues[1] = MUL_AXIS_X * revalues[OUT_AXIS_X];
-    revalues[2] = MUL_AXIS_Y * revalues[OUT_AXIS_Y];
-    revalues[3] = MUL_AXIS_Z * revalues[OUT_AXIS_Z];
+    revalues[0] = MUL_AXIS_W_ORIE * values[OUT_AXIS_W_ORIE];
+    revalues[1] = MUL_AXIS_X_ORIE * values[OUT_AXIS_X_ORIE];
+    revalues[2] = MUL_AXIS_Y_ORIE * values[OUT_AXIS_Y_ORIE];
+    revalues[3] = MUL_AXIS_Z_ORIE * values[OUT_AXIS_Z_ORIE];
 }
 
 #endif /*__BN_ORIENTATION_ABS_SENSOR_H__*/

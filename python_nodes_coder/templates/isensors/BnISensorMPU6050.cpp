@@ -32,12 +32,21 @@
 // Note: You need to set the appropriate SDA and SCL pins on the BnNodeSpecific.h file (or anywhere is your project, but there is better)
 static TwoWire sMPU6050Wire(NRF_TWIM0, NRF_TWIS0, SPIM0_SPIS0_TWIM0_TWIS0_SPI0_TWI0_IRQn, MPU6050_PIN_SDA, MPU6050_PIN_SCL);
 static Adafruit_MPU6050 sMPU;
+static bool sIsInit = false;
 
 bool BnISensor::init(){
+    if(sIsInit){
+        return true;
+    }
 
     /* Initialise the sensor */
     sMPU6050Wire.begin();
-    return sMPU.begin(MPU6050_I2CADDR_DEFAULT, &sMPU6050Wire);
+    if(sMPU.begin(MPU6050_I2CADDR_DEFAULT, &sMPU6050Wire) ){
+        sIsInit = true;
+    } else {
+        sIsInit = false;
+    }
+    return sIsInit;
 }
 
 bool BnISensor::isCalibrated(){
