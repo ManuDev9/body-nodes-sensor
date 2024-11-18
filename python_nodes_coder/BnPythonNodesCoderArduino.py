@@ -42,7 +42,7 @@ import json
 #    "acceleration_rel" : "no",         # Possible values: "no", "yes"
 #    "angularvelocity_rel" : "no",      # Possible values: "no"
 #    "orientation_abs" : "fusion",      # Possible values: "no", "onboard", "fusion"
-#    "glove" : "serial",                # Possible values: "no", "serial", "onboard"
+#    "glove" : "serial",                # Possible values: "no", "onboard", "serial", 
 #    "shoe" : "onboard"                 # Possible values: "no", "onboard"
 #  }
 #}

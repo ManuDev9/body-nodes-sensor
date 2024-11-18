@@ -1,16 +1,16 @@
 {
     "type" : "node",
-    "board" : "esp-12e",
-    "node_communicator": "wifi",
+    "board" : "arduino_nano_33",
+    "node_communicator": "ble",
     "actuators": {
         "haptic": "no"
     },
-    "isensor": "bno055",
+    "isensor": "arduino_lsm9ds1",
     "esensors": {
-        "acceleration_rel" : "yes",
+        "acceleration_rel" : "no",
         "angularvelocity_rel" : "no",
-        "orientation_abs" : "onboard",
-        "glove" : "no",
-        "shoe" : "yes"
+        "orientation_abs" : "no",
+        "glove" : "onboard",
+        "shoe" : "no"
     }
 }
