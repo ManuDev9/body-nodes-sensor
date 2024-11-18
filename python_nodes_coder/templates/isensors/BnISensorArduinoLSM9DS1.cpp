@@ -30,6 +30,7 @@
 #include "Arduino_LSM9DS1.h"
 
 static bool sIsInit = false;
+static BnStatusLED sStatusSensorLED;
 
 bool BnISensor::init(){
 
@@ -39,19 +40,24 @@ bool BnISensor::init(){
 
     /* Initialise the sensor */
     if( IMU.begin() ){
-        sIsInit = true;
+         setStatus(SENSOR_STATUS_WORKING);
     } else {
-        sIsInit = false;
+         setStatus(SENSOR_STATUS_NOT_ACCESSIBLE);
     }
     return sIsInit;
 }
 
 bool BnISensor::isCalibrated(){
-    return IMU.gyroscopeAvailable() && IMU.accelerationAvailable() && IMU.magneticFieldAvailable();
+    if( IMU.gyroscopeAvailable() && IMU.accelerationAvailable() && IMU.magneticFieldAvailable() ){
+        setStatus(SENSOR_STATUS_WORKING);
+        return true;
+    } else {
+        setStatus(SENSOR_STATUS_CALIBRATING);
+        return false;
+    }
 }
 
 bool BnISensor::getData(float values[], const int type){
-
     /*
     DEBUG_PRINT("values = ");
     DEBUG_PRINT(s_values[0]);
@@ -95,6 +101,31 @@ bool BnISensor::getData(float values[], const int type){
         return false;
     }
 
+}
+
+void BnISensor::setStatus(int sensor_status){
+    if(sensor_status == SENSOR_STATUS_NOT_ACCESSIBLE){
+        sIsInit=false;
+        DEBUG_PRINTLN("Ooops, no LSM9DS1 detected ... Check your wiring or I2C ADDR!");
+        BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_ON;
+        sStatusSensorLED.on = true;
+        sStatusSensorLED.lastToggle = millis();
+    } else if(sensor_status == SENSOR_STATUS_CALIBRATING) {
+        if(millis()-sStatusSensorLED.lastToggle > 500){
+            sStatusSensorLED.lastToggle = millis();
+            sStatusSensorLED.on = !sStatusSensorLED.on;
+            if(sStatusSensorLED.on){
+                BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_ON;
+            } else {
+                BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_OFF;
+            }
+        }
+    } else if(sensor_status == SENSOR_STATUS_WORKING) {
+        sIsInit=true;
+        BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_OFF;
+        sStatusSensorLED.on = false;
+        sStatusSensorLED.lastToggle = millis();
+    }
 }
 
 #endif // __BN_ISENSOR_H__

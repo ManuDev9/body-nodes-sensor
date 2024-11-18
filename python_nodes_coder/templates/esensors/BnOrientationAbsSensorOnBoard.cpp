@@ -28,47 +28,16 @@
 
 void BnOrientationAbsSensor::init(){
     s_enabled = true;
-    BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_SETUP;
-    BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_ON;
-    s_statusSensorLED.on = false;
-    s_statusSensorLED.lastToggle = millis();
 
     s_sensorInit=false;
     s_lastReadSensorTime=millis();
     s_sensorReconnectionTime=millis();
     /* Initialise the sensor */
     if(s_isensor.init()) {
-         s_firstZeros=true;
-         setStatus(SENSOR_STATUS_WORKING);
-    } else {
-         setStatus(SENSOR_STATUS_NOT_ACCESSIBLE);
+        s_firstZeros=true;
     }
 }
 
-void BnOrientationAbsSensor::setStatus(int sensor_status){
-    if(sensor_status == SENSOR_STATUS_NOT_ACCESSIBLE){
-        s_sensorInit=false;
-        DEBUG_PRINTLN("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
-        BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_ON;
-        s_statusSensorLED.on = true;
-        s_statusSensorLED.lastToggle = millis();
-    } else if(sensor_status == SENSOR_STATUS_CALIBRATING) {
-        if(millis()-s_statusSensorLED.lastToggle > 500){
-            s_statusSensorLED.lastToggle = millis();
-            s_statusSensorLED.on = !s_statusSensorLED.on;
-            if(s_statusSensorLED.on){
-                BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_ON;
-            } else {
-                BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_OFF;
-            }
-        }
-    } else if(sensor_status == SENSOR_STATUS_WORKING) {
-        s_sensorInit=true;
-        BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_OFF;
-        s_statusSensorLED.on = false;
-        s_statusSensorLED.lastToggle = millis();
-    }
-}
 
 bool BnOrientationAbsSensor::checkAllOk(){
     if(!s_sensorInit){
@@ -78,11 +47,9 @@ bool BnOrientationAbsSensor::checkAllOk(){
         DEBUG_PRINTLN("Sensor not connected");
         s_sensorReconnectionTime=millis();
         if(s_isensor.init()) {
-            setStatus(SENSOR_STATUS_WORKING);
             s_firstZeros=true;
             return true;
         } else {
-            setStatus(SENSOR_STATUS_NOT_ACCESSIBLE);
             return false;
         }
     }
@@ -106,7 +73,7 @@ bool BnOrientationAbsSensor::checkAllOk(){
 
     if (tvalues[0] == 0 && tvalues[1]==0 && tvalues[2]==0 && tvalues[3]==0 && !s_firstZeros){
         DEBUG_PRINTLN("Sensor might have gotten disconnected!");
-        setStatus(SENSOR_STATUS_NOT_ACCESSIBLE);
+        s_isensor.setStatus(SENSOR_STATUS_NOT_ACCESSIBLE);
         return false;
     }
 
@@ -119,13 +86,7 @@ bool BnOrientationAbsSensor::checkAllOk(){
 }
 
 bool BnOrientationAbsSensor::isCalibrated(){
-    if( s_isensor.isCalibrated() ){
-        setStatus(SENSOR_STATUS_WORKING);
-        return true;
-    } else {
-        setStatus(SENSOR_STATUS_CALIBRATING);
-        return false;
-    }
+    return s_isensor.isCalibrated();
 }
 
 BnSensorData BnOrientationAbsSensor::getData(){

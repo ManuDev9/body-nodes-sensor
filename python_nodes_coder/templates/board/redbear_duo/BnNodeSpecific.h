@@ -187,9 +187,9 @@ void BnHapticActuator_init();
 void BnHapticActuator_turnON(uint8_t strength);
 void BnHapticActuator_turnOFF();
 
-#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_SETUP do{ pinMode(STATUS_SENSOR_HMI_LED_P, OUTPUT); pinMode(STATUS_SENSOR_HMI_LED_M, OUTPUT); digitalWrite(STATUS_SENSOR_HMI_LED_M, LOW); }while(0)
-#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_ON do{ digitalWrite(STATUS_SENSOR_HMI_LED_P, HIGH); }while(0)
-#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_OFF do{ digitalWrite(STATUS_SENSOR_HMI_LED_P, LOW); }while(0)
+#define BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_SETUP do{ pinMode(STATUS_SENSOR_HMI_LED_P, OUTPUT); pinMode(STATUS_SENSOR_HMI_LED_M, OUTPUT); digitalWrite(STATUS_SENSOR_HMI_LED_M, LOW); }while(0)
+#define BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_ON do{ digitalWrite(STATUS_SENSOR_HMI_LED_P, HIGH); }while(0)
+#define BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_OFF do{ digitalWrite(STATUS_SENSOR_HMI_LED_P, LOW); }while(0)
 
 typedef union
 {

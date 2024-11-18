@@ -165,9 +165,9 @@
 // on the platform.
 // In order to debug, just take the content and put it directly on the funtion itself
 
-#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_SETUP 
-#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_ON 
-#define BN_NODE_SPECIFIC_BN_ORIENTATION_ABS_SENSOR_HMI_LED_OFF 
+#define BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_SETUP 
+#define BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_ON 
+#define BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_OFF 
 
 // Other node specific utility functions that are defined in the same way
 void persMemoryInit();

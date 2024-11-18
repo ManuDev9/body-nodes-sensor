@@ -31,6 +31,7 @@
 
 static Adafruit_BNO055 s_BNO;
 static bool sIsInit = false;
+static BnStatusLED sStatusSensorLED;
 
 bool BnISensor::init(){
     if(sIsInit){
@@ -40,9 +41,9 @@ bool BnISensor::init(){
     s_BNO = Adafruit_BNO055(55, BNO055_ADDRESS_B);
     /* Initialise the sensor */
     if(s_BNO.begin(s_BNO.OPERATION_MODE_NDOF_FMC_OFF)) {
-        sIsInit = true;
+         setStatus(SENSOR_STATUS_WORKING);
     } else {
-        sIsInit = false;
+         setStatus(SENSOR_STATUS_NOT_ACCESSIBLE);
     }
     s_BNO.setExtCrystalUse(true);
     return sIsInit;
@@ -53,6 +54,7 @@ bool BnISensor::isCalibrated(){
     uint8_t gyro;
     uint8_t accel;
     uint8_t mag;
+
     s_BNO.getCalibration(&sys, &gyro, &accel, &mag);
     if(sys < 2){
         /*
@@ -65,8 +67,10 @@ bool BnISensor::isCalibrated(){
         DEBUG_PRINT(" , mag = ");
         DEBUG_PRINTLN_DEC(mag);
         */
+        setStatus(SENSOR_STATUS_CALIBRATING);
         return false;
     } else {
+        setStatus(SENSOR_STATUS_WORKING);
         return true;
     }
 }
@@ -113,6 +117,31 @@ bool BnISensor::getData(float values[], const int type){
         return false;
     }
 
+}
+
+void BnISensor::setStatus(int sensor_status){
+    if(sensor_status == SENSOR_STATUS_NOT_ACCESSIBLE){
+        sIsInit=false;
+        DEBUG_PRINTLN("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
+        BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_ON;
+        sStatusSensorLED.on = true;
+        sStatusSensorLED.lastToggle = millis();
+    } else if(sensor_status == SENSOR_STATUS_CALIBRATING) {
+        if(millis()-sStatusSensorLED.lastToggle > 500){
+            sStatusSensorLED.lastToggle = millis();
+            sStatusSensorLED.on = !sStatusSensorLED.on;
+            if(sStatusSensorLED.on){
+                BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_ON;
+            } else {
+                BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_OFF;
+            }
+        }
+    } else if(sensor_status == SENSOR_STATUS_WORKING) {
+        sIsInit=true;
+        BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_OFF;
+        sStatusSensorLED.on = false;
+        sStatusSensorLED.lastToggle = millis();
+    }
 }
 
 #endif /*__BN_ISENSOR_H__*/

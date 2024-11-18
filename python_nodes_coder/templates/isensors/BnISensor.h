@@ -30,14 +30,10 @@
 class BnISensor {
 public:
 
-  bool init();
-  bool isCalibrated();
-  bool getData(float values[], const int type);
-
-private:
-
-  bool s_sensorInit;
-
+    bool init();
+    bool isCalibrated();
+    bool getData(float values[], const int type);
+    void setStatus(int sensor_status);    
 };
 
 #endif // __BN_ISENSOR_H__

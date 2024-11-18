@@ -45,13 +45,11 @@ public:
     bool isEnabled();
 
 private:
-    void setStatus(int sensor_status);
     void realignAxis(float values[], float revalues[]);
 
     BnISensor s_isensor;
     bool s_enabled;
     bool s_sensorInit;
-    BnStatusLED s_statusSensorLED;
     unsigned long s_lastReadSensorTime;
     unsigned long s_sensorReconnectionTime;
     //At the beginning of each connection with the sensor it seems it returns some 0s. The first 0s are not of my interest.
