@@ -170,7 +170,6 @@
 // on the platform.
 // In order to debug, just take the content and put it directly on the funtion itself
 
-
 // Other node specific utility functions that are defined in the same way
 void persMemoryInit();
 void persMemoryCommit();

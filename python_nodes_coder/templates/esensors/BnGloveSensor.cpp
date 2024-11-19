@@ -101,16 +101,16 @@ static int filterDigitalValue(uint8_t finger, int readSensorValue){
 
 void BnGloveSensor::init() {
 
-    sensorPin[MIGNOLO] = A4;
-    sensorPin[ANULARE] = A3;
-    sensorPin[MEDIO] = A2;
-    sensorPin[INDICE] = A1;
-    sensorPin[POLLICE] = A0;
+    sensorPin[MIGNOLO] = BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_MIGNOLO_SENSE_PIN;
+    sensorPin[ANULARE] = BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_ANULARE_SENSE_PIN;
+    sensorPin[MEDIO] = BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_MEDIO_SENSE_PIN;
+    sensorPin[INDICE] = BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_INDICE_SENSE_PIN;
+    sensorPin[POLLICE] = BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_POLLICE_SENSE_PIN;
 
-    digitalPin[MIGNOLO] = D2;
-    digitalPin[ANULARE] = D3;
-    digitalPin[MEDIO] = D4;
-    digitalPin[INDICE] = D5;
+    digitalPin[MIGNOLO] = BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_MIGNOLO_DIGI_PIN;
+    digitalPin[ANULARE] = BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_ANULARE_DIGI_PIN;
+    digitalPin[MEDIO] = BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_MEDIO_DIGI_PIN;
+    digitalPin[INDICE] = BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_INDICE_DIGI_PIN;
 
     for(uint8_t finger=0;finger<5;++finger) {
         sensorValue[finger] = 0;

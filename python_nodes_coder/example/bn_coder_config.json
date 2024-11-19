@@ -1,11 +1,11 @@
 {
     "type" : "node",
-    "board" : "arduino_nano_33",
+    "board" : "redbear_duo",
     "node_communicator": "ble",
     "actuators": {
         "haptic": "no"
     },
-    "isensor": "arduino_lsm9ds1",
+    "isensor": "no",
     "esensors": {
         "acceleration_rel" : "no",
         "angularvelocity_rel" : "no",

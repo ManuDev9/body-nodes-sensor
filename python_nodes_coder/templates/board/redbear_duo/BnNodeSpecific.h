@@ -39,10 +39,8 @@
 #define BODYNODE_PLAYER_TAG_DEFAULT  "1"
 
 // COMMUNICATION //
-#define BLE_COMMUNICATION
 
 // SENSORS //
-#define ORIENTATION_ABS_SENSOR
 
 // ACTUATORS //
 
@@ -171,6 +169,18 @@
 // So that we don't have to deal in passing weird datatypes that might differ depending
 // on the platform.
 // In order to debug, just take the content and put it directly on the funtion itself
+
+
+#define BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_MIGNOLO_SENSE_PIN      A0
+#define BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_ANULARE_SENSE_PIN      A1
+#define BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_MEDIO_SENSE_PIN        A2
+#define BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_INDICE_SENSE_PIN       A3
+#define BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_POLLICE_SENSE_PIN      A4
+
+#define BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_MIGNOLO_DIGI_PIN       D0
+#define BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_ANULARE_DIGI_PIN       D1
+#define BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_MEDIO_DIGI_PIN         D2
+#define BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_INDICE_DIGI_PIN        D3
 
 #if defined(ARDUINO)
   #define BN_NODE_SPECIFIC_MAIN_FILE_INIT SYSTEM_MODE(MANUAL);

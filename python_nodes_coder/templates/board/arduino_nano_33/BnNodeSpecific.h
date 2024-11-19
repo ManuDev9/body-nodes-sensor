@@ -165,9 +165,16 @@
 // on the platform.
 // In order to debug, just take the content and put it directly on the funtion itself
 
-#define BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_SETUP 
-#define BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_ON 
-#define BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_OFF 
+#define BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_MIGNOLO_SENSE_PIN      A4
+#define BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_ANULARE_SENSE_PIN      A3
+#define BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_MEDIO_SENSE_PIN        A2
+#define BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_INDICE_SENSE_PIN       A1
+#define BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_POLLICE_SENSE_PIN      A0
+
+#define BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_MIGNOLO_DIGI_PIN       D2
+#define BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_ANULARE_DIGI_PIN       D3
+#define BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_MEDIO_DIGI_PIN         D4
+#define BN_NODE_SPECIFIC_BN_GLOVE_SENSOR_INDICE_DIGI_PIN        D5
 
 // Other node specific utility functions that are defined in the same way
 void persMemoryInit();
@@ -177,6 +184,10 @@ void persMemoryWrite(uint16_t address_, uint8_t in_byte );
 void BnHapticActuator_init();
 void BnHapticActuator_turnON(uint8_t strength);
 void BnHapticActuator_turnOFF();
+
+#define BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_SETUP 
+#define BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_ON 
+#define BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_OFF 
 
 typedef union
 {
