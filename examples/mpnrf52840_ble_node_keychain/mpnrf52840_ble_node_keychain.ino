@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2023-2024 Manuel Bottini
+* Copyright (c) 2023-2025 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -93,8 +93,8 @@ void setup() {
 
     mCommunicator.init();
 
-    mPlayerName = BnPersMemory::getValue(MEMORY_PLAYER_TAG);
-    mBodypartName = BnPersMemory::getValue(MEMORY_BODYPART_TAG);
+    mPlayerName = "1"; // BnPersMemory::getValue(MEMORY_PLAYER_TAG);
+    mBodypartName = "hand_left"; // BnPersMemory::getValue(MEMORY_BODYPART_TAG);
 
     rawPinMode(BUTTON_LEFT_PIN, INPUT_PULLDOWN);
     rawPinMode(BUTTON_RIGHT_PIN, INPUT_PULLDOWN);

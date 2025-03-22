@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2021-2024 Manuel Bottini
+* Copyright (c) 2021-2025 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -38,7 +38,7 @@ public:
 private:
   BnPersMemory(){};
 
-  static constexpr uint8_t pm_checkkey[5] = {0x00, 0x00, 0x00, 0x00, 0x01};
+  static constexpr uint8_t pm_checkkey[5] = {0x00, 0x00, 0x00, 0x00, 0x02};
 
   static constexpr uint16_t pm_player_addr_nbytes = 50;
   static constexpr uint16_t pm_player_addr_chars = 51;

@@ -1,9 +1,7 @@
 #!/usr/bin/python3
-
-#
 # MIT License
 # 
-# Copyright (c) 2024 Manuel Bottini
+# Copyright (c) 2024-2025 Manuel Bottini
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -40,7 +38,7 @@ import json
 #  "isensors": "mpu6050",               # Possible values: "no", "bno055", "arduino_lsm9ds1", "mpu6050"
 #  "esensors": {
 #    "acceleration_rel" : "no",         # Possible values: "no", "yes"
-#    "angularvelocity_rel" : "no",      # Possible values: "no"
+#    "angularvelocity_rel" : "no",      # Possible values: "no", "yes"
 #    "orientation_abs" : "fusion",      # Possible values: "no", "onboard", "fusion"
 #    "glove" : "serial",                # Possible values: "no", "onboard", "serial", 
 #    "shoe" : "onboard"                 # Possible values: "no", "onboard"

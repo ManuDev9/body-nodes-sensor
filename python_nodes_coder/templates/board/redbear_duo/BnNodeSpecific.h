@@ -1,7 +1,7 @@
 /**
 * MIT License
 *
-* Copyright (c) 2021-2024 Manuel Bottini
+* Copyright (c) 2021-2025 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,7 @@
 
 // Implements Specification Version Dev 1.0
 // Sensortypes: orientation_abs, glove
-// Board: RedBear Duo (Native USB Port)
+// Board: RedBear IoT Boards -> RedBear Duo (Native USB Port)
 
 #ifndef __BN_NODE_SPECIFIC_H
 #define __BN_NODE_SPECIFIC_H
@@ -118,13 +118,6 @@
  #define DEBUG_PRINTLN_HEX(x)
  #define DEBUG_PRINTLN_DEC(x)
 #endif
-
-#define BODYNODES_PORT 12345
-#define BODYNODES_MULTICAST_PORT 12346
-#define BODYNODES_WIFI_SSID_DEFAULT "BodynodeHotspot"
-#define BODYNODES_WIFI_PASS_DEFAULT "bodynodes1"
-#define BODYNODES_MULTICASTGROUP_DEFAULT  "239.192.1.99"
-#define BODYNODES_MULTICASTMESSAGE_DEFAULT  "BN"
 
 // Set BODYNODE_BODYPART_TAG_DEFAULT
 #if BODYNODE_BODYPART_HEX_DEFAULT == BODYPART_HEAD_HEX
