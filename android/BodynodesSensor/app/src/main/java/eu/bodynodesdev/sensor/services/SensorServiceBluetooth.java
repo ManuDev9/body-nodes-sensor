@@ -442,10 +442,10 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
             return false;
         } else {
             // Connected to wifi and server
-            if(millis() - mLastSentTime > BnConstants.CONNECTION_KEEP_ALIVE_SEND_INTERVAL_MS){
+            if(millis() - mLastSentTime > BnAppConstants.CONNECTION_KEEP_ALIVE_SEND_INTERVAL_MS){
                 sendACKN();
             }
-            if(millis() - mLastRecTime > BnConstants.CONNECTION_KEEP_ALIVE_REC_INTERVAL_MS){
+            if(millis() - mLastRecTime > BnAppConstants.CONNECTION_KEEP_ALIVE_REC_INTERVAL_MS){
                 AppData.setCommunicationDisconnected();
             }
             if(!checkForACKH()) {
@@ -483,7 +483,7 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
     }
 
     private void sendACKN() {
-        if(millis() - mLastSentTime < BnConstants.CONNECTION_ACK_INTERVAL_MS){
+        if(millis() - mLastSentTime < BnAppConstants.CONNECTION_ACK_INTERVAL_MS){
             return;
         }
         try {
@@ -582,7 +582,7 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
                     mConnectorServer = null;
                 }
 
-                AppData.setCommunicationState(BnConstants.COMMUNICATION_STATE_DISCONNECTED);
+                AppData.setCommunicationState(BnAppConstants.COMMUNICATION_STATE_DISCONNECTED);
                 LocalBroadcastManager.getInstance(SensorServiceBluetooth.this).sendBroadcast(new Intent(BnAppConstants.ACTION_UPDATE_UI));
             }
         });

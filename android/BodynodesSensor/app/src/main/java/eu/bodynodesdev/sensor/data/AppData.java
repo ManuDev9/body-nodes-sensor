@@ -33,7 +33,7 @@ import eu.bodynodesdev.sensor.BnAppConstants;
 public class AppData {
 
     private static boolean sIsServiceRunning = false;
-    private static int sCommunicationState = BnConstants.COMMUNICATION_STATE_DISCONNECTED;
+    private static int sCommunicationState = BnAppConstants.COMMUNICATION_STATE_DISCONNECTED;
 
     public static boolean isServiceRunning(){
         return sIsServiceRunning;
@@ -47,27 +47,27 @@ public class AppData {
     }
 
     public static void setCommunicationConnected() {
-        setCommunicationState(BnConstants.COMMUNICATION_STATE_CONNECTED);
+        setCommunicationState(BnAppConstants.COMMUNICATION_STATE_CONNECTED);
     }
 
     public static void setCommunicationDisconnected() {
-        setCommunicationState(BnConstants.COMMUNICATION_STATE_DISCONNECTED);
+        setCommunicationState(BnAppConstants.COMMUNICATION_STATE_DISCONNECTED);
     }
 
     public static void setCommunicationWaitingACK() {
-        setCommunicationState(BnConstants.COMMUNICATION_STATE_WAITING_ACK);
+        setCommunicationState(BnAppConstants.COMMUNICATION_STATE_WAITING_ACK);
     }
 
     public static boolean isCommunicationWaitingACK() {
-        return sCommunicationState == BnConstants.COMMUNICATION_STATE_WAITING_ACK;
+        return sCommunicationState == BnAppConstants.COMMUNICATION_STATE_WAITING_ACK;
     }
 
     public static boolean isCommunicationConnected() {
-        return sCommunicationState == BnConstants.COMMUNICATION_STATE_CONNECTED;
+        return sCommunicationState == BnAppConstants.COMMUNICATION_STATE_CONNECTED;
     }
 
     public static boolean isCommunicationDisconnected() {
-        return sCommunicationState == BnConstants.COMMUNICATION_STATE_DISCONNECTED;
+        return sCommunicationState == BnAppConstants.COMMUNICATION_STATE_DISCONNECTED;
     }
 
     public static int getCommunicationType(Context context){
@@ -93,7 +93,7 @@ public class AppData {
 
     public static int getSensorIntervalMs(Context context) {
         SharedPreferences sharedPref = context.getSharedPreferences(BnAppConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
-        return sharedPref.getInt(BnAppConstants.SENSOR_INTERVAL_MS, BnConstants.SENSOR_READ_INTERVAL_MS);
+        return sharedPref.getInt(BnAppConstants.SENSOR_INTERVAL_MS, BnAppConstants.SENSOR_READ_INTERVAL_MS);
     }
 
     public static void setSensorIntervalMs(Context context, int sensorIntervalMs) {

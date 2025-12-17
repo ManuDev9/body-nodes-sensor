@@ -163,8 +163,8 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
 
                     if (BnConstants.ACTION_TYPE_HAPTIC_TAG.equals(actionType)) {
                         Log.i(TAG,"Vibration action");
-                        if (actionJson.has(BnConstants.ACTION_HAPTIC_STRENGTH_TAG) && actionJson.has(BnConstants.ACTION_HAPTIC_DURATIONMS_TAG)) {
-                            vibrate(actionJson.getInt(BnConstants.ACTION_HAPTIC_DURATIONMS_TAG),
+                        if (actionJson.has(BnConstants.ACTION_HAPTIC_STRENGTH_TAG) && actionJson.has(BnConstants.ACTION_HAPTIC_DURATION_MS_TAG)) {
+                            vibrate(actionJson.getInt(BnConstants.ACTION_HAPTIC_DURATION_MS_TAG),
                                     actionJson.getInt(BnConstants.ACTION_HAPTIC_STRENGTH_TAG));
                         }
                     } else if(BnConstants.ACTION_TYPE_SETPLAYER_TAG.equals(actionType)){
@@ -202,9 +202,9 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
                     } else if(BnConstants.ACTION_TYPE_SETWIFI_TAG.equals(actionType)) {
                         if(actionJson.has(BnConstants.ACTION_SETWIFI_SSID_TAG) &&
                                 actionJson.has(BnConstants.ACTION_SETWIFI_PASSWORD_TAG) &&
-                                actionJson.has(BnConstants.ACTION_SETWIFI_MULTICAST_GROUP_TAG )){
+                                actionJson.has(BnConstants.ACTION_SETWIFI_MULTICASTMESSAGE_TAG )){
 
-                            BnSensorAppData.setMulticastGroup(MainSensorActivity.this, actionJson.getString(BnConstants.ACTION_SETWIFI_MULTICAST_GROUP_TAG ) );
+                            BnSensorAppData.setMulticastGroup(MainSensorActivity.this, actionJson.getString(BnConstants.ACTION_SETWIFI_MULTICASTMESSAGE_TAG ) );
                             Log.i(TAG,"Orientation Rel sensor");
 
                         }

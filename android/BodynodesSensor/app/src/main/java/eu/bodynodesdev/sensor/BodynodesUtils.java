@@ -36,7 +36,7 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Locale;
 
-import eu.bodynodesdev.common.BnReorientAxis;
+import eu.bodynodesdev.common.BnAxisConfig;
 /**
  * Created by m.bottini on 13/02/2016.
  */
@@ -45,11 +45,11 @@ public class BodynodesUtils {
     public final static String TAG = "BodynodesUtils";
 
     private final static BluetoothAdapter sBluetoothAdapter;
-    private static BnReorientAxis sBnReorientAxis = new BnReorientAxis();
+    private static BnAxisConfig sAxisConfig = new BnAxisConfig();
 
     static {
         sBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        sBnReorientAxis.config( BnAppConstants.REORIENT_IO_AXIS, BnAppConstants.REORIENT_IO_SIGN );
+        sAxisConfig.config( BnAppConstants.REORIENT_IO_AXIS, BnAppConstants.REORIENT_IO_SIGN );
     }
 
     /**
@@ -106,7 +106,7 @@ public class BodynodesUtils {
         for( int idi = 0; idi < orientation_in.length; ++idi ){
             orientation_out[idi] = orientation_in[idi];
         }
-        sBnReorientAxis.apply(orientation_out);
+        sAxisConfig.apply(orientation_out);
     }
 
     public static InetAddress getLocalhostIpAddress(Activity activity) throws UnknownHostException {

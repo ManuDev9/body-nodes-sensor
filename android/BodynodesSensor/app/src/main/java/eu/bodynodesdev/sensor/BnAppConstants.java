@@ -25,6 +25,9 @@
 package eu.bodynodesdev.sensor;
 
 
+import eu.bodynodesdev.common.BnConstants;
+import eu.bodynodesdev.sensor.data.AppData;
+
 public class BnAppConstants {
 
 
@@ -67,5 +70,20 @@ public class BnAppConstants {
     public static final String PLAYER_NAME = "PLAYER_NAME";
     public static final String MULTICAST_GROUP = "MULTICAST_GROUP";
 
-    
+
+    public static final long CONNECTION_KEEP_ALIVE_SEND_INTERVAL_MS = 30000;
+
+    public static final long CONNECTION_KEEP_ALIVE_REC_INTERVAL_MS = 60000;
+
+    public static final long CONNECTION_ACK_INTERVAL_MS = 5000;
+
+    public static final int SENSOR_READ_INTERVAL_MS = 30;
+
+    public static final int COMMUNICATION_STATE_DISCONNECTED = 0;
+    public static final int COMMUNICATION_STATE_CONNECTED = 1;
+    public static final int COMMUNICATION_STATE_WAITING_ACK = 1;
+
 }
+
+
+

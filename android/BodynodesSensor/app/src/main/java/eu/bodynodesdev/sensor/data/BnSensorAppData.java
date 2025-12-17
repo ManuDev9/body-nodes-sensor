@@ -89,7 +89,7 @@ public class BnSensorAppData {
 
     public static String getMulticastGroup(Context context){
         SharedPreferences sharedPref = context.getSharedPreferences(BnAppConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
-        return sharedPref.getString(BnAppConstants.MULTICAST_GROUP, BnConstants.BODYNODES_MULTICASTGROUP_DEFAULT);
+        return sharedPref.getString(BnAppConstants.MULTICAST_GROUP, BnConstants.WIFI_MULTICASTMESSAGE_DEFAULT );
     }
 
     public static void setMulticastGroup(Context context, String player) {
