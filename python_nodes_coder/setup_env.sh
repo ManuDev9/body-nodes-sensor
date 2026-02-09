@@ -7,6 +7,7 @@
 arduino-cli config init
 arduino-cli config add board_manager.additional_urls "https://redbearlab.github.io/arduino/package_redbear_index.json"
 arduino-cli config add board_manager.additional_urls "http://arduino.esp8266.com/stable/package_esp8266com_index.json"
+arduino-cli config add board_manager.additional_urls "https://adafruit.github.io/arduino-board-index/package_adafruit_index.json"
 arduino-cli config set directories.user "$HOME/Arduino"
 arduino-cli config set directories.data "$HOME/.arduino15"
 arduino-cli core update-index; sed -i 's/"boards": {"name": "RedBear Duo"}/"boards": [ {"name": "RedBear Duo"} ]/' $HOME/.arduino15/package_redbear_index.json
