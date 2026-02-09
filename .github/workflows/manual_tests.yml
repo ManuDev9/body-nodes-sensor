@@ -26,6 +26,7 @@ jobs:
           curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
           mv ./bin/arduino-cli $HOME/.local/bin
           echo "$HOME/.local/bin" >> $GITHUB_PATH
+          bash setup_env.sh
 
       - name: Test All Builds
         run: time python3 bnpython_nodes_coder_arduino.py --test
