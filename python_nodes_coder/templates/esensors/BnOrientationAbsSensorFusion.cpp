@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2024-2025 Manuel Bottini
+* Copyright (c) 2024-2026 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -1428,11 +1428,11 @@ bool BnOrientationAbsSensor::checkAllOk(){
     }
 
     float acc_values[3];
-    if( !s_isensor.getData(acc_values, ISENSOR_DATATYPE_ACCELEROMETER) ) {
+    if( !s_isensor.getData(acc_values, BN_ISENSOR_DATATYPE_ACCELEROMETER) ) {
         return false;
     }
     float gyro_values[3];
-    if( !s_isensor.getData(gyro_values, ISENSOR_DATATYPE_GYROSCOPE) ) {
+    if( !s_isensor.getData(gyro_values, BN_ISENSOR_DATATYPE_GYROSCOPE) ) {
         return false;
     }
 
@@ -1477,12 +1477,12 @@ BnSensorData BnOrientationAbsSensor::getData(){
   DEBUG_PRINTLN(s_values[3]);
   */
   BnSensorData sensorData;
-  sensorData.setValues(s_values, SENSORTYPE_ORIENTATION_ABS_TAG);
+  sensorData.setValues(s_values, BN_SENSORTYPE_ORIENTATION_ABS_TAG);
   return sensorData;
 }
 
 BnType BnOrientationAbsSensor::getType(){
-    return SENSORTYPE_ORIENTATION_ABS_TAG;
+    return BN_SENSORTYPE_ORIENTATION_ABS_TAG;
 }
 
 void BnOrientationAbsSensor::setEnable(bool enable_status){

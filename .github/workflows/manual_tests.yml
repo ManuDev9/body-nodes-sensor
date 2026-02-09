@@ -1,0 +1,27 @@
+
+name: Manual Sensors Builds
+on:
+  workflow_dispatch:
+
+
+jobs:
+  python-coder-builds:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./python_nodes_coder
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Environment
+        run: |
+          mkdir -p $HOME/.local/bin
+          pip3 install adafruit-nrfutil
+          curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
+          mv ./bin/arduino-cli $HOME/.local/bin
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Test All Builds
+        run: time python3 bnpython_nodes_coder_arduino.py --test

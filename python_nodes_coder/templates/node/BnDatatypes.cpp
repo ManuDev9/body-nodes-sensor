@@ -26,12 +26,12 @@
 
 #ifdef BLE_COMMUNICATION
 
-void BnBLEConnectionData::setDisconnected(){ conn_status = CONNECTION_STATUS_NOT_CONNECTED; }
-void BnBLEConnectionData::setWaitingACK(){ conn_status = CONNECTION_STATUS_WAITING_ACK; }
-void BnBLEConnectionData::setConnected(){ conn_status = CONNECTION_STATUS_CONNECTED; }
-bool BnBLEConnectionData::isWaitingACK(){ return conn_status == CONNECTION_STATUS_WAITING_ACK; }
-bool BnBLEConnectionData::isDisconnected(){ return conn_status == CONNECTION_STATUS_NOT_CONNECTED; }
-bool BnBLEConnectionData::isConnected(){ return conn_status == CONNECTION_STATUS_CONNECTED; }
+void BnBLEConnectionData::setDisconnected(){ conn_status = BN_CONNECTION_STATUS_NOT_CONNECTED; }
+void BnBLEConnectionData::setWaitingACK(){ conn_status = BN_CONNECTION_STATUS_WAITING_ACK; }
+void BnBLEConnectionData::setConnected(){ conn_status = BN_CONNECTION_STATUS_CONNECTED; }
+bool BnBLEConnectionData::isWaitingACK(){ return conn_status == BN_CONNECTION_STATUS_WAITING_ACK; }
+bool BnBLEConnectionData::isDisconnected(){ return conn_status == BN_CONNECTION_STATUS_NOT_CONNECTED; }
+bool BnBLEConnectionData::isConnected(){ return conn_status == BN_CONNECTION_STATUS_CONNECTED; }
 void BnBLEConnectionData::cleanBytes(){    }
 
 #endif
@@ -39,12 +39,12 @@ void BnBLEConnectionData::cleanBytes(){    }
 
 #ifdef WIFI_COMMUNICATION
 
-void BnIPConnectionData::setDisconnected(){ conn_status = CONNECTION_STATUS_NOT_CONNECTED; }
-void BnIPConnectionData::setWaitingACK(){ conn_status = CONNECTION_STATUS_WAITING_ACK; }
-void BnIPConnectionData::setConnected(){ conn_status = CONNECTION_STATUS_CONNECTED; }
-bool BnIPConnectionData::isWaitingACK(){ return conn_status == CONNECTION_STATUS_WAITING_ACK; }
-bool BnIPConnectionData::isDisconnected(){ return conn_status == CONNECTION_STATUS_NOT_CONNECTED; }
-bool BnIPConnectionData::isConnected(){ return conn_status == CONNECTION_STATUS_CONNECTED; }
+void BnIPConnectionData::setDisconnected(){ conn_status = BN_CONNECTION_STATUS_NOT_CONNECTED; }
+void BnIPConnectionData::setWaitingACK(){ conn_status = BN_CONNECTION_STATUS_WAITING_ACK; }
+void BnIPConnectionData::setConnected(){ conn_status = BN_CONNECTION_STATUS_CONNECTED; }
+bool BnIPConnectionData::isWaitingACK(){ return conn_status == BN_CONNECTION_STATUS_WAITING_ACK; }
+bool BnIPConnectionData::isDisconnected(){ return conn_status == BN_CONNECTION_STATUS_NOT_CONNECTED; }
+bool BnIPConnectionData::isConnected(){ return conn_status == BN_CONNECTION_STATUS_CONNECTED; }
 void BnIPConnectionData::cleanBytes(){ num_received_bytes = 0; }
 
 #endif
@@ -55,9 +55,9 @@ BnType BnSensorData::getType(){
 
 void BnSensorData::setValues(float values[], BnType sensortype){
     sd_sensortype = sensortype;
-    if(sd_sensortype.equals(SENSORTYPE_ORIENTATION_ABS_TAG)) {
+    if(sd_sensortype.equals(BN_SENSORTYPE_ORIENTATION_ABS_TAG)) {
         sd_num_values = 4;
-    } else if(sd_sensortype.equals(SENSORTYPE_ACCELERATION_REL_TAG)) {
+    } else if(sd_sensortype.equals(BN_SENSORTYPE_ACCELERATION_REL_TAG)) {
         sd_num_values = 3;
     }
     for(uint8_t index = 0; index<sd_num_values; ++index){
@@ -67,9 +67,9 @@ void BnSensorData::setValues(float values[], BnType sensortype){
 
 void BnSensorData::setValues(int values[], BnType sensortype){
     sd_sensortype = sensortype;
-    if(sd_sensortype.equals(SENSORTYPE_ORIENTATION_ABS_TAG)) {
+    if(sd_sensortype.equals(BN_SENSORTYPE_ORIENTATION_ABS_TAG)) {
         sd_num_values = 4;
-    } else if(sd_sensortype.equals(SENSORTYPE_ACCELERATION_REL_TAG)) {
+    } else if(sd_sensortype.equals(BN_SENSORTYPE_ACCELERATION_REL_TAG)) {
         sd_num_values = 3;
     }
     for(uint8_t index = 0; index<sd_num_values; ++index){
@@ -90,5 +90,5 @@ void BnSensorData::getValues(int values[]){
 }
 
 bool BnSensorData::isEmpty(){
-        return sd_sensortype == SENSORTYPE_NONE_TAG;
+        return sd_sensortype == BN_SENSORTYPE_NONE_TAG;
 }

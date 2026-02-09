@@ -179,7 +179,7 @@ void BnGloveSensor::getData(int *values){
 }
 
 String BnGloveSensor::getType(){
-    return SENSORTYPE_GLOVE_TAG;
+    return BN_SENSORTYPE_GLOVE_TAG;
 }
 
 void BnGloveSensor::setEnable(bool enable_status){

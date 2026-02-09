@@ -31,10 +31,10 @@
 #define MAX_RECEIVED_BYTES_LENGTH 150
 
 // Internal Sensors Data Types
-#define ISENSOR_DATATYPE_ACCELEROMETER          0
-#define ISENSOR_DATATYPE_GYROSCOPE              1
-#define ISENSOR_DATATYPE_MAGNETOMETER           2
-#define ISENSOR_DATATYPE_ABSOLUTEORIENTATION    3
+#define BN_ISENSOR_DATATYPE_ACCELEROMETER          0
+#define BN_ISENSOR_DATATYPE_GYROSCOPE              1
+#define BN_ISENSOR_DATATYPE_MAGNETOMETER           2
+#define BN_ISENSOR_DATATYPE_ABSOLUTEORIENTATION    3
 
 struct BnStatusLED {
   bool on;
@@ -57,7 +57,7 @@ public:
     bool isConnected();
     void cleanBytes();
     
-    uint8_t conn_status = CONNECTION_STATUS_NOT_CONNECTED;
+    uint8_t conn_status = BN_CONNECTION_STATUS_NOT_CONNECTED;
     
     unsigned long last_sent_time = 0;
 };
@@ -75,7 +75,7 @@ public:
     bool isConnected();
     void cleanBytes();
     
-    uint8_t conn_status = CONNECTION_STATUS_NOT_CONNECTED;
+    uint8_t conn_status = BN_CONNECTION_STATUS_NOT_CONNECTED;
     IPAddress ip_address;
     bool has_ip_address;
     
@@ -99,7 +99,7 @@ public:
     bool isEmpty();
 
 private:
-    BnType sd_sensortype = SENSORTYPE_NONE_TAG;
+    BnType sd_sensortype = BN_SENSORTYPE_NONE_TAG;
     float sd_values_float[5];
     int16_t sd_values_int[5];
     uint8_t sd_num_values;

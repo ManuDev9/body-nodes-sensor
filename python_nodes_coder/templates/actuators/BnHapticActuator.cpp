@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2021-2025 Manuel Bottini
+* Copyright (c) 2021-2026 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,7 @@ void BnHapticActuator::init(){
 }
 
 void BnHapticActuator::setAction(BnAction &action){
-    if(action["type"] == ACTION_TYPE_HAPTIC_TAG){
+    if(action["type"] == BN_ACTION_TYPE_HAPTIC_TAG){
         uint16_t duration_ms = action["duration_ms"];
         uint16_t strength = action["strength"];
         DEBUG_PRINT("Haptic triggered with duration and strenght = ");
@@ -57,7 +57,7 @@ void BnHapticActuator::performAction(){
 
 BnType BnHapticActuator::getType(){
     // It is well known for this Bodynode
-    return ACTION_TYPE_HAPTIC_TAG;
+    return BN_ACTION_TYPE_HAPTIC_TAG;
 }
 
 #endif // __BN_HAPTIC_ACTUATOR_H__

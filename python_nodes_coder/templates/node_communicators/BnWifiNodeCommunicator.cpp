@@ -49,9 +49,9 @@ void BnWifiNodeCommunicator::init(){
 }
 
 void BnWifiNodeCommunicator::setConnectionParams(JsonObject &params){
-  BnPersMemory::setValue(MEMORY_WIFI_SSID_TAG, params[ACTION_SETWIFI_SSID_TAG].as<String>());
-  BnPersMemory::setValue(MEMORY_WIFI_PASSWORD_TAG, params[ACTION_SETWIFI_PASSWORD_TAG].as<String>());
-  BnPersMemory::setValue(MEMORY_WIFI_MULTICASTMESSAGE_TAG, params[ACTION_SETWIFI_MULTICASTMESSAGE_TAG].as<String>());
+  BnPersMemory::setValue(BN_MEMORY_WIFI_SSID_TAG, params[ BN_ACTION_SETWIFI_SSID_TAG].as<String>());
+  BnPersMemory::setValue(BN_MEMORY_WIFI_PASSWORD_TAG, params[ BN_ACTION_SETWIFI_PASSWORD_TAG].as<String>());
+  BnPersMemory::setValue(BN_MEMORY_WIFI_MULTICASTMESSAGE_TAG, params[ BN_ACTION_SETWIFI_MULTICASTMESSAGE_TAG].as<String>());
 }
 
 void BnWifiNodeCommunicator::receiveBytes(){
@@ -76,8 +76,8 @@ bool BnWifiNodeCommunicator::checkAllOk(){
   bool allok = false;
   checkStatus();
   if (wnc_connection_data.isDisconnected()){
-    String ssid = BnPersMemory::getValue(MEMORY_WIFI_SSID_TAG);
-    String password = BnPersMemory::getValue(MEMORY_WIFI_PASSWORD_TAG);
+    String ssid = BnPersMemory::getValue(BN_MEMORY_WIFI_SSID_TAG);
+    String password = BnPersMemory::getValue(BN_MEMORY_WIFI_PASSWORD_TAG);
     if (!tryConnectWifi(ssid, password)){
       DEBUG_PRINTLN("Not connected to the Wifi");
       wnc_connection_data.setDisconnected();
@@ -86,8 +86,8 @@ bool BnWifiNodeCommunicator::checkAllOk(){
     } else {
       DEBUG_PRINTLN("Connected to the Wifi");
       //wnc_connection_data.ip_address = WiFi.gatewayIP();
-      wnc_connector.begin(BODYNODES_PORT);
-      IPAddress multicastIP = getIPAdressFromStr(BODYNODES_MULTICASTGROUP_DEFAULT);
+      wnc_connector.begin(BN_WIFI_PORT);
+      IPAddress multicastIP = getIPAdressFromStr(BN_WIFI_MULTICASTGROUP_DEFAULT);
       BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_BEGIN_MULTICAST
       wnc_multicast_data.setConnected();
       printWifiStatus();
@@ -153,7 +153,7 @@ void BnWifiNodeCommunicator::sendAllMessages(){
   DEBUG_PRINT("buf_udp = ");
   DEBUG_PRINTLN(buf_udp);
 
-  wnc_connector.beginPacket(wnc_connection_data.ip_address, BODYNODES_PORT);
+  wnc_connector.beginPacket(wnc_connection_data.ip_address, BN_WIFI_PORT);
   wnc_connector.write((uint8_t const *)buf_udp, real_tot_bytes);
   wnc_connector.endPacket();
   wnc_connection_data.last_sent_time = millis();
@@ -223,7 +223,7 @@ void BnWifiNodeCommunicator::sendACKN(){
   DEBUG_PRINT("Sending ACKN to ");
   DEBUG_PRINTLN(wnc_connection_data.ip_address);
   byte buf_udp [5] = {'A','C','K','N', '\0'};
-  wnc_connector.beginPacket(wnc_connection_data.ip_address, BODYNODES_PORT);
+  wnc_connector.beginPacket(wnc_connection_data.ip_address, BN_WIFI_PORT);
   wnc_connector.write(buf_udp, 5);
   wnc_connector.endPacket();
   wnc_connection_data.last_sent_time = millis();
@@ -247,7 +247,7 @@ bool BnWifiNodeCommunicator::checkForACKH(){
 }
 
 bool BnWifiNodeCommunicator::checkForMulticastMessage() {
-  String multicastMessage = BnPersMemory::getValue(MEMORY_WIFI_MULTICASTMESSAGE_TAG);
+  String multicastMessage = BnPersMemory::getValue(BN_MEMORY_WIFI_MULTICASTMESSAGE_TAG);
   //DEBUG_PRINT("multicastMessage = ");
   //DEBUG_PRINTLN(multicastMessage);
   if(wnc_multicast_data.num_received_bytes >= multicastMessage.length()){

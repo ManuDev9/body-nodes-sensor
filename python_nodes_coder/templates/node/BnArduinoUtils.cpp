@@ -53,17 +53,17 @@ void BnPersMemory::init(){
     persMemoryCommit();
 
     // Sets default values
-    setValue(MEMORY_PLAYER_TAG, BODYNODE_PLAYER_TAG_DEFAULT );
-    setValue(MEMORY_BODYPART_TAG, BODYNODE_BODYPART_TAG_DEFAULT );
+    setValue(BN_MEMORY_PLAYER_TAG, BODYNODE_PLAYER_TAG_DEFAULT );
+    setValue(BN_MEMORY_BODYPART_TAG, BODYNODE_BODYPART_TAG_DEFAULT );
 #if defined(GLOVE_SENSOR_ON_SERIAL) || defined(GLOVE_SENSOR_ON_BOARD)
-    setValue(MEMORY_BODYPART_GLOVE_TAG, BODYNODE_BODYPART_GLOVE_TAG);
+    setValue(BN_MEMORY_BODYPART_GLOVE_TAG, BN_SENSORTYPE_GLOVE_TAG);
 #endif /*defined(GLOVE_SENSOR_ON_SERIAL) || defined(GLOVE_SENSOR_ON_BOARD)*/
 #ifdef SHOE_SENSOR_ON_BOARD
-    setValue(MEMORY_BODYPART_SHOE_TAG, BODYNODE_BODYPART_SHOE_TAG);
+    setValue(BN_MEMORY_BODYPART_SHOE_TAG, BN_SENSORTYPE_SHOE_TAG);
 #endif /*SHOE_SENSOR_ON_BOARD*/
-    setValue(MEMORY_WIFI_SSID_TAG, BODYNODES_WIFI_SSID_DEFAULT);
-    setValue(MEMORY_WIFI_PASSWORD_TAG, BODYNODES_WIFI_PASS_DEFAULT);
-    setValue(MEMORY_WIFI_MULTICASTMESSAGE_TAG, BODYNODES_MULTICASTMESSAGE_DEFAULT);
+    setValue(BN_MEMORY_WIFI_SSID_TAG, BN_WIFI_SSID_DEFAULT);
+    setValue(BN_MEMORY_WIFI_PASSWORD_TAG, BN_WIFI_PASSWORD_DEFAULT);
+    setValue(BN_MEMORY_WIFI_MULTICASTMESSAGE_TAG, BN_WIFI_MULTICASTMESSAGE_DEFAULT);
 
   } else {
     DEBUG_PRINTLN("Already setup memory!");
@@ -81,22 +81,22 @@ void BnPersMemory::clean(){
 void BnPersMemory::setValue(String key, String value){
   uint16_t addr_nbytes = 0;
   uint16_t addr_chars = 0;
-  if(key == MEMORY_PLAYER_TAG) {
+  if(key == BN_MEMORY_PLAYER_TAG) {
     addr_nbytes = pm_player_addr_nbytes;
     addr_chars = pm_player_addr_chars;
-  } else if(key == MEMORY_BODYPART_TAG) {
+  } else if(key == BN_MEMORY_BODYPART_TAG) {
     addr_nbytes = pm_bodypart_addr_nbytes;
     addr_chars = pm_bodypart_addr_chars;
-  } else if(key == MEMORY_BODYPART_GLOVE_TAG) {
+  } else if(key == BN_MEMORY_BODYPART_GLOVE_TAG) {
     addr_nbytes = pm_bodypart_glove_addr_nbytes;
     addr_chars = pm_bodypart_glove_addr_chars;
-  } else if(key == MEMORY_WIFI_SSID_TAG) {
+  } else if(key == BN_MEMORY_WIFI_SSID_TAG) {
     addr_nbytes = pm_ssid_addr_nbytes;
     addr_chars = pm_ssid_addr_chars;
-  } else if(key == MEMORY_WIFI_PASSWORD_TAG) {
+  } else if(key == BN_MEMORY_WIFI_PASSWORD_TAG) {
     addr_nbytes = pm_password_addr_nbytes;
     addr_chars = pm_password_addr_chars;
-  } else if(key == MEMORY_WIFI_MULTICASTMESSAGE_TAG) {
+  } else if(key == BN_MEMORY_WIFI_MULTICASTMESSAGE_TAG) {
     addr_nbytes = pm_multicast_message_addr_nbytes;
     addr_chars = pm_multicast_message_addr_chars;
   } else {
@@ -117,22 +117,22 @@ void BnPersMemory::setValue(String key, String value){
 String BnPersMemory::getValue(String key){
   uint16_t addr_nbytes = 0;
   uint16_t addr_chars = 0;
-  if(key == MEMORY_PLAYER_TAG) {
+  if(key == BN_MEMORY_PLAYER_TAG) {
     addr_nbytes = pm_player_addr_nbytes;
     addr_chars = pm_player_addr_chars;
-  } else if(key == MEMORY_BODYPART_TAG) {
+  } else if(key == BN_MEMORY_BODYPART_TAG) {
     addr_nbytes = pm_bodypart_addr_nbytes;
     addr_chars = pm_bodypart_addr_chars;
-  } else if(key == MEMORY_BODYPART_GLOVE_TAG) {
+  } else if(key == BN_MEMORY_BODYPART_GLOVE_TAG) {
     addr_nbytes = pm_bodypart_glove_addr_nbytes;
     addr_chars = pm_bodypart_glove_addr_chars;
-  } else if(key == MEMORY_WIFI_SSID_TAG) {
+  } else if(key == BN_MEMORY_WIFI_SSID_TAG) {
     addr_nbytes = pm_ssid_addr_nbytes;
     addr_chars = pm_ssid_addr_chars;
-  } else if(key == MEMORY_WIFI_PASSWORD_TAG) {
+  } else if(key == BN_MEMORY_WIFI_PASSWORD_TAG) {
     addr_nbytes = pm_password_addr_nbytes;
     addr_chars = pm_password_addr_chars;
-  } else if(key == MEMORY_WIFI_MULTICASTMESSAGE_TAG) {
+  } else if(key == BN_MEMORY_WIFI_MULTICASTMESSAGE_TAG) {
     addr_nbytes = pm_multicast_message_addr_nbytes;
     addr_chars = pm_multicast_message_addr_chars;
   } else {

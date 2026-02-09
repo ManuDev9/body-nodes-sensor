@@ -1,7 +1,7 @@
 /**
 * MIT License
 *
-* Copyright (c) 2021-2025 Manuel Bottini
+* Copyright (c) 2021-2026 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -69,7 +69,7 @@ void BnGloveSensorReaderSerial::getData(int *values){
 }
 
 String BnGloveSensorReaderSerial::getType(){
-    return SENSORTYPE_GLOVE_TAG;
+    return BN_SENSORTYPE_GLOVE_TAG;
 }
 
 void BnGloveSensorReaderSerial::setEnable(bool enable_status){

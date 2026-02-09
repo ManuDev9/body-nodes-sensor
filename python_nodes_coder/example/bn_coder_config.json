@@ -1,7 +1,7 @@
 {
     "type" : "node",
-    "board" : "esp-12e",
-    "node_communicator": "wifi",
+    "board" : "mpnrf52840",
+    "node_communicator": "ble",
     "actuators": {
         "haptic": "no"
     },

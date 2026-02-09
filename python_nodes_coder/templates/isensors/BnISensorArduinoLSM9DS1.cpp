@@ -40,19 +40,19 @@ bool BnISensor::init(){
 
     /* Initialise the sensor */
     if( IMU.begin() ){
-         setStatus(SENSOR_STATUS_WORKING);
+         setStatus(BN_SENSOR_STATUS_WORKING);
     } else {
-         setStatus(SENSOR_STATUS_NOT_ACCESSIBLE);
+         setStatus(BN_SENSOR_STATUS_NOT_ACCESSIBLE);
     }
     return sIsInit;
 }
 
 bool BnISensor::isCalibrated(){
     if( IMU.gyroscopeAvailable() && IMU.accelerationAvailable() && IMU.magneticFieldAvailable() ){
-        setStatus(SENSOR_STATUS_WORKING);
+        setStatus(BN_SENSOR_STATUS_WORKING);
         return true;
     } else {
-        setStatus(SENSOR_STATUS_CALIBRATING);
+        setStatus(BN_SENSOR_STATUS_CALIBRATING);
         return false;
     }
 }
@@ -68,7 +68,7 @@ bool BnISensor::getData(float values[], const int type){
     DEBUG_PRINT(", ");
     DEBUG_PRINTLN(s_values[3]);
     */
-    if( type == ISENSOR_DATATYPE_ACCELEROMETER ){
+    if( type == BN_ISENSOR_DATATYPE_ACCELEROMETER ){
         float accx;
         float accy;
         float accz;
@@ -77,7 +77,7 @@ bool BnISensor::getData(float values[], const int type){
         values[1] = accy;
         values[2] = accz;
         return true;
-    } else if( type == ISENSOR_DATATYPE_GYROSCOPE ){
+    } else if( type == BN_ISENSOR_DATATYPE_GYROSCOPE ){
         float gyrox;
         float gyroy;
         float gyroz;
@@ -86,7 +86,7 @@ bool BnISensor::getData(float values[], const int type){
         values[1] = gyroy;
         values[2] = gyroz;
         return true;        
-    } else if( type == ISENSOR_DATATYPE_MAGNETOMETER ){
+    } else if( type == BN_ISENSOR_DATATYPE_MAGNETOMETER ){
         float magnx;
         float magny;
         float magnz;
@@ -95,7 +95,7 @@ bool BnISensor::getData(float values[], const int type){
         values[1] = magny;
         values[2] = magnz;
         return true;
-    } else if( type == ISENSOR_DATATYPE_ABSOLUTEORIENTATION ){
+    } else if( type == BN_ISENSOR_DATATYPE_ABSOLUTEORIENTATION ){
         return false;        
     } else {
         return false;
@@ -104,13 +104,13 @@ bool BnISensor::getData(float values[], const int type){
 }
 
 void BnISensor::setStatus(int sensor_status){
-    if(sensor_status == SENSOR_STATUS_NOT_ACCESSIBLE){
+    if(sensor_status == BN_SENSOR_STATUS_NOT_ACCESSIBLE){
         sIsInit=false;
         DEBUG_PRINTLN("Ooops, no LSM9DS1 detected ... Check your wiring or I2C ADDR!");
         BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_ON;
         sStatusSensorLED.on = true;
         sStatusSensorLED.lastToggle = millis();
-    } else if(sensor_status == SENSOR_STATUS_CALIBRATING) {
+    } else if(sensor_status == BN_SENSOR_STATUS_CALIBRATING) {
         if(millis()-sStatusSensorLED.lastToggle > 500){
             sStatusSensorLED.lastToggle = millis();
             sStatusSensorLED.on = !sStatusSensorLED.on;
@@ -120,7 +120,7 @@ void BnISensor::setStatus(int sensor_status){
                 BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_OFF;
             }
         }
-    } else if(sensor_status == SENSOR_STATUS_WORKING) {
+    } else if(sensor_status == BN_SENSOR_STATUS_WORKING) {
         sIsInit=true;
         BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_OFF;
         sStatusSensorLED.on = false;

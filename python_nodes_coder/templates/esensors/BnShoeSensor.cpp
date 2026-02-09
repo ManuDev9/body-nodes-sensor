@@ -30,7 +30,7 @@
 void BnShoeSensor::init() {
     ss_value = 0;
     ss_pin = SHOE_SENSOR_PIN_P;
-    pinMode(STATUS_SENSOR_HMI_LED_M, INPUT);
+    pinMode(ss_pin, INPUT);
     ss_enabled = true;
 }
 
@@ -46,7 +46,7 @@ void BnShoeSensor::getData(int *values){
 }
 
 String BnShoeSensor::getType(){
-    return SENSORTYPE_SHOE_TAG;
+    return BN_SENSORTYPE_SHOE_TAG;
 }
 
 void BnShoeSensor::setEnable(bool enable_status){

@@ -36,18 +36,18 @@ void BnAccelerationRelSensor::init(){
     s_sensorReconnectionTime=millis();
     /* Initialise the sensor */
     if(s_isensor.init()) {
-         setStatus(SENSOR_STATUS_WORKING);
+         setStatus(BN_SENSOR_STATUS_WORKING);
     } else {
-         setStatus(SENSOR_STATUS_NOT_ACCESSIBLE);
+         setStatus(BN_SENSOR_STATUS_NOT_ACCESSIBLE);
     }
 }
 
 void BnAccelerationRelSensor::setStatus(int sensor_status){
-    if(sensor_status == SENSOR_STATUS_NOT_ACCESSIBLE){
+    if(sensor_status == BN_SENSOR_STATUS_NOT_ACCESSIBLE){
         s_sensorInit=false;
         DEBUG_PRINTLN("Ooops, no isensor detected ... Check your wiring or I2C ADDR!");
-    } else if(sensor_status == SENSOR_STATUS_CALIBRATING) {
-    } else if(sensor_status == SENSOR_STATUS_WORKING) {
+    } else if(sensor_status == BN_SENSOR_STATUS_CALIBRATING) {
+    } else if(sensor_status == BN_SENSOR_STATUS_WORKING) {
         s_sensorInit=true;
     }
 }
@@ -60,10 +60,10 @@ bool BnAccelerationRelSensor::checkAllOk(){
         DEBUG_PRINTLN("Sensor not connected");
         s_sensorReconnectionTime=millis();
         if (s_isensor.init()) {
-            setStatus(SENSOR_STATUS_WORKING);
+            setStatus(BN_SENSOR_STATUS_WORKING);
             return true;
         } else {
-            setStatus(SENSOR_STATUS_NOT_ACCESSIBLE);
+            setStatus(BN_SENSOR_STATUS_NOT_ACCESSIBLE);
             return false;
         }
     }
@@ -72,7 +72,7 @@ bool BnAccelerationRelSensor::checkAllOk(){
     }
 
     float acc_values[3];
-    if( !s_isensor.getData(acc_values, ISENSOR_DATATYPE_ACCELEROMETER) ) {
+    if( !s_isensor.getData(acc_values, BN_ISENSOR_DATATYPE_ACCELEROMETER) ) {
         return false;
     }
 
@@ -90,10 +90,10 @@ bool BnAccelerationRelSensor::checkAllOk(){
 
 bool BnAccelerationRelSensor::isCalibrated(){
     if( s_isensor.isCalibrated() ){
-        setStatus(SENSOR_STATUS_WORKING);
+        setStatus(BN_SENSOR_STATUS_WORKING);
         return true;
     } else {
-        setStatus(SENSOR_STATUS_CALIBRATING);
+        setStatus(BN_SENSOR_STATUS_CALIBRATING);
         return false;
     }
 }
@@ -111,12 +111,12 @@ BnSensorData BnAccelerationRelSensor::getData(){
   DEBUG_PRINTLN(s_values[3]);
   */
   BnSensorData sensorData;
-  sensorData.setValues(s_values, SENSORTYPE_ACCELERATION_REL_TAG);
+  sensorData.setValues(s_values, BN_SENSORTYPE_ACCELERATION_REL_TAG);
   return sensorData;
 }
 
 BnType BnAccelerationRelSensor::getType(){
-    return SENSORTYPE_ACCELERATION_REL_TAG;
+    return BN_SENSORTYPE_ACCELERATION_REL_TAG;
 }
 
 void BnAccelerationRelSensor::setEnable(bool enable_status){

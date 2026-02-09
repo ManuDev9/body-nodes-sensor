@@ -61,7 +61,7 @@ bool BnOrientationAbsSensor::checkAllOk(){
 
 
     float svalues[4];
-    if( !s_isensor.getData(svalues, ISENSOR_DATATYPE_ABSOLUTEORIENTATION) ) {
+    if( !s_isensor.getData(svalues, BN_ISENSOR_DATATYPE_ABSOLUTEORIENTATION) ) {
         return false;
     }
     
@@ -75,7 +75,7 @@ bool BnOrientationAbsSensor::checkAllOk(){
 
     if (tvalues[0] == 0 && tvalues[1]==0 && tvalues[2]==0 && tvalues[3]==0 && !s_firstZeros){
         DEBUG_PRINTLN("Sensor might have gotten disconnected!");
-        s_isensor.setStatus(SENSOR_STATUS_NOT_ACCESSIBLE);
+        s_isensor.setStatus(BN_SENSOR_STATUS_NOT_ACCESSIBLE);
         return false;
     }
 
@@ -104,12 +104,12 @@ BnSensorData BnOrientationAbsSensor::getData(){
     DEBUG_PRINTLN(s_values[3]);
     */
     BnSensorData sensorData;
-    sensorData.setValues(s_values, SENSORTYPE_ORIENTATION_ABS_TAG);
+    sensorData.setValues(s_values, BN_SENSORTYPE_ORIENTATION_ABS_TAG);
     return sensorData;
 }
 
 BnType BnOrientationAbsSensor::getType(){
-    return SENSORTYPE_ORIENTATION_ABS_TAG;
+    return BN_SENSORTYPE_ORIENTATION_ABS_TAG;
 }
 
 void BnOrientationAbsSensor::setEnable(bool enable_status){

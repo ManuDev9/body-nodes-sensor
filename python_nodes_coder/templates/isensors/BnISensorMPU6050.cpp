@@ -30,7 +30,17 @@
 #include "Adafruit_MPU6050.h"
 
 // Note: You need to set the appropriate SDA and SCL pins on the BnNodeSpecific.h file (or anywhere is your project, but there is better)
-static TwoWire sMPU6050Wire(NRF_TWIM0, NRF_TWIS0, SPIM0_SPIS0_TWIM0_TWIS0_SPI0_TWI0_IRQn, MPU6050_PIN_SDA, MPU6050_PIN_SCL);
+
+#if defined(ARDUINO_ARCH_NRF52)
+    static TwoWire sMPU6050Wire(NRF_TWIM0, NRF_TWIS0, SPIM0_SPIS0_TWIM0_TWIS0_SPI0_TWI0_IRQn, MPU6050_PIN_SDA, MPU6050_PIN_SCL);
+#elif defined(BN_BOARD_REDBEAR_DUO)
+    #define sMPU6050Wire Wire
+#elif defined(BN_BOARD_ESP_12E)
+    #define sMPU6050Wire Wire
+#else
+    #error "Board architecture not supported"
+#endif
+
 static Adafruit_MPU6050 sMPU;
 static bool sIsInit = false;
 static BnStatusLED sStatusSensorLED;
@@ -41,18 +51,23 @@ bool BnISensor::init(){
     }
 
     /* Initialise the sensor */
-    sMPU6050Wire.begin();
+
+#if defined(ARDUINO_ARCH_NRF52)
+        sMPU6050Wire.begin();
+#elif defined(ARDUINO_ARCH_STM32F2)
+        sMPU6050Wire.begin(MPU6050_PIN_SDA, MPU6050_PIN_SCL);
+#endif
     if(sMPU.begin(MPU6050_I2CADDR_DEFAULT, &sMPU6050Wire) ){
-        setStatus(SENSOR_STATUS_WORKING);
+        setStatus(BN_SENSOR_STATUS_WORKING);
     } else {
-        setStatus(SENSOR_STATUS_NOT_ACCESSIBLE);
+        setStatus(BN_SENSOR_STATUS_NOT_ACCESSIBLE);
     }
 
     return sIsInit;
 }
 
 bool BnISensor::isCalibrated(){
-    setStatus(SENSOR_STATUS_WORKING);
+    setStatus(BN_SENSOR_STATUS_WORKING);
     return true;
 }
 
@@ -62,19 +77,19 @@ bool BnISensor::getData(float values[], const int type){
     sMPU.getAccelerometerSensor()->getEvent(&a);    // outputs m/s^2
     sMPU.getGyroSensor()->getEvent(&g);             // outputs in rad/s
 
-    if( type == ISENSOR_DATATYPE_ACCELEROMETER ){
+    if( type == BN_ISENSOR_DATATYPE_ACCELEROMETER ){
         values[0] =  a.acceleration.x;
         values[1] =  a.acceleration.y;
         values[2] =  a.acceleration.z;
         return true;
-    } else if( type == ISENSOR_DATATYPE_GYROSCOPE ){
+    } else if( type == BN_ISENSOR_DATATYPE_GYROSCOPE ){
         values[0] =  g.gyro.x;
         values[1] =  g.gyro.y;
         values[2] =  g.gyro.z;
         return true;        
-    } else if( type == ISENSOR_DATATYPE_MAGNETOMETER ){
+    } else if( type == BN_ISENSOR_DATATYPE_MAGNETOMETER ){
         return false;
-    } else if( type == ISENSOR_DATATYPE_ABSOLUTEORIENTATION ){
+    } else if( type == BN_ISENSOR_DATATYPE_ABSOLUTEORIENTATION ){
         return false;        
     } else {
         return false;
@@ -84,13 +99,13 @@ bool BnISensor::getData(float values[], const int type){
 
 
 void BnISensor::setStatus(int sensor_status){
-    if(sensor_status == SENSOR_STATUS_NOT_ACCESSIBLE){
+    if(sensor_status == BN_SENSOR_STATUS_NOT_ACCESSIBLE){
         sIsInit=false;
         DEBUG_PRINTLN("Ooops, no MPU6050 detected ... Check your wiring or I2C ADDR!");
         BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_ON;
         sStatusSensorLED.on = true;
         sStatusSensorLED.lastToggle = millis();
-    } else if(sensor_status == SENSOR_STATUS_CALIBRATING) {
+    } else if(sensor_status == BN_SENSOR_STATUS_CALIBRATING) {
         if(millis()-sStatusSensorLED.lastToggle > 500){
             sStatusSensorLED.lastToggle = millis();
             sStatusSensorLED.on = !sStatusSensorLED.on;
@@ -100,7 +115,7 @@ void BnISensor::setStatus(int sensor_status){
                 BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_OFF;
             }
         }
-    } else if(sensor_status == SENSOR_STATUS_WORKING) {
+    } else if(sensor_status == BN_SENSOR_STATUS_WORKING) {
         sIsInit=true;
         BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_OFF;
         sStatusSensorLED.on = false;

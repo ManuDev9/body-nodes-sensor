@@ -34,18 +34,18 @@ void BnAngularVelocityRelSensor::init(){
     s_sensorReconnectionTime=millis();
     /* Initialise the sensor */
     if(s_isensor.init()) {
-         setStatus(SENSOR_STATUS_WORKING);
+         setStatus(BN_SENSOR_STATUS_WORKING);
     } else {
-         setStatus(SENSOR_STATUS_NOT_ACCESSIBLE);
+         setStatus(BN_SENSOR_STATUS_NOT_ACCESSIBLE);
     }
 }
 
 void BnAngularVelocityRelSensor::setStatus(int sensor_status){
-    if(sensor_status == SENSOR_STATUS_NOT_ACCESSIBLE){
+    if(sensor_status == BN_SENSOR_STATUS_NOT_ACCESSIBLE){
         s_sensorInit=false;
         DEBUG_PRINTLN("Ooops, no isensor detected ... Check your wiring or I2C ADDR!");
-    } else if(sensor_status == SENSOR_STATUS_CALIBRATING) {
-    } else if(sensor_status == SENSOR_STATUS_WORKING) {
+    } else if(sensor_status == BN_SENSOR_STATUS_CALIBRATING) {
+    } else if(sensor_status == BN_SENSOR_STATUS_WORKING) {
         s_sensorInit=true;
     }
 }
@@ -58,10 +58,10 @@ bool BnAngularVelocityRelSensor::checkAllOk(){
         DEBUG_PRINTLN("Sensor not connected");
         s_sensorReconnectionTime=millis();
         if (s_isensor.init()) {
-            setStatus(SENSOR_STATUS_WORKING);
+            setStatus(BN_SENSOR_STATUS_WORKING);
             return true;
         } else {
-            setStatus(SENSOR_STATUS_NOT_ACCESSIBLE);
+            setStatus(BN_SENSOR_STATUS_NOT_ACCESSIBLE);
             return false;
         }
     }
@@ -70,7 +70,7 @@ bool BnAngularVelocityRelSensor::checkAllOk(){
     }
 
     float gyro_values[3];
-    if( !s_isensor.getData(gyro_values, ISENSOR_DATATYPE_GYROSCOPE) ) {
+    if( !s_isensor.getData(gyro_values, BN_ISENSOR_DATATYPE_GYROSCOPE) ) {
         return false;
     }
     
@@ -86,10 +86,10 @@ bool BnAngularVelocityRelSensor::checkAllOk(){
 
 bool BnAngularVelocityRelSensor::isCalibrated(){
     if( s_isensor.isCalibrated() ){
-        setStatus(SENSOR_STATUS_WORKING);
+        setStatus(BN_SENSOR_STATUS_WORKING);
         return true;
     } else {
-        setStatus(SENSOR_STATUS_CALIBRATING);
+        setStatus(BN_SENSOR_STATUS_CALIBRATING);
         return false;
     }
 }
@@ -107,12 +107,12 @@ BnSensorData BnAngularVelocityRelSensor::getData(){
   DEBUG_PRINTLN(s_values[3]);
   */
   BnSensorData sensorData;
-  sensorData.setValues(s_values, SENSORTYPE_ANGULARVELOCITY_REL_TAG);
+  sensorData.setValues(s_values, BN_SENSORTYPE_ANGULARVELOCITY_REL_TAG);
   return sensorData;
 }
 
 BnType BnAngularVelocityRelSensor::getType(){
-    return SENSORTYPE_ANGULARVELOCITY_REL_TAG;
+    return BN_SENSORTYPE_ANGULARVELOCITY_REL_TAG;
 }
 
 void BnAngularVelocityRelSensor::setEnable(bool enable_status){

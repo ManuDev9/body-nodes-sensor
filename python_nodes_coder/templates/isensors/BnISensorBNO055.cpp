@@ -24,7 +24,6 @@
 
 #include "BnISensor.h"
 
-#ifdef __BN_ISENSOR_H__
 
 #include "Adafruit_Sensor.h"
 #include "Adafruit_BNO055.h"
@@ -40,10 +39,10 @@ bool BnISensor::init(){
 
     s_BNO = Adafruit_BNO055(55, BNO055_ADDRESS_B);
     /* Initialise the sensor */
-    if(s_BNO.begin(s_BNO.OPERATION_MODE_NDOF_FMC_OFF)) {
-         setStatus(SENSOR_STATUS_WORKING);
+    if(s_BNO.begin(OPERATION_MODE_NDOF_FMC_OFF)) {
+         setStatus(BN_SENSOR_STATUS_WORKING);
     } else {
-         setStatus(SENSOR_STATUS_NOT_ACCESSIBLE);
+         setStatus(BN_SENSOR_STATUS_NOT_ACCESSIBLE);
     }
     s_BNO.setExtCrystalUse(true);
     return sIsInit;
@@ -67,10 +66,10 @@ bool BnISensor::isCalibrated(){
         DEBUG_PRINT(" , mag = ");
         DEBUG_PRINTLN_DEC(mag);
         */
-        setStatus(SENSOR_STATUS_CALIBRATING);
+        setStatus(BN_SENSOR_STATUS_CALIBRATING);
         return false;
     } else {
-        setStatus(SENSOR_STATUS_WORKING);
+        setStatus(BN_SENSOR_STATUS_WORKING);
         return true;
     }
 }
@@ -88,25 +87,25 @@ bool BnISensor::getData(float values[], const int type){
     DEBUG_PRINTLN(s_values[3]);
     */
 
-    if( type == ISENSOR_DATATYPE_ACCELEROMETER ){
+    if( type == BN_ISENSOR_DATATYPE_ACCELEROMETER ){
         imu::Vector<3> vector_acc = s_BNO.getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
         values[0] = static_cast<float>( vector_acc[0] );
         values[1] = static_cast<float>( vector_acc[1] );
         values[2] = static_cast<float>( vector_acc[2] );
         return true;
-    } else if( type == ISENSOR_DATATYPE_GYROSCOPE ){
+    } else if( type == BN_ISENSOR_DATATYPE_GYROSCOPE ){
         imu::Vector<3> vector_gyro = s_BNO.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
         values[0] =  static_cast<float>( vector_gyro[0] );
         values[1] =  static_cast<float>( vector_gyro[1] );
         values[2] =  static_cast<float>( vector_gyro[2] );
         return true;
-    } else if( type == ISENSOR_DATATYPE_MAGNETOMETER ){
+    } else if( type == BN_ISENSOR_DATATYPE_MAGNETOMETER ){
         imu::Vector<3> vector_magn = s_BNO.getVector(Adafruit_BNO055::VECTOR_MAGNETOMETER);
         values[0] =  static_cast<float>( vector_magn[0] );
         values[1] =  static_cast<float>( vector_magn[1] );
         values[2] =  static_cast<float>( vector_magn[2] );
         return true;
-    } else if( type == ISENSOR_DATATYPE_ABSOLUTEORIENTATION ){
+    } else if( type == BN_ISENSOR_DATATYPE_ABSOLUTEORIENTATION ){
         imu::Quaternion sensor_quat = s_BNO.getQuat();
         values[0] =  static_cast<float>( sensor_quat.w() );
         values[1] =  static_cast<float>( sensor_quat.x() );
@@ -119,14 +118,14 @@ bool BnISensor::getData(float values[], const int type){
 
 }
 
-void BnISensor::setStatus(int sensor_status){
-    if(sensor_status == SENSOR_STATUS_NOT_ACCESSIBLE){
+void BnISensor::setStatus(int BN_SENSOR_status){
+    if(BN_SENSOR_status == BN_SENSOR_STATUS_NOT_ACCESSIBLE){
         sIsInit=false;
         DEBUG_PRINTLN("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
         BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_ON;
         sStatusSensorLED.on = true;
         sStatusSensorLED.lastToggle = millis();
-    } else if(sensor_status == SENSOR_STATUS_CALIBRATING) {
+    } else if(BN_SENSOR_status == BN_SENSOR_STATUS_CALIBRATING) {
         if(millis()-sStatusSensorLED.lastToggle > 500){
             sStatusSensorLED.lastToggle = millis();
             sStatusSensorLED.on = !sStatusSensorLED.on;
@@ -136,7 +135,7 @@ void BnISensor::setStatus(int sensor_status){
                 BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_OFF;
             }
         }
-    } else if(sensor_status == SENSOR_STATUS_WORKING) {
+    } else if(BN_SENSOR_status == BN_SENSOR_STATUS_WORKING) {
         sIsInit=true;
         BN_NODE_SPECIFIC_BN_ISENSOR_HMI_LED_OFF;
         sStatusSensorLED.on = false;
@@ -144,4 +143,3 @@ void BnISensor::setStatus(int sensor_status){
     }
 }
 
-#endif /*__BN_ISENSOR_H__*/

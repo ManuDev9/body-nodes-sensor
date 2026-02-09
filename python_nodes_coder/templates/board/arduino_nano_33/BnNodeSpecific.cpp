@@ -122,15 +122,15 @@ static void convertStringArrayToUInt8Bytes(char const *message_str, uint8_t slen
 
 #define CHARA_MAX_LENGTH 20
 
-static BLEService sBodynodesService(BLE_BODYNODES_SERVICE_UUID);
+static BLEService sBodynodesService(BN_BLE_SERVICE_UUID);
 
-static BLECharacteristic sPlayerChara(BLE_BODYNODES_CHARA_PLAYER_UUID, BLERead, CHARA_MAX_LENGTH);
-static BLECharacteristic sBodypartChara(BLE_BODYNODES_CHARA_BODYPART_UUID, BLERead, CHARA_MAX_LENGTH);
+static BLECharacteristic sPlayerChara(BN_BLE_CHARA_PLAYER_UUID, BLERead, CHARA_MAX_LENGTH);
+static BLECharacteristic sBodypartChara(BN_BLE_CHARA_BODYPART_UUID, BLERead, CHARA_MAX_LENGTH);
 
-static BLECharacteristic sOrientationAbsChara(BLE_BODYNODES_CHARA_ORIENTATION_ABS_VALUE_UUID, BLENotify, CHARA_MAX_LENGTH);
-static BLECharacteristic sAccelerationRelChara(BLE_BODYNODES_CHARA_ACCELERATION_REL_VALUE_UUID, BLENotify, CHARA_MAX_LENGTH);
-static BLECharacteristic sGloveChara(BLE_BODYNODES_CHARA_GLOVE_VALUE_UUID, BLENotify, CHARA_MAX_LENGTH);
-static BLECharacteristic sShoeChara(BLE_BODYNODES_CHARA_SHOE_UUID, BLENotify, CHARA_MAX_LENGTH);
+static BLECharacteristic sOrientationAbsChara(BN_BLE_CHARA_ORIENTATION_ABS_VALUE_UUID, BLENotify, CHARA_MAX_LENGTH);
+static BLECharacteristic sAccelerationRelChara(BN_BLE_CHARA_ACCELERATION_REL_VALUE_UUID, BLENotify, CHARA_MAX_LENGTH);
+static BLECharacteristic sGloveChara(BN_BLE_CHARA_GLOVE_VALUE_UUID, BLENotify, CHARA_MAX_LENGTH);
+static BLECharacteristic sShoeChara(BN_BLE_CHARA_SHOE_UUID, BLENotify, CHARA_MAX_LENGTH);
 
 // This boolean just forces the Player and Bodypart to be set once
 // This is by specifications. The reason is that BLE communication is quite unique in nature and it is just
@@ -147,7 +147,7 @@ void BnBLENodeCommunicator_init(){
         DEBUG_PRINTLN("BLE failed to initialize!");
     }
     
-    BLE.setLocalName(BLE_BODYNODES_NAME);
+    BLE.setLocalName(BN_BLE_NAME);
     BLE.setAdvertisedService(sBodynodesService);
     
     // Add characteristics to the service
@@ -174,16 +174,16 @@ void BnBLENodeCommunicator_init(){
 
 uint8_t BnBLENodeCommunicator_checkAllOk( uint8_t current_conn_status ){
     BLE.poll();
-    if (current_conn_status == CONNECTION_STATUS_NOT_CONNECTED){
+    if (current_conn_status == BN_CONNECTION_STATUS_NOT_CONNECTED){
         DEBUG_PRINTLN("Not connected");
         delay(1000);
-        return CONNECTION_STATUS_WAITING_ACK;
+        return BN_CONNECTION_STATUS_WAITING_ACK;
     } else {
         BLEDevice central = BLE.central();
         if( central.connected() ) {
-            return CONNECTION_STATUS_CONNECTED;
+            return BN_CONNECTION_STATUS_CONNECTED;
         } else {
-            return CONNECTION_STATUS_NOT_CONNECTED;
+            return BN_CONNECTION_STATUS_NOT_CONNECTED;
         }
     }
 }
@@ -195,31 +195,31 @@ void BnBLENodeCommunicator_sendAllMessages(JsonArray &bnc_messages_list){
     }
     for (JsonObject message_json : bnc_messages_list) {
         if(!sPlayerBodypartSet) {
-            sPlayerChara.setValue(message_json[MESSAGE_PLAYER_TAG].as<String>().c_str());
-            sBodypartChara.setValue(message_json[MESSAGE_BODYPART_TAG].as<String>().c_str());
+            sPlayerChara.setValue(message_json[BN_MESSAGE_PLAYER_TAG].as<String>().c_str());
+            sBodypartChara.setValue(message_json[BN_MESSAGE_BODYPART_TAG].as<String>().c_str());
             sPlayerBodypartSet = true;
         }
-        String sensortype_str = message_json[MESSAGE_SENSORTYPE_TAG].as<String>();
-        String value_str = message_json[MESSAGE_VALUE_TAG].as<String>();
+        String sensortype_str = message_json[BN_MESSAGE_SENSORTYPE_TAG].as<String>();
+        String value_str = message_json[BN_MESSAGE_VALUE_TAG].as<String>();
 
         DEBUG_PRINT("message = ");
         String output;
         serializeJson(message_json, output);
         DEBUG_PRINTLN(output);
         
-        if(sensortype_str == SENSORTYPE_ORIENTATION_ABS_TAG) {
+        if(sensortype_str == BN_SENSORTYPE_ORIENTATION_ABS_TAG) {
             uint8_t bytes_message[16];
             convertStringArrayToFloatBytes(value_str.c_str(), value_str.length(), bytes_message, 4);
             sOrientationAbsChara.setValue(bytes_message, 16);
-        } else if(sensortype_str == SENSORTYPE_ACCELERATION_REL_TAG) {
+        } else if(sensortype_str == BN_SENSORTYPE_ACCELERATION_REL_TAG) {
             uint8_t bytes_message[12];
             convertStringArrayToFloatBytes(value_str.c_str(), value_str.length(), bytes_message, 3);
             sAccelerationRelChara.setValue(bytes_message, 12);
-        } else if(sensortype_str == SENSORTYPE_GLOVE_TAG) {
+        } else if(sensortype_str == BN_SENSORTYPE_GLOVE_TAG) {
             uint8_t bytes_message[9];
             convertStringArrayToUInt8Bytes(value_str.c_str(), value_str.length(), bytes_message, 9);
             sGloveChara.setValue(bytes_message, 9);
-        } else if(sensortype_str == SENSORTYPE_SHOE_TAG) {
+        } else if(sensortype_str == BN_SENSORTYPE_SHOE_TAG) {
             //TODO sShoeChara.setValue(message_json[MESSAGE_VALUE_TAG].as<String>().c_str());
         } 
     }

@@ -263,20 +263,20 @@ static uint8_t BNC_adv_data[] = {
 static uint8_t BNC_scan_response[] = {
   0x09,
   BLE_GAP_AD_TYPE_COMPLETE_LOCAL_NAME,
-  'B', 'o',  'd', 'y', 'n', 'o', 'd', 'e'
+  'B', 'L',  'E', '_', 'N', 'o', 'd', 'e'
 };
 
 
-static uint8_t sBodynodesService_uuid[] = UUID_TO_UINT8( BLE_BODYNODES_SERVICE_UUID );
+static uint8_t sBodynodesService_uuid[] = UUID_TO_UINT8( BN_BLE_SERVICE_UUID );
 
-static uint8_t sPlayerChara_uuid[] = UUID_TO_UINT8( BLE_BODYNODES_CHARA_PLAYER_UUID );
-static uint8_t sBodypartChara_uuid[] = UUID_TO_UINT8( BLE_BODYNODES_CHARA_BODYPART_UUID );
+static uint8_t sPlayerChara_uuid[] = UUID_TO_UINT8( BN_BLE_CHARA_PLAYER_UUID );
+static uint8_t sBodypartChara_uuid[] = UUID_TO_UINT8( BN_BLE_CHARA_BODYPART_UUID );
 
-static uint8_t sOrientationAbsChara_uuid[] = UUID_TO_UINT8( BLE_BODYNODES_CHARA_ORIENTATION_ABS_VALUE_UUID );
-static uint8_t sAccelerationRelChara_uuid[] = UUID_TO_UINT8( BLE_BODYNODES_CHARA_ACCELERATION_REL_VALUE_UUID );
-static uint8_t sAngularvelocityRelChara_uuid[] = UUID_TO_UINT8( BLE_BODYNODES_CHARA_ANGULARVELOCITY_REL_VALUE_UUID );
-static uint8_t sGloveChara_uuid[] = UUID_TO_UINT8( BLE_BODYNODES_CHARA_GLOVE_VALUE_UUID );
-static uint8_t sShoeChara_uuid[] = UUID_TO_UINT8( BLE_BODYNODES_CHARA_SHOE_UUID );
+static uint8_t sOrientationAbsChara_uuid[] = UUID_TO_UINT8( BN_BLE_CHARA_ORIENTATION_ABS_VALUE_UUID );
+static uint8_t sAccelerationRelChara_uuid[] = UUID_TO_UINT8( BN_BLE_CHARA_ACCELERATION_REL_VALUE_UUID );
+static uint8_t sAngularvelocityRelChara_uuid[] = UUID_TO_UINT8( BN_BLE_CHARA_ANGULARVELOCITY_REL_VALUE_UUID );
+static uint8_t sGloveChara_uuid[] = UUID_TO_UINT8( BN_BLE_CHARA_GLOVE_VALUE_UUID );
+static uint8_t sShoeChara_uuid[] = UUID_TO_UINT8( BN_BLE_CHARA_SHOE_UUID );
 
 // This boolean just forces the Player and Bodypart to be set once
 // This is by specifications. The reason is that BLE communication is quite unique in nature and it is just
@@ -449,15 +449,15 @@ void BnBLENodeCommunicator_init(){
 }
 
 uint8_t BnBLENodeCommunicator_checkAllOk( uint8_t current_conn_status ){
-    if (current_conn_status == CONNECTION_STATUS_NOT_CONNECTED){
+    if (current_conn_status == BN_CONNECTION_STATUS_NOT_CONNECTED){
         DEBUG_PRINTLN("Not connected");
         delay(1000);
-        return CONNECTION_STATUS_WAITING_ACK;
+        return BN_CONNECTION_STATUS_WAITING_ACK;
     } else {
         if( sIsConnected ) {
-            return CONNECTION_STATUS_CONNECTED;
+            return BN_CONNECTION_STATUS_CONNECTED;
         } else {
-            return CONNECTION_STATUS_NOT_CONNECTED;
+            return BN_CONNECTION_STATUS_NOT_CONNECTED;
         }
     }
 }
@@ -470,38 +470,38 @@ void BnBLENodeCommunicator_sendAllMessages(JsonArray &bnc_messages_list){
     for (JsonObject message_json : bnc_messages_list) {
         if(!sPlayerBodypartSet) {
 
-            sPlayerChara_dataLength = message_json[MESSAGE_PLAYER_TAG].as<String>().length();
-            sBodypartChara_dataLength = message_json[MESSAGE_BODYPART_TAG].as<String>().length();
-            memcpy( sPlayerChara_data, message_json[MESSAGE_PLAYER_TAG].as<String>().c_str() , sPlayerChara_dataLength+1 );
-            memcpy( sBodypartChara_data, message_json[MESSAGE_BODYPART_TAG].as<String>().c_str() , sBodypartChara_dataLength+1 );
+            sPlayerChara_dataLength = message_json[BN_MESSAGE_PLAYER_TAG].as<String>().length();
+            sBodypartChara_dataLength = message_json[BN_MESSAGE_BODYPART_TAG].as<String>().length();
+            memcpy( sPlayerChara_data, message_json[BN_MESSAGE_PLAYER_TAG].as<String>().c_str() , sPlayerChara_dataLength+1 );
+            memcpy( sBodypartChara_data, message_json[BN_MESSAGE_BODYPART_TAG].as<String>().c_str() , sBodypartChara_dataLength+1 );
 
             sPlayerBodypartSet = true;
         }
-        String sensortype_str = message_json[MESSAGE_SENSORTYPE_TAG].as<String>();
-        String value_str = message_json[MESSAGE_VALUE_TAG].as<String>();
+        String sensortype_str = message_json[BN_MESSAGE_SENSORTYPE_TAG].as<String>();
+        String value_str = message_json[BN_MESSAGE_VALUE_TAG].as<String>();
 
         DEBUG_PRINT("message = ");
         String output;
         serializeJson(message_json, output);
         DEBUG_PRINTLN(output);
 
-        if(sensortype_str == SENSORTYPE_ORIENTATION_ABS_TAG) {
+        if(sensortype_str == BN_SENSORTYPE_ORIENTATION_ABS_TAG) {
             uint8_t bytes_message[BLE_CHARACTERISTIC_ORIABS_MAX_LEN];
             convertStringArrayToFloatBytes(value_str.c_str(), value_str.length(), bytes_message, BLE_CHARACTERISTIC_ORIABS_MAX_LEN/4);
             ble.sendNotify(sOrientationAbsChara_handle, bytes_message, BLE_CHARACTERISTIC_ORIABS_MAX_LEN);
-        } else if(sensortype_str == SENSORTYPE_ACCELERATION_REL_TAG) {
+        } else if(sensortype_str == BN_SENSORTYPE_ACCELERATION_REL_TAG) {
             uint8_t bytes_message[BLE_CHARACTERISTIC_ACCREL_MAX_LEN];
             convertStringArrayToFloatBytes(value_str.c_str(), value_str.length(), bytes_message, BLE_CHARACTERISTIC_ACCREL_MAX_LEN/4);
             ble.sendNotify(sAccelerationRelChara_handle, bytes_message, BLE_CHARACTERISTIC_ACCREL_MAX_LEN);
-        } else if(sensortype_str == SENSORTYPE_GLOVE_TAG) {
+        } else if(sensortype_str == BN_SENSORTYPE_GLOVE_TAG) {
             uint8_t bytes_message[BLE_CHARACTERISTIC_GLOVE_MAX_LEN];
             convertStringArrayToUInt8Bytes(value_str.c_str(), value_str.length(), bytes_message, BLE_CHARACTERISTIC_GLOVE_MAX_LEN);
             ble.sendNotify(sGloveChara_handle, bytes_message, BLE_CHARACTERISTIC_GLOVE_MAX_LEN);
-        } else if(sensortype_str == SENSORTYPE_SHOE_TAG) {
+        } else if(sensortype_str == BN_SENSORTYPE_SHOE_TAG) {
             uint8_t bytes_message[BLE_CHARACTERISTIC_SHOE_MAX_LEN];
             convertStringArrayToUInt8Bytes(value_str.c_str(), value_str.length(), bytes_message, BLE_CHARACTERISTIC_SHOE_MAX_LEN);
             ble.sendNotify(sShoeChara_handle, bytes_message, BLE_CHARACTERISTIC_SHOE_MAX_LEN);
-        } else if(sensortype_str == SENSORTYPE_ANGULARVELOCITY_REL_TAG) {
+        } else if(sensortype_str == BN_SENSORTYPE_ANGULARVELOCITY_REL_TAG) {
             uint8_t bytes_message[BLE_CHARACTERISTIC_ANGVELREL_MAX_LEN];
             convertStringArrayToFloatBytes(value_str.c_str(), value_str.length(), bytes_message, BLE_CHARACTERISTIC_ANGVELREL_MAX_LEN/4);
             ble.sendNotify(sAngularvelocityRelChara_handle, bytes_message, BLE_CHARACTERISTIC_ANGVELREL_MAX_LEN);            
@@ -515,3 +515,34 @@ void BnBLENodeCommunicator_sendAllMessages(JsonArray &bnc_messages_list){
 }
 
 #endif
+
+// Silencing this kind of problems
+// /home/manu/.arduino15/packages/RedBear/tools/arm-none-eabi-gcc-redbear/4.9-2015-q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-writer.o): In function `_write_r':
+
+extern "C" {
+    int _write(int file, char *ptr, int len) {
+        // Optional: Send output to Serial for debugging
+        // if (file == 1) Serial.write((uint8_t*)ptr, len); 
+        return len;
+    }
+
+    int _read(int file, char *ptr, int len) {
+        return 0; // Logic for reading from stdin (Serial) could go here
+    }
+
+    int _close(int file) {
+        return -1;
+    }
+
+    int _fstat(int file, void *st) {
+        return 0;
+    }
+
+    int _isatty(int file) {
+        return 1;
+    }
+
+    int _lseek(int file, int ptr, int dir) {
+        return 0;
+    }
+}

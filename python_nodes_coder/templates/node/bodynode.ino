@@ -84,6 +84,7 @@ int mBigDiff_G[9] = {BIG_ANGLE_DIFF ,BIG_ANGLE_DIFF ,BIG_ANGLE_DIFF ,BIG_ANGLE_D
 #endif // GLOVE_SENSOR_ON_BOARD
 
 #ifdef SHOE_SENSOR_ON_BOARD
+#include "BnShoeSensor.h"
 String mBodypartShoeName;
 BnShoeSensor mShoeSensor;
 int mLastSensorData_S[1] = {0};
@@ -150,16 +151,16 @@ void setup() {
 
 #if defined(GLOVE_SENSOR_ON_SERIAL) || defined(GLOVE_SENSOR_ON_BOARD)
     mGloveSensor.init();
-    mBodypartGloveName = BnPersMemory::getValue(MEMORY_BODYPART_GLOVE_TAG);
+    mBodypartGloveName = BnPersMemory::getValue(BN_MEMORY_BODYPART_GLOVE_TAG);
 #endif /*GLOVE_SENSOR_ON_SERIAL || GLOVE_SENSOR_ON_BOARD*/
 
 #ifdef SHOE_SENSOR_ON_BOARD
     mShoeSensor.init();
-    mBodypartShoeName = BnPersMemory::getValue(MEMORY_BODYPART_SHOE_TAG);
+    mBodypartShoeName = BnPersMemory::getValue(BN_MEMORY_BODYPART_SHOE_TAG);
 #endif /*SHOE_SENSOR_ON_BOARD*/
 
-    mPlayerName = BnPersMemory::getValue(MEMORY_PLAYER_TAG);
-    mBodypartName = BnPersMemory::getValue(MEMORY_BODYPART_TAG);
+    mPlayerName = BnPersMemory::getValue(BN_MEMORY_PLAYER_TAG);
+    mBodypartName = BnPersMemory::getValue(BN_MEMORY_BODYPART_TAG);
 }
 
 void loop() {
@@ -194,7 +195,7 @@ void loop() {
 #endif // ORIENTATION_ABS_SENSOR
 
 #ifdef ACCELERATION_REL_SENSOR
-        if(!mOASensor.isCalibrated()){
+        if(!mARSensor.isCalibrated()){
             // You can decide to return
         }
 
@@ -284,8 +285,8 @@ void loop() {
         mCommunicator.getActions(actions);
 
         for (JsonObject action : actions) {
-            String actionPlayer = action[ACTION_PLAYER_TAG].as<String>();
-            String actionBodypart = action[ACTION_BODYPART_TAG].as<String>();
+            String actionPlayer = action[BN_ACTION_PLAYER_TAG].as<String>();
+            String actionBodypart = action[BN_ACTION_BODYPART_TAG].as<String>();
             if(actionPlayer != mPlayerName) {
                 DEBUG_PRINTLN("Wrong player in the action");
                 continue;
@@ -294,35 +295,35 @@ void loop() {
                 DEBUG_PRINTLN("Wrong bodypart in the action");
                 continue;
             }
-            String actionType = action[ACTION_TYPE_TAG].as<String>();
-            if(actionType == ACTION_TYPE_HAPTIC_TAG) {
+            String actionType = action[BN_ACTION_TYPE_TAG].as<String>();
+            if(actionType == BN_ACTION_TYPE_HAPTIC_TAG) {
 #ifdef HAPTIC_ACTUATOR_ON_BOARD
                 mHapticActuator.setAction(action);
 #endif // HAPTIC_ACTUATOR_ON_BOARD
-            } else if(actionType == ACTION_TYPE_ENABLESENSOR_TAG) {
-                String actionSensorType = action[ACTION_ENABLESENSOR_SENSORTYPE_TAG].as<String>();
-                if(actionSensorType == SENSORTYPE_ORIENTATION_ABS_TAG) {
+            } else if(actionType == BN_ACTION_TYPE_ENABLESENSOR_TAG) {
+                String actionSensorType = action[BN_ACTION_ENABLESENSOR_SENSORTYPE_TAG].as<String>();
+                if(actionSensorType == BN_SENSORTYPE_ORIENTATION_ABS_TAG) {
                     //DEBUG_PRINT("Setting enabled = ");
-                    //DEBUG_PRINTLN(action[ACTION_ENABLESENSOR_ENABLE_TAG].as<bool>());
+                    //DEBUG_PRINTLN(action[BN_ACTION_ENABLESENSOR_ENABLE_TAG].as<bool>());
 #ifdef ORIENTATION_ABS_SENSOR
-                    mOASensor.setEnable(action[ACTION_ENABLESENSOR_ENABLE_TAG].as<bool>());
+                    mOASensor.setEnable(action[BN_ACTION_ENABLESENSOR_ENABLE_TAG].as<bool>());
 #endif /*ORIENTATION_ABS_SENSOR*/
-                } else if(actionSensorType == SENSORTYPE_GLOVE_TAG) {
+                } else if(actionSensorType == BN_SENSORTYPE_GLOVE_TAG) {
 #if defined(GLOVE_SENSOR_ON_SERIAL) || defined(GLOVE_SENSOR_ON_BOARD) 
-                    mGloveSensor.setEnable(action[ACTION_ENABLESENSOR_ENABLE_TAG].as<bool>());
+                    mGloveSensor.setEnable(action[BN_ACTION_ENABLESENSOR_ENABLE_TAG].as<bool>());
 #endif /*GLOVE_SENSOR_ON_SERIAL || GLOVE_SENSOR_ON_BOARD */
-                } else if(actionSensorType == SENSORTYPE_SHOE_TAG) {
+                } else if(actionSensorType == BN_SENSORTYPE_SHOE_TAG) {
 #ifdef SHOE_SENSOR_ON_BOARD
-                    mShoeSensor.setEnable(action[ACTION_ENABLESENSOR_ENABLE_TAG].as<bool>());
+                    mShoeSensor.setEnable(action[BN_ACTION_ENABLESENSOR_ENABLE_TAG].as<bool>());
 #endif /*SHOE_SENSOR_ON_BOARD*/
                 }
-            } else if(actionType == ACTION_TYPE_SETPLAYER_TAG) {
-                mPlayerName = action[ACTION_SETPLAYER_NEWPLAYER_TAG].as<String>();
-                BnPersMemory::setValue(MEMORY_PLAYER_TAG, mPlayerName);
-            } else if(actionType == ACTION_TYPE_SETBODYPART_TAG) {
-                mBodypartName = action[ACTION_SETBODYPART_NEWBODYPART_TAG].as<String>();
-                BnPersMemory::setValue(MEMORY_BODYPART_TAG, mBodypartName);
-            } else if(actionType == ACTION_TYPE_SETWIFI_TAG) {
+            } else if(actionType == BN_ACTION_TYPE_SETPLAYER_TAG) {
+                mPlayerName = action[BN_ACTION_SETPLAYER_NEWPLAYER_TAG].as<String>();
+                BnPersMemory::setValue(BN_MEMORY_PLAYER_TAG, mPlayerName);
+            } else if(actionType == BN_ACTION_TYPE_SETBODYPART_TAG) {
+                mBodypartName = action[BN_ACTION_SETBODYPART_NEWBODYPART_TAG].as<String>();
+                BnPersMemory::setValue(BN_MEMORY_BODYPART_TAG, mBodypartName);
+            } else if(actionType == BN_ACTION_TYPE_SETWIFI_TAG) {
 #ifdef WIFI_COMMUNICATION
                 mCommunicator.setConnectionParams(action);
                 mCommunicator.init();
