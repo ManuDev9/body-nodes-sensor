@@ -2,13 +2,14 @@
 
 # curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
 # pip3 install adafruit-nrfutil --break-system-packages
+# Config file written to: $HOME/.arduino15/arduino-cli.yaml
 
 arduino-cli config init
 arduino-cli config add board_manager.additional_urls "https://redbearlab.github.io/arduino/package_redbear_index.json"
 arduino-cli config add board_manager.additional_urls "http://arduino.esp8266.com/stable/package_esp8266com_index.json"
-arduino-cli config set directories.user "/home/manu/Arduino"
-arduino-cli config set directories.data "/home/manu/.arduino15"
-arduino-cli core update-index; sed -i 's/"boards": {"name": "RedBear Duo"}/"boards": [ {"name": "RedBear Duo"} ]/' /home/manu/.arduino15/package_redbear_index.json
+arduino-cli config set directories.user "$HOME/Arduino"
+arduino-cli config set directories.data "$HOME/.arduino15"
+arduino-cli core update-index; sed -i 's/"boards": {"name": "RedBear Duo"}/"boards": [ {"name": "RedBear Duo"} ]/' $HOME/.arduino15/package_redbear_index.json
 
 arduino-cli lib install "ArduinoJson@6.15.2"
 arduino-cli lib install "Adafruit Unified Sensor@1.1.15"
