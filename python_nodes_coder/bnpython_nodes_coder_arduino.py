@@ -363,13 +363,13 @@ def generate_all_configs():
         ["esp-12e"],  # board
         ["esp8266:esp8266:nodemcuv2"],  # fqbn
         ["wifi"],  # node_communicator
-        ["no", "yes"],  # actuators->haptic
-        ["bno055", "mpu6050"],  # isensors
-        ["no", "yes"],  # esensors->acceleration_rel
-        ["no", "yes"],  # esensors->angularvelocity_rel
-        ["no", "fusion"],  # esensors->orientation_abs
-        ["no", "onboard", "serial"],  # esensors->glove
-        ["no", "onboard"],  # esensors->shoe
+        ["yes"],  # actuators->haptic
+        ["mpu6050"],  # isensors
+        ["yes"],  # esensors->acceleration_rel
+        ["yes"],  # esensors->angularvelocity_rel
+        ["fusion"],  # esensors->orientation_abs
+        ["onboard", "serial"],  # esensors->glove
+        ["onboard"],  # esensors->shoe
     ]
     all_configs.extend(create_combo(flat_keys, value_lists))
 
@@ -378,13 +378,13 @@ def generate_all_configs():
         ["esp-12e"],  # board
         ["esp8266:esp8266:nodemcuv2"],  # fqbn
         ["wifi"],  # node_communicator
-        ["no", "yes"],  # actuators->haptic
+        ["yes"],  # actuators->haptic
         ["bno055"],  # isensors
-        ["no", "yes"],  # esensors->acceleration_rel
-        ["no", "yes"],  # esensors->angularvelocity_rel
-        ["no", "onboard", "fusion"],  # esensors->orientation_abs
-        ["no", "onboard", "serial"],  # esensors->glove
-        ["no", "onboard"],  # esensors->shoe
+        ["yes"],  # esensors->acceleration_rel
+        ["yes"],  # esensors->angularvelocity_rel
+        ["onboard", "fusion"],  # esensors->orientation_abs
+        ["no"],  # esensors->glove
+        ["no"],  # esensors->shoe
     ]
     all_configs.extend(create_combo(flat_keys, value_lists))
 
@@ -393,13 +393,13 @@ def generate_all_configs():
         ["esp-12e"],  # board
         ["esp8266:esp8266:nodemcuv2"],  # fqbn
         ["wifi"],  # node_communicator
-        ["no", "yes"],  # actuators->haptic
+        ["no"],  # actuators->haptic
         ["no"],  # isensors
         ["no"],  # esensors->acceleration_rel
         ["no"],  # esensors->angularvelocity_rel
         ["no"],  # esensors->orientation_abs
-        ["no", "onboard", "serial"],  # esensors->glove
-        ["no", "onboard"],  # esensors->shoe
+        ["no"],  # esensors->glove
+        ["no"],  # esensors->shoe
     ]
     all_configs.extend(create_combo(flat_keys, value_lists))
 
@@ -410,13 +410,13 @@ def generate_all_configs():
         ["arduino_nano_33"],  # board
         ["arduino:mbed_nano:nano33ble"],  # fqbn
         ["ble"],  # node_communicator
-        ["no", "yes"],  # actuators->haptic
+        ["yes"],  # actuators->haptic
         ["arduino_lsm9ds1"],  # isensors
-        ["no", "yes"],  # esensors->acceleration_rel
-        ["no", "yes"],  # esensors->angularvelocity_rel
-        ["no", "fusion"],  # esensors->orientation_abs
-        ["no", "onboard", "serial"],  # esensors->glove
-        ["no", "onboard"],  # esensors->shoe
+        ["yes"],  # esensors->acceleration_rel
+        ["yes"],  # esensors->angularvelocity_rel
+        ["fusion"],  # esensors->orientation_abs
+        ["onboard", "serial"],  # esensors->glove
+        ["onboard"],  # esensors->shoe
     ]
     all_configs.extend(create_combo(flat_keys, value_lists))
 
@@ -427,28 +427,13 @@ def generate_all_configs():
         ["redbear_duo"],  # board
         ["RedBear:STM32F2:RedBear_Duo_native" ],
         ["wifi", "ble"],  # node_communicator
-        ["no", "yes"],  # actuators->haptic
-        ["bno055", "mpu6050"],  # isensors
-        ["no", "yes"],  # esensors->acceleration_rel
-        ["no", "yes"],  # esensors->angularvelocity_rel
-        ["no", "fusion"],  # esensors->orientation_abs
-        ["no", "onboard", "serial"],  # esensors->glove
-        ["no", "onboard"],  # esensors->shoe
-    ]
-    all_configs.extend(create_combo(flat_keys, value_lists))
-
-    value_lists = [
-        ["node"],  # type
-        ["redbear_duo"],  # board
-        ["RedBear:STM32F2:RedBear_Duo_native" ],
-        ["wifi"],  # node_communicator
-        ["no", "yes"],  # actuators->haptic
-        ["bno055"],  # isensors
-        ["no", "yes"],  # esensors->acceleration_rel
-        ["no", "yes"],  # esensors->angularvelocity_rel
-        ["no", "onboard", "fusion"],  # esensors->orientation_abs
-        ["no", "onboard", "serial"],  # esensors->glove
-        ["no", "onboard"],  # esensors->shoe
+        ["yes"],  # actuators->haptic
+        ["mpu6050"],  # isensors
+        ["yes"],  # esensors->acceleration_rel
+        ["yes"],  # esensors->angularvelocity_rel
+        ["fusion"],  # esensors->orientation_abs
+        ["onboard", "serial"],  # esensors->glove
+        ["onboard"],  # esensors->shoe
     ]
     all_configs.extend(create_combo(flat_keys, value_lists))
 
@@ -457,13 +442,28 @@ def generate_all_configs():
         ["redbear_duo"],  # board
         ["RedBear:STM32F2:RedBear_Duo_native" ],
         ["wifi", "ble"],  # node_communicator
-        ["no", "yes"],  # actuators->haptic
+        ["yes"],  # actuators->haptic
+        ["bno055"],  # isensors
+        ["yes"],  # esensors->acceleration_rel
+        ["yes"],  # esensors->angularvelocity_rel
+        ["onboard", "fusion"],  # esensors->orientation_abs
+        ["no"],  # esensors->glove
+        ["no"],  # esensors->shoe
+    ]
+    all_configs.extend(create_combo(flat_keys, value_lists))
+
+    value_lists = [
+        ["node"],  # type
+        ["redbear_duo"],  # board
+        ["RedBear:STM32F2:RedBear_Duo_native" ],
+        ["wifi", "ble"],  # node_communicator
+        ["no"],  # actuators->haptic
         ["no"],  # isensors
         ["no"],  # esensors->acceleration_rel
         ["no"],  # esensors->angularvelocity_rel
         ["no"],  # esensors->orientation_abs
-        ["no", "onboard", "serial"],  # esensors->glove
-        ["no", "onboard"],  # esensors->shoe
+        ["no"],  # esensors->glove
+        ["no"],  # esensors->shoe
     ]
     all_configs.extend(create_combo(flat_keys, value_lists))
 
@@ -474,13 +474,13 @@ def generate_all_configs():
         ["mpnrf52840"],  # board
         ["adafruit:nrf52:feather52840" ],
         ["ble"],  # node_communicator
-        ["no", "yes"],  # actuators->haptic
-        ["bno055", "mpu6050"],  # isensors
-        ["no", "yes"],  # esensors->acceleration_rel
-        ["no", "yes"],  # esensors->angularvelocity_rel
-        ["no", "fusion"],  # esensors->orientation_abs
-        ["no", "onboard", "serial"],  # esensors->glove
-        ["no", "onboard"],  # esensors->shoe
+        ["yes"],  # actuators->haptic
+        ["mpu6050"],  # isensors
+        ["yes"],  # esensors->acceleration_rel
+        ["yes"],  # esensors->angularvelocity_rel
+        ["fusion"],  # esensors->orientation_abs
+        ["onboard", "serial"],  # esensors->glove
+        ["onboard"],  # esensors->shoe
     ]
     all_configs.extend(create_combo(flat_keys, value_lists))
 
@@ -489,13 +489,13 @@ def generate_all_configs():
         ["mpnrf52840"],  # board
         ["adafruit:nrf52:feather52840" ],
         ["ble"],  # node_communicator
-        ["no", "yes"],  # actuators->haptic
+        ["yes"],  # actuators->haptic
         ["bno055"],  # isensors
-        ["no", "yes"],  # esensors->acceleration_rel
-        ["no", "yes"],  # esensors->angularvelocity_rel
-        ["no", "onboard"],  # esensors->orientation_abs
-        ["no", "onboard", "serial"],  # esensors->glove
-        ["no", "onboard"],  # esensors->shoe
+        ["yes"],  # esensors->acceleration_rel
+        ["yes"],  # esensors->angularvelocity_rel
+        ["onboard", "fusion"],  # esensors->orientation_abs
+        ["no"],  # esensors->glove
+        ["no"],  # esensors->shoe
     ]
     all_configs.extend(create_combo(flat_keys, value_lists))
 
@@ -509,8 +509,8 @@ def generate_all_configs():
         ["no"],  # esensors->acceleration_rel
         ["no"],  # esensors->angularvelocity_rel
         ["no"],  # esensors->orientation_abs
-        ["no", "onboard", "serial"],  # esensors->glove
-        ["no", "onboard"],  # esensors->shoe
+        ["no"],  # esensors->glove
+        ["no"],  # esensors->shoe
     ]
     all_configs.extend(create_combo(flat_keys, value_lists))
 
