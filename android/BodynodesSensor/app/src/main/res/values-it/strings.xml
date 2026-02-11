@@ -22,6 +22,8 @@
     <string name="main_sensor_page_stop_wifi_button_text">Ferma WiFi</string>
     <string name="main_sensor_page_start_bluetooth_button_text">Inizia Bluetooth</string>
     <string name="main_sensor_page_stop_bluetooth_button_text">Ferma Bluetooth</string>
+    <string name="main_sensor_page_start_ble_button_text">Inizia BLE</string>
+    <string name="main_sensor_page_stop_ble_button_text">Ferma BLE</string>
 
     <!--General messages-->
     <string name="message_sensor_not_supported">
@@ -48,6 +50,7 @@
     <string name="settings_connection_type_string">Connessione:</string>
     <string name="settings_connection_type_bluetooth_string">Bluetooth</string>
     <string name="settings_connection_type_wifi_string">WIFI</string>
+    <string name="settings_connection_type_ble_string">BLE</string>
     <string name="settings_player_string">Player:</string>
     <string name="settings_bodypart_string">Parte del corpo:</string>
     <string name="settings_sensor_interval_string">Intervallo Sensore (ms):</string>

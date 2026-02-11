@@ -91,6 +91,11 @@ public class AppData {
         return communicationType == BnAppConstants.COMMUNICATION_TYPE_BLUETOOTH;
     }
 
+    public static boolean isCommunicationBLE(Context context) {
+        int communicationType = getCommunicationType(context);
+        return communicationType == BnAppConstants.COMMUNICATION_TYPE_BLE;
+    }
+
     public static int getSensorIntervalMs(Context context) {
         SharedPreferences sharedPref = context.getSharedPreferences(BnAppConstants.BODYNODES_SHARED_PREFS, Context.MODE_PRIVATE);
         return sharedPref.getInt(BnAppConstants.SENSOR_INTERVAL_MS, BnAppConstants.SENSOR_READ_INTERVAL_MS);

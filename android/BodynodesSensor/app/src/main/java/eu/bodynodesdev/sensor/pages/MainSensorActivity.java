@@ -32,6 +32,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Handler;
 
@@ -61,6 +62,7 @@ import eu.bodynodesdev.sensor.BnAppConstants;
 import eu.bodynodesdev.sensor.data.AppData;
 import eu.bodynodesdev.sensor.data.BnSensorAppData;
 import eu.bodynodesdev.sensor.R;
+import eu.bodynodesdev.sensor.services.SensorServiceBLE;
 import eu.bodynodesdev.sensor.services.SensorServiceBluetooth;
 import eu.bodynodesdev.sensor.services.SensorServiceWifi;
 
@@ -71,7 +73,6 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
     private Button mStartButton;
     private Button mStopButton;
     private Button mSettingsButton;
-    private Button mResetButton;
     private TextView mSensorNotSupportedPopup;
     private ProgressBar mProgressBar;
     private RelativeLayout mBodynodesKatana;
@@ -234,6 +235,9 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
         } else if( AppData.isCommunicationBluetooth(this) ){
             mStartButton.setText(R.string.main_sensor_page_start_bluetooth_button_text);
             mStopButton.setText(R.string.main_sensor_page_stop_bluetooth_button_text);
+        } else if( AppData.isCommunicationBLE(this) ){
+            mStartButton.setText(R.string.main_sensor_page_start_ble_button_text);
+            mStopButton.setText(R.string.main_sensor_page_stop_bluetooth_button_text);
         }
 
     }
@@ -242,7 +246,6 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
         mStartButton = findViewById(R.id.main_sensor_start_button);
         mStopButton = findViewById(R.id.main_sensor_stop_button);
         mSettingsButton = findViewById(R.id.main_sensor_settings_button);
-        mResetButton = findViewById(R.id.main_sensor_reset_button);
         mProgressBar = findViewById(R.id.main_sensor_progress_bar);
 
         mBodynodesKatana = findViewById(R.id.main_sensor_katana_layout);
@@ -270,7 +273,6 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
         mStopButton.setOnClickListener(this);
         mStartButton.setOnClickListener(this);
         mSettingsButton.setOnClickListener(this);
-        mResetButton.setOnClickListener(this);
 
         mBodynodesThumb.setOnTouchListener(this);
         mBodynodesIndexFinger.setOnTouchListener(this);
@@ -284,26 +286,25 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
         BnSensorAppData.setOrientationAbsSensorEnabled(this, mOrientationAbsCheckbox.isChecked());
         BnSensorAppData.setAccelerationRelSensorEnabled(this, mAccelerationRelCheckbox.isChecked());
 
-        Intent sensorServiceIntent = null;
+        Intent sensorServiceIntent;
         if(AppData.getCommunicationType(this) == BnAppConstants.COMMUNICATION_TYPE_WIFI) {
             sensorServiceIntent = new Intent(this, SensorServiceWifi.class);
         } else if(AppData.getCommunicationType(this) == BnAppConstants.COMMUNICATION_TYPE_BLUETOOTH) {
             sensorServiceIntent = new Intent(this, SensorServiceBluetooth.class);
+        } else if(AppData.getCommunicationType(this) == BnAppConstants.COMMUNICATION_TYPE_BLE) {
+            sensorServiceIntent = new Intent(this, SensorServiceBLE.class);
         } else {
             Log.d(TAG, "Cannot start because communication type is not implemented");
             return;
         }
-        if(sensorServiceIntent != null) {
-            startService(sensorServiceIntent);
-            sensorServiceONUI();
-        }
+        startService(sensorServiceIntent);
+        sensorServiceONUI();
     }
 
     private void sensorServiceONUI() {
         mSensortypeChecklist.setVisibility(View.GONE);
         mStartButton.setVisibility(View.GONE);
         mSettingsButton.setVisibility(View.GONE);
-        mResetButton.setVisibility(View.VISIBLE);
         mBodynodesGlove.setVisibility(View.VISIBLE);
     }
 
@@ -312,6 +313,8 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
             stopService(new Intent(this, SensorServiceWifi.class));
         } else if(AppData.getCommunicationType(this) == BnAppConstants.COMMUNICATION_TYPE_BLUETOOTH) {
             stopService(new Intent(this, SensorServiceBluetooth.class));
+        } else if(AppData.getCommunicationType(this) == BnAppConstants.COMMUNICATION_TYPE_BLE) {
+            stopService(new Intent(this, SensorServiceBLE.class));
         }
         sensorServiceOFFUI();
     }
@@ -320,7 +323,6 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
         mSensortypeChecklist.setVisibility(View.VISIBLE);
         mStopButton.setVisibility(View.GONE);
         mSettingsButton.setVisibility(View.VISIBLE);
-        mResetButton.setVisibility(View.GONE);
         mBodynodesGlove.setVisibility(View.VISIBLE);
     }
 
@@ -400,15 +402,53 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
                     return;
                 }
 
+                boolean canStartService = true;
+
                 if (AppData.isCommunicationWifi(this) &&
                         ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    canStartService = false;
                     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, BnAppConstants.WIFI_PERMISSION_CODE);
+
                 } else if(AppData.isCommunicationBluetooth(this) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
                         ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED){
+                    canStartService = false;
                     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, BnAppConstants.BLUETOOTH_PERMISSION_CODE);
-                } else {
+
+                } else if(AppData.isCommunicationBLE(this)){
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
+                                ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADVERTISE) != PackageManager.PERMISSION_GRANTED) {
+                            canStartService = false;
+                            ActivityCompat.requestPermissions(this,
+                                    new String[]{Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_ADVERTISE}, 1);
+                        }
+                    }
+                    else {
+                        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            canStartService = false;
+                            ActivityCompat.requestPermissions(this,
+                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                        }
+                        // Check if the physical GPS/Location toggle is ON
+                        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                        boolean isGpsEnabled = false;
+                        try {
+                            isGpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        if (!isGpsEnabled) {
+                            Toast.makeText(this, "Please enable Location/GPS to make the BLE device discoverable", Toast.LENGTH_LONG).show();
+                            // Optional: Send them to settings
+                            // startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        }
+                    }
+                }
+                if (canStartService){
                     startSersorService();
                 }
+
                 break;
             case R.id.main_sensor_stop_button:
                 stopSersorService();
@@ -417,9 +457,6 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
                 intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.main_sensor_reset_button:
-                intent = new Intent(BnAppConstants.ACTION_RESET_MESSAGE);
-                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
             default:
                 break;
         }

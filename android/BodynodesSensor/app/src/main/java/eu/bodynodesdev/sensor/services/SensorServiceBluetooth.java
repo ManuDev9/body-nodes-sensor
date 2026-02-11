@@ -29,6 +29,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
@@ -97,6 +98,7 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
     private Sensor mAccelerationRelSensor;
     public static final int ACCELETATION_TYPE = Sensor.TYPE_LINEAR_ACCELERATION;
     private Timer mTimer;
+    private boolean mIsRunning = false;
     private long mLastSentTime = 0;
     private long mLastRecTime = 0;
     private float[] mOrientationAbs;
@@ -131,7 +133,9 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
             }
         }
         if (AppData.getCommunicationType(this) == BnAppConstants.COMMUNICATION_TYPE_BLUETOOTH) {
-            mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            BluetoothManager manager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+            mBluetoothAdapter = manager.getAdapter();
+            mIsRunning = true;
             init();
         } else {
             Log.i(TAG, "Wrong communication type for " + TAG);
@@ -190,7 +194,6 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
 
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(BnAppConstants.ACTION_GLOVE_SENSOR_MESSAGE);
-            intentFilter.addAction(BnAppConstants.ACTION_RESET_MESSAGE);
             LocalBroadcastManager.getInstance(this).registerReceiver(mMessagesToSendReceiver, intentFilter);
 
             run_connection_background();
@@ -227,7 +230,8 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
             mSensorManager.unregisterListener(this);
         }
 
-        if (isReading()) {
+        if (mIsRunning) {
+            mIsRunning = false;
             stop();
         }
     }
@@ -271,36 +275,6 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
                     }
                     jsonObject.put( BnConstants.MESSAGE_VALUE_TAG,
                             jsonArrayValues);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    return;
-                }
-
-                jsonArray.put(jsonObject);
-                sendMessages(jsonArray.toString());
-            } else if(intent.getAction().equals(BnAppConstants.ACTION_RESET_MESSAGE)){
-                Log.d(TAG,"Reset message to send");
-                JSONArray jsonArray = new JSONArray();
-
-                int[] gloveData = {0,0,0,0,0, 0, 0 ,0,0};
-                gloveData[BnConstants.GLOVE_TOUCH_INDICE_INDEX] = 1;
-                Log.d(TAG,"Glove data to send");
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    jsonObject.put( BnConstants.MESSAGE_PLAYER_TAG,
-                            BnSensorAppData.getPlayerName(SensorServiceBluetooth.this));
-                    jsonObject.put( BnConstants.MESSAGE_BODYPART_TAG,
-                            BnSensorAppData.getGloveBodypart(SensorServiceBluetooth.this));
-                    jsonObject.put( BnConstants.MESSAGE_SENSORTYPE_TAG,
-                            BnConstants.SENSORTYPE_GLOVE_TAG);
-
-                    JSONArray jsonArrayValues = new JSONArray();
-                    for( int count = 0; count < gloveData.length; count++ ) {
-                        jsonArrayValues.put(gloveData[count]);
-                    }
-                    jsonObject.put( BnConstants.MESSAGE_VALUE_TAG,
-                            jsonArrayValues);
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                     return;
@@ -375,6 +349,9 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
                     e.printStackTrace();
                     return;
                 }
+                if(mConnector == null){
+                    continue;
+                }
                 try {
                     byte[] buffer = new byte[2048];
                     int bytes = mConnector.getInputStream().read(buffer);
@@ -383,7 +360,6 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
                     e.printStackTrace();
                 } catch (IOException e) {
                     Log.w(TAG, "The bluetooth connection terminated");
-                    mConnector = null;
                     e.printStackTrace();
                 }
             }
@@ -526,8 +502,15 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
                         BnSensorAppData.getBodypart(SensorServiceBluetooth.this));
                 jsonObject.put( BnConstants.MESSAGE_SENSORTYPE_TAG,
                         BnConstants.SENSORTYPE_ORIENTATION_ABS_TAG);
+
+                JSONArray jsonArrayValues = new JSONArray();
+                jsonArrayValues.put(mOrientationAbs[0]);
+                jsonArrayValues.put(mOrientationAbs[1]);
+                jsonArrayValues.put(mOrientationAbs[2]);
+                jsonArrayValues.put(mOrientationAbs[3]);
                 jsonObject.put( BnConstants.MESSAGE_VALUE_TAG,
-                        mOrientationAbs);
+                        jsonArrayValues);
+
             } catch (JSONException e) {
                 e.printStackTrace();
                 return;
@@ -573,6 +556,8 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
 
                 if(mConnector !=null){
                     try {
+                        mConnector.getInputStream().close();
+                        mConnector.getOutputStream().close();
                         mConnector.close();
                         mConnectorServer.close();
                     } catch (IOException e) {
@@ -595,20 +580,17 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
 
     private void sendMessages(String msg) {
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "sending = " + msg);
-                try {
-                    if(mConnector != null) {
-                        mConnector.getOutputStream().write(msg.getBytes());
-                        mLastSentTime = millis();
-                    } else {
-                        Log.e(TAG, "mConnector is null");
-                    }
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+        new Thread(() -> {
+            Log.d(TAG, "sending = " + msg);
+            try {
+                if(mConnector != null) {
+                    mConnector.getOutputStream().write(msg.getBytes());
+                    mLastSentTime = millis();
+                } else {
+                    Log.e(TAG, "mConnector is null");
                 }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }).start();
     }

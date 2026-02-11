@@ -49,7 +49,6 @@ public class BnAppConstants {
 
     public static final String ACTION_UPDATE_UI = "eu.bodynodesdev.sensor.ACTION_UPDATE_UI";
     public static final String ACTION_GLOVE_SENSOR_MESSAGE = "eu.bodynodesdev.sensor.ACTION_GLOVE_SENSOR_MESSAGE";
-    public static final String ACTION_RESET_MESSAGE = "eu.bodynodesdev.sensor.ACTION_RESET_MESSAGE";
     public static final String ACTION_RECEIVED = "eu.bodynodesdev.sensor.ACTION_RECEIVED";
     public static final String KEY_JSON_ACTION = "JSON_ACTION";
     
@@ -81,7 +80,7 @@ public class BnAppConstants {
 
     public static final int COMMUNICATION_STATE_DISCONNECTED = 0;
     public static final int COMMUNICATION_STATE_CONNECTED = 1;
-    public static final int COMMUNICATION_STATE_WAITING_ACK = 1;
+    public static final int COMMUNICATION_STATE_WAITING_ACK = 2;
 
 }
 

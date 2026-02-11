@@ -49,6 +49,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private RadioButton mGloveBodypartKatanaRadio;
     private RadioButton mConnectionTypeBluetoothRadio;
     private RadioButton mConnectionTypeWifiRadio;
+    private RadioButton mConnectionTypeBLERadio;
     private Button mSaveButton;
 
 
@@ -66,9 +67,15 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         if(AppData.getCommunicationType(this) == BnAppConstants.COMMUNICATION_TYPE_BLUETOOTH) {
             mConnectionTypeBluetoothRadio.setChecked(true);
             mConnectionTypeWifiRadio.setChecked(false);
+            mConnectionTypeBLERadio.setChecked(false);
         } else if(AppData.getCommunicationType(this) == BnAppConstants.COMMUNICATION_TYPE_WIFI){
             mConnectionTypeBluetoothRadio.setChecked(false);
             mConnectionTypeWifiRadio.setChecked(true);
+            mConnectionTypeBLERadio.setChecked(false);
+        } else if(AppData.getCommunicationType(this) == BnAppConstants.COMMUNICATION_TYPE_BLE){
+            mConnectionTypeBluetoothRadio.setChecked(false);
+            mConnectionTypeWifiRadio.setChecked(false);
+            mConnectionTypeBLERadio.setChecked(true);
         }
 
         if( BnConstants.BODYPART_HAND_LEFT_TAG.equals(BnSensorAppData.getGloveBodypart(this)) ) {
@@ -105,6 +112,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         mGloveBodypartKatanaRadio = findViewById(R.id.settings_connection_type_glovebodypart_katana_radio);
         mConnectionTypeBluetoothRadio = findViewById(R.id.settings_connection_type_bluetooth_radio);
         mConnectionTypeWifiRadio = findViewById(R.id.settings_connection_type_wifi_radio);
+        mConnectionTypeBLERadio = findViewById(R.id.settings_connection_type_ble_radio);
         mSaveButton = findViewById(R.id.settings_save_button);
     }
 
@@ -121,6 +129,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                     AppData.setCommunitcationType(this, BnAppConstants.COMMUNICATION_TYPE_BLUETOOTH);
                 } else if(mConnectionTypeWifiRadio.isChecked()){
                     AppData.setCommunitcationType(this, BnAppConstants.COMMUNICATION_TYPE_WIFI);
+                } else if(mConnectionTypeBLERadio.isChecked()){
+                    AppData.setCommunitcationType(this, BnAppConstants.COMMUNICATION_TYPE_BLE);
                 }
 
                 if(mGloveBodypartLeftHandRadio.isChecked()){

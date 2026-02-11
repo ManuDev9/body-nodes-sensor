@@ -85,14 +85,6 @@
             android:gravity="center_horizontal">
 
             <Button
-                android:id="@+id/main_sensor_reset_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/main_sensor_page_reset_button_text"
-                android:visibility="gone"
-                />
-
-            <Button
                 android:id="@+id/main_sensor_settings_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
