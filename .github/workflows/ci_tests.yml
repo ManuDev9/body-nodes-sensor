@@ -83,7 +83,7 @@ jobs:
 
       - name: Run emulator and tests
         uses: reactivecircus/android-emulator-runner@v2
-        working-directory: ./android/BodynodesSensor
+        working-directory: 
         with:
           api-level: ${{ matrix.api-level }}
           target: ${{ matrix.target }}
@@ -93,7 +93,7 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: |
+            cd ./android/BodynodesSensor
             ls -la .
-            chmod +x gradlew
             ./gradlew assembleDebug
             ./gradlew connectedDebugAndroidTest
