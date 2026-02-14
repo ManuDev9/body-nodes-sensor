@@ -58,6 +58,16 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          cmdline-tools-version: 12266719
+
+      - name: List files
+        run: |
+          ls -la /usr/local/android-sdk/cmdline-tools/latest/bin
+          ls -la $HOME/.android/sdk
+
       - name: Install Android SDK
         run: |
           yes | sdkmanager --licenses
