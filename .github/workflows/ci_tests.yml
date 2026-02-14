@@ -46,7 +46,7 @@ jobs:
     env:
       JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
       ANDROID_HOME: /usr/local/android-sdk
-      PATH: /usr/local/android-sdk/cmdline-tools/latest/bin:/usr/local/android-sdk/platform-tools:/usr/bin:/bin
+      PATH: /usr/local/lib/android/sdk/cmdline-tools/16.0/bin/:/usr/local/android-sdk/platform-tools:/usr/bin:/bin
 
     steps:
       - name: Checkout repository
@@ -60,13 +60,9 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+        # /usr/local/lib/android/sdk/cmdline-tools/16.0/bin/sdkmanager --licenses
         with:
           cmdline-tools-version: 12266719
-
-      - name: List files
-        run: |
-          ls -la /usr/local/android-sdk/cmdline-tools/latest/bin
-          ls -la $HOME/.android/sdk
 
       - name: Install Android SDK
         run: |
@@ -76,6 +72,12 @@ jobs:
       - name: Create emulator
         run: |
           echo no | avdmanager create avd -n test_emulator -k "system-images;android-33;google_apis;x86_64" --device "pixel"
+
+      - name: List files
+        run: |
+          ls -la /usr/local/lib/android/sdk/
+          ls -la /usr/local/android-sdk/
+          ls -la /usr/local/android-sdk/platform-tools
 
       - name: Start emulator
         run: |
