@@ -35,6 +35,8 @@ jobs:
       - name: Test All Builds
         run: time python3 bnpython_nodes_coder_arduino.py --test
 
+  # https://github.com/ReactiveCircus/android-emulator-runner
+  # https://github.com/ReactiveCircus/android-emulator-runner/blob/main/.github/workflows/main.yml
   android-bodynodessensor:
     name: Build and Test BodynodesSensor App
     runs-on: ubuntu-latest
@@ -43,12 +45,6 @@ jobs:
         api-level: [35]
         target: [google_apis]
 
-    defaults:
-      run:
-        working-directory: ./android/BodynodesSensor
-
-
-    # https://github.com/ReactiveCircus/android-emulator-runner
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -87,6 +83,7 @@ jobs:
 
       - name: Run emulator and tests
         uses: reactivecircus/android-emulator-runner@v2
+        working-directory: ./android/BodynodesSensor
         with:
           api-level: ${{ matrix.api-level }}
           target: ${{ matrix.target }}
