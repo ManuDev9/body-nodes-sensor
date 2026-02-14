@@ -40,8 +40,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        api-level: [29, 30]
-        target: [default]
+        api-level: [35]
+        target: [google_apis]
 
     defaults:
       run:
