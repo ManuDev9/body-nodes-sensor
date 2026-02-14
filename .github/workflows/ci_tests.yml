@@ -41,7 +41,7 @@ jobs:
     strategy:
       matrix:
         api-level: [29, 30]
-        target: [google_apis]
+        target: [default]
 
     defaults:
       run:
