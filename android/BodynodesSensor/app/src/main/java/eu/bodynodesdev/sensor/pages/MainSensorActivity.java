@@ -221,6 +221,7 @@ public class MainSensorActivity extends AppCompatActivity implements View.OnClic
     protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mSensorReceiver);
         super.onDestroy();
+
     }
 
     @Override

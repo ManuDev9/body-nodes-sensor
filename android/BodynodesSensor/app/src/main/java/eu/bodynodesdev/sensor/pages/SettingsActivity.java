@@ -24,6 +24,7 @@
 
 package eu.bodynodesdev.sensor.pages;
 
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -95,7 +96,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         mPlayerNameEdit.setText(BnSensorAppData.getPlayerName(this));
         mBodypartEdit.setText(BnSensorAppData.getBodypart(this));
         mWifiMulticastGroupEdit.setText(BnSensorAppData.getMulticastGroup(this));
-        mSensorIntervalMsEdit.setText(AppData.getSensorIntervalMs(this)+"");
+        mSensorIntervalMsEdit.setText(String.format("%d", AppData.getSensorIntervalMs(this)));
     }
 
     private void setOnClicks() {

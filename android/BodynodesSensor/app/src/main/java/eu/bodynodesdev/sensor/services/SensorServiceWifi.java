@@ -37,6 +37,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -85,10 +86,17 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
     private String mLastMulticastIpAddress = "";
     private InetAddress mServerIpAddress = null;
 
+    public class LocalBinder extends Binder {
+        SensorServiceWifi getService() {
+            return SensorServiceWifi.this;
+        }
+    }
+    private final IBinder mBinder = new LocalBinder();
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder; // for AllServicesTest
     }
 
     private SensorManager mSensorManager;
@@ -132,8 +140,7 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
         if (AppData.getCommunicationType(this) == BnAppConstants.COMMUNICATION_TYPE_WIFI) {
             init();
         } else {
-            Log.i(TAG,"Wrong communication type for " + TAG);
-            stopSelf();
+            throw new RuntimeException( "Wrong communication type for " + TAG);
         }
     }
 
@@ -169,6 +176,10 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
 
     private void init() {
         new Handler().postDelayed(() -> {
+
+            AppData.setCommunicationDisconnected();
+            LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(BnAppConstants.ACTION_UPDATE_UI));
+
             try {
                 mMulticastConnector = new MulticastSocket(12346);
                 mMulticastConnector.joinGroup(InetAddress.getByName("239.192.1.99"));
@@ -361,10 +372,6 @@ public class SensorServiceWifi extends Service implements SensorEventListener {
     }
 
     private boolean checkAllOk() {
-        if(AppData.getCommunicationType(this) != BnAppConstants.COMMUNICATION_TYPE_WIFI) {
-            Log.d(TAG, "Wrong communication type");
-            return false;
-        }
         if(AppData.isCommunicationWaitingACK()){
             Log.d(TAG, "Waiting for ACK");
             if(checkForMulticastBN()){

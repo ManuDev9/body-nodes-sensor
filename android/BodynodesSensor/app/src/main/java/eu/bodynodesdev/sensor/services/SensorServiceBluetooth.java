@@ -43,6 +43,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -87,12 +88,18 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
 
     private String mLastDataReceived = "";
 
+    public class LocalBinder extends Binder {
+        SensorServiceBluetooth getService() {
+            return SensorServiceBluetooth.this;
+        }
+    }
+    private final IBinder mBinder = new LocalBinder();
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder; // for AllServicesTest
     }
-
     private SensorManager mSensorManager;
     private Sensor mOrientationAbsSensor;
     private Sensor mAccelerationRelSensor;
@@ -138,8 +145,7 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
             mIsRunning = true;
             init();
         } else {
-            Log.i(TAG, "Wrong communication type for " + TAG);
-            stopSelf();
+            throw new RuntimeException( "Wrong communication type for " + TAG);
         }
     }
 
@@ -176,6 +182,13 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
     private void init() {
         new Handler().postDelayed(() -> {
 
+            AppData.setCommunicationDisconnected();
+            LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(BnAppConstants.ACTION_UPDATE_UI));
+
+            if( !mIsRunning ){
+                Log.i(TAG, "Service was closed");
+                return;
+            }
             if (!mBluetoothAdapter.isEnabled()) {
                 Log.e(TAG, "Bluetooth is not enabled.");
                 return;
@@ -286,10 +299,6 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
         }
     };
 
-    boolean isReading() {
-        return mTimer != null;
-    }
-
     private void checkForActions() {
         //Log.d(TAG, "mLastMessageReceived "+mLastMessageReceived.replace("\0","\\0"));
 
@@ -399,10 +408,6 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
     }
 
     private boolean checkAllOk() {
-        if(AppData.getCommunicationType(this) != BnAppConstants.COMMUNICATION_TYPE_BLUETOOTH) {
-            Log.d(TAG, "Wrong communication type");
-            return false;
-        }
         if(AppData.isCommunicationWaitingACK()){
             //Log.d(TAG, "Waiting for ACK");
             sendACKN();
@@ -547,33 +552,36 @@ public class SensorServiceBluetooth extends Service implements SensorEventListen
     }
 
     private void stop() {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
+        Thread thread = new Thread(() -> {
+            if(mTimer!=null) {
                 mTimer.cancel();
                 mTimer.purge();
                 mTimer = null;
-
-                if(mConnector !=null){
-                    try {
-                        mConnector.getInputStream().close();
-                        mConnector.getOutputStream().close();
-                        mConnector.close();
-                        mConnectorServer.close();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    mConnector = null;
-                    mConnectorServer = null;
-                }
-
-                AppData.setCommunicationState(BnAppConstants.COMMUNICATION_STATE_DISCONNECTED);
-                LocalBroadcastManager.getInstance(SensorServiceBluetooth.this).sendBroadcast(new Intent(BnAppConstants.ACTION_UPDATE_UI));
             }
+
+            if(mConnector !=null){
+                try {
+                    mConnector.getInputStream().close();
+                    mConnector.getOutputStream().close();
+                    mConnector.close();
+                    mConnectorServer.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                mConnector = null;
+                mConnectorServer = null;
+            }
+
+            AppData.setCommunicationState(BnAppConstants.COMMUNICATION_STATE_DISCONNECTED);
+            LocalBroadcastManager.getInstance(SensorServiceBluetooth.this).sendBroadcast(new Intent(BnAppConstants.ACTION_UPDATE_UI));
         });
         thread.start();
-        mDataConnectionThread.interrupt();
-        mAcceptConnectionThread.interrupt();
+        if(mDataConnectionThread != null) {
+            mDataConnectionThread.interrupt();
+        }
+        if(mDataConnectionThread != null) {
+            mDataConnectionThread.interrupt();
+        }
         mDataConnectionThread = null;
         mAcceptConnectionThread = null;
     }

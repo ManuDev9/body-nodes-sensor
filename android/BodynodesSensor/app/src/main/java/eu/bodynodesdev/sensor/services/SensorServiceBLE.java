@@ -55,6 +55,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -107,10 +108,17 @@ public class SensorServiceBLE extends Service implements SensorEventListener {
 
     private String mLastDataReceived = "";
 
+    public class LocalBinder extends Binder {
+        SensorServiceBLE getService() {
+            return SensorServiceBLE.this;
+        }
+    }
+    private final IBinder mBinder = new LocalBinder();
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder; // for AllServicesTest
     }
 
     private SensorManager mSensorManager;
@@ -153,8 +161,7 @@ public class SensorServiceBLE extends Service implements SensorEventListener {
             mIsRunning = true;
             init();
         } else {
-            Log.i(TAG, "Wrong communication type for " + TAG);
-            stopSelf();
+            throw new RuntimeException( "Wrong communication type for " + TAG);
         }
     }
 
@@ -190,6 +197,10 @@ public class SensorServiceBLE extends Service implements SensorEventListener {
 
     private void init() {
         new Handler().postDelayed(() -> {
+
+            AppData.setCommunicationDisconnected();
+            LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(BnAppConstants.ACTION_UPDATE_UI));
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
                         ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADVERTISE) != PackageManager.PERMISSION_GRANTED) {
@@ -510,10 +521,6 @@ public class SensorServiceBLE extends Service implements SensorEventListener {
     };
 
     private boolean checkAllOk() {
-        if(AppData.getCommunicationType(this) != BnAppConstants.COMMUNICATION_TYPE_BLE) {
-            Log.d(TAG, "Wrong communication type");
-            return false;
-        }
         if(AppData.isCommunicationWaitingACK()){
             //Log.d(TAG, "Waiting for ACK");
             return false;
@@ -592,10 +599,11 @@ public class SensorServiceBLE extends Service implements SensorEventListener {
     private void stop() {
         Thread thread = new Thread(() -> {
             Log.i(TAG,"Stopping the BLE service");
-            mTimer.cancel();
-            mTimer.purge();
-            mTimer = null;
-
+            if(mTimer!=null) {
+                mTimer.cancel();
+                mTimer.purge();
+                mTimer = null;
+            }
             if (mAdvertiser != null ) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     if (ActivityCompat.checkSelfPermission(SensorServiceBLE.this, Manifest.permission.BLUETOOTH_ADVERTISE) == PackageManager.PERMISSION_GRANTED) {

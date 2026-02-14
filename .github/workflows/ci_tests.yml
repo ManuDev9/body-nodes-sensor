@@ -1,0 +1,83 @@
+
+name: Sensors Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+
+jobs:
+  python-coder-builds:
+    name: Build BnPythonCoder Sensors
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./python_nodes_coder
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+            submodules: true
+
+      - name: Setup Environment
+        run: |
+          mkdir -p $HOME/.local/bin
+          pip3 install adafruit-nrfutil
+          curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
+          mv ./bin/arduino-cli $HOME/.local/bin
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          bash setup_env.sh
+
+      - name: Test All Builds
+        run: time python3 bnpython_nodes_coder_arduino.py --test
+
+  android-bodynodessensor:
+    name: Build and Test BodynodesSensor App
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./android/BodynodesSensor
+
+    env:
+      JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
+      ANDROID_HOME: /usr/local/android-sdk
+      PATH: ${{ env.ANDROID_HOME }}/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Install Android SDK
+      run: |
+        yes | sdkmanager --licenses
+        sdkmanager "platform-tools" "platforms;android-33" "emulator" "system-images;android-33;google_apis;x86_64"
+
+    - name: Create emulator
+      run: |
+        echo no | avdmanager create avd -n test_emulator -k "system-images;android-33;google_apis;x86_64" --device "pixel"
+
+    - name: Start emulator
+      run: |
+        $ANDROID_HOME/emulator/emulator -avd test_emulator -no-window -no-audio -no-boot-anim &
+        adb wait-for-device
+        adb shell settings put global window_animation_scale 0
+        adb shell settings put global transition_animation_scale 0
+        adb shell settings put global animator_duration_scale 0
+
+    - name: Build APK
+      run: ./gradlew assembleDebug
+
+    - name: Run instrumentation tests
+      run: ./gradlew connectedDebugAndroidTest
