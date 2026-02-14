@@ -94,6 +94,5 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: |
-            cd ./android/BodynodesSensor && ls -la .
             cd ./android/BodynodesSensor && ./gradlew assembleDebug
-            cd ./android/BodynodesSensor && ./gradlew connectedDebugAndroidTest
+            cd ./android/BodynodesSensor && ./gradlew connectedDebugAndroidTest --info --stacktrace
