@@ -58,29 +58,18 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-        # /usr/local/lib/android/sdk/cmdline-tools/16.0/bin/sdkmanager --licenses
+#      - name: Setup Android SDK
+#        uses: android-actions/setup-android@v3
+#        # /usr/local/lib/android/sdk/cmdline-tools/16.0/bin/sdkmanager --licenses
+#        with:
+#          cmdline-tools-version: 12266719
+
+      - name: Run emulator and tests
+        uses: reactivecircus/android-emulator-runner@v2
         with:
-          cmdline-tools-version: 12266719
-
-      - name: Install Android SDK
-        run: sdkmanager "platform-tools" "platforms;android-33" "emulator" "system-images;android-33;google_apis;x86_64"
-
-      - name: Create emulator
-        run: |
-          echo no | avdmanager create avd -n test_emulator -k "system-images;android-33;google_apis;x86_64" --device "pixel"
-
-      - name: Start emulator
-        run: |
-          $ANDROID_HOME/emulator/emulator -avd test_emulator -no-window -no-audio -no-boot-anim &
-          adb wait-for-device
-          adb shell settings put global window_animation_scale 0
-          adb shell settings put global transition_animation_scale 0
-          adb shell settings put global animator_duration_scale 0
-
-      - name: Build APK
-        run: ./gradlew assembleDebug
-
-      - name: Run instrumentation tests
-        run: ./gradlew connectedDebugAndroidTest
+          api-level: 33
+          target: google_apis
+          arch: x86_64
+          script: |
+            ./gradlew assembleDebug
+            ./gradlew connectedDebugAndroidTest
