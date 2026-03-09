@@ -1,7 +1,7 @@
 /**
 * MIT License
 *
-* Copyright (c) 2021-2025 Manuel Bottini
+* Copyright (c) 2026 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -26,33 +26,33 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 // Wifi
-#include <ESP8266WiFi.h>
+#include <WiFi.h>
 #include <WiFiUdp.h>
 // Memory
 #include <EEPROM.h>
 
 #include "BnConstants.h"
 
+
 // Implements Specification Version Dev 1.0
-// Sensortypes: orientation_abs, glove
-// Board: ESP-12E
+// Board: ESP32C3 Dev Module
+// ESP32-C3 Super Mini 
+// USB CDC On Boot: Enabled
+
 
 #ifndef __BN_NODE_SPECIFIC_H
 #define __BN_NODE_SPECIFIC_H
 
-extern "C" {
-    #include "user_interface.h"  // Required for wifi_station_connect() to work
-}
-#define FPM_SLEEP_MAX_TIME 0xFFFFFFF
-
-#define BN_BOARD_ESP_12E
+#define BN_BOARD_ESP32C3_SUPERMINI
 
 #define BODYNODE_BODYPART_HEX_DEFAULT BN_BODYPART_UPPERARM_LEFT_HEX
 #define BODYNODE_PLAYER_TAG_DEFAULT  "1"
 
 // COMMUNICATION //
+#define WIFI_COMMUNICATION
 
 // SENSORS //
+#define ORIENTATION_ABS_SENSOR
 
 // ACTUATORS //
 
@@ -101,15 +101,17 @@ extern "C" {
 // PINS
 #define BUZZER_FREQ 1000 //Specified in Hz
 #define LED_DT_ON 30 // Duty cicle of LED ON
-#define STATUS_SENSOR_HMI_LED_P 2
-#define STATUS_CONNECTION_HMI_LED_P 0
-#define HAPTIC_MOTOR_PIN_P 14
+#define STATUS_SENSOR_HMI_LED_P 255 // NOT TESTED 
+#define STATUS_CONNECTION_HMI_LED_P 8
+#define HAPTIC_MOTOR_PIN_P 255 // NOT TESTED
 #define SHOE_SENSOR_PIN_P  255 // NOT TESTED
 
-#define BN_BNO055_EXTERNALCRYSTAL true
+#define BN_BNO055_I2C1_SDA1 8
+#define BN_BNO055_I2C1_SCL1 9
+#define BN_BNO055_EXTERNALCRYSTAL false
 //#define BNO055_ADDRESS_A (0x28)
 //#define BNO055_ADDRESS_B (0x29)
-#define BN_BNO055_ADDRESS (0x29)
+#define BN_BNO055_ADDRESS (0x28)
 
 #define MAX_BUFF_LENGTH 100
 
@@ -227,7 +229,7 @@ IPAddress getIPAdressFromStr(String ip_address_str);
   WiFi.softAPdisconnect(false);                              \
   WiFi.enableAP(false);
 #define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_UDP_OBJ WiFiUDP
-#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_BEGIN_MULTICAST wnc_multicast_connector.beginMulticast(WiFi.localIP(), multicastIP, BN_WIFI_MULTICAST_PORT); // Listen to the Multicast
+#define BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_BEGIN_MULTICAST wnc_multicast_connector.beginMulticast(multicastIP, BN_WIFI_MULTICAST_PORT); // Listen to the Multicast
 
 #endif
 

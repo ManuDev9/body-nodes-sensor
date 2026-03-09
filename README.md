@@ -3,5 +3,5 @@ This project contains different implementations of the Bodynodes Sensor specific
 
 The pythor_nodes_coder is a module that can create Arduino sensor code for you
 
-In the example you can find old implementations of sensors which are not mantained, so they might not work
+In the example you can find old implementations of sensors which are not maintained, so they might not work
 with the latest specifications

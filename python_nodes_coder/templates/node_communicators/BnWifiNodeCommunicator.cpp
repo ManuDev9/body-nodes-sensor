@@ -135,6 +135,7 @@ void BnWifiNodeCommunicator::addMessage(JsonObject &message){
     DEBUG_PRINTLN("Too many messages in list");
     return;
   }
+
   wnc_messages_list.add(message);
 }
 
@@ -142,19 +143,19 @@ void BnWifiNodeCommunicator::sendAllMessages(){
   if(wnc_messages_list.size() == 0) {
     return;
   }
-  uint16_t tot_bytes = wnc_messages_doc.memoryUsage()+1;
-  char buf_udp[tot_bytes];
 
-  uint16_t real_tot_bytes = serializeJson(wnc_messages_doc, buf_udp, tot_bytes);
-  DEBUG_PRINT("sendAllMessages wnc_messages_list tot_bytes = ");
-  DEBUG_PRINT(tot_bytes);
-  DEBUG_PRINT(" , real_tot_bytes = ");
+  String messages_str;
+  serializeJson(wnc_messages_doc, messages_str);
+
+  uint16_t real_tot_bytes = messages_str.length();
+  DEBUG_PRINT("sendAllMessages wnc_messages_list ");
+  DEBUG_PRINT("real_tot_bytes = ");
   DEBUG_PRINTLN(real_tot_bytes);
-  DEBUG_PRINT("buf_udp = ");
-  DEBUG_PRINTLN(buf_udp);
+  DEBUG_PRINT("messages_str = ");
+  DEBUG_PRINTLN(messages_str);
 
   wnc_connector.beginPacket(wnc_connection_data.ip_address, BN_WIFI_PORT);
-  wnc_connector.write((uint8_t const *)buf_udp, real_tot_bytes);
+  wnc_connector.write((uint8_t const *)messages_str.c_str(), real_tot_bytes);
   wnc_connector.endPacket();
   wnc_connection_data.last_sent_time = millis();
   //wnc_messages_doc.clear();

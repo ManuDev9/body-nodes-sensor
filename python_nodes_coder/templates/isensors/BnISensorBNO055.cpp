@@ -76,16 +76,6 @@ bool BnISensor::isCalibrated(){
 
 bool BnISensor::getData(float values[], const int type){
 
-    /*
-    DEBUG_PRINT("values = ");
-    DEBUG_PRINT(s_values[0]);
-    DEBUG_PRINT(", ");
-    DEBUG_PRINT(s_values[1]);
-    DEBUG_PRINT(", ");
-    DEBUG_PRINT(s_values[2]);
-    DEBUG_PRINT(", ");
-    DEBUG_PRINTLN(s_values[3]);
-    */
 
     if( type == BN_ISENSOR_DATATYPE_ACCELEROMETER ){
         imu::Vector<3> vector_acc = s_BNO.getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
@@ -111,6 +101,18 @@ bool BnISensor::getData(float values[], const int type){
         values[1] =  static_cast<float>( sensor_quat.x() );
         values[2] =  static_cast<float>( sensor_quat.y() );
         values[3] =  static_cast<float>( sensor_quat.z() );
+
+        /*
+        DEBUG_PRINT("values = ");
+        DEBUG_PRINT(values[0]);
+        DEBUG_PRINT(", ");
+        DEBUG_PRINT(values[1]);
+        DEBUG_PRINT(", ");
+        DEBUG_PRINT(values[2]);
+        DEBUG_PRINT(", ");
+        DEBUG_PRINTLN(values[3]);
+        */
+
         return true;
     } else {
         return false;

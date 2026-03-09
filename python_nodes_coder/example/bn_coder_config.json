@@ -1,7 +1,7 @@
 {
     "type" : "node",
-    "board" : "mpnrf52840",
-    "node_communicator": "ble",
+    "board" : "esp32c3-supermini",
+    "node_communicator": "wifi",
     "actuators": {
         "haptic": "no"
     },

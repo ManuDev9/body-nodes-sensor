@@ -23,11 +23,8 @@ arduino-cli lib install "Arduino_LSM9DS1@1.1.1"
 arduino-cli lib install "NanoBLEFlashPrefs@1.2.0"
 arduino-cli lib install "ArduinoBLE@1.5.0"
 
-
 arduino-cli core install RedBear:STM32F2@0.3.3
 arduino-cli core install esp8266:esp8266@3.1.2
 arduino-cli core install arduino:mbed_nano@4.5.0
 arduino-cli core install adafruit:nrf52@1.7.0
-
-
-
+arduino-cli core install esp32:esp32@3.3.7

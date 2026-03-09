@@ -21,13 +21,12 @@ You just need to setup the files:
     - It gets created afterwards
     - It will need to change if you have a custom board or custom pins setup
   - Example:
-
-        python3 BnPythonNodesCoderArduino.py examples/
+        python3 bnpython_nodes_coder_arduino.py examples/
 
     - And the directory examples will be populated by files
 
 
-Use the command "python3 BnPythonNodesCoderArduino.py h" to print the help and check how to run it
+Use the command "python3 bnpython_nodes_coder_arduino.py h" to print the help and check how to run it
 
 Have a look at the files you need and adapt them for your project in order to create your Bodynodes.
 

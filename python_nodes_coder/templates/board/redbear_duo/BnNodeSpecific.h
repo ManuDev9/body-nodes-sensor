@@ -102,6 +102,11 @@
 #define HAPTIC_MOTOR_PIN_M           11
 #define SHOE_SENSOR_PIN_P            19
 
+#define BN_BNO055_EXTERNALCRYSTAL true
+//#define BNO055_ADDRESS_A (0x28)
+//#define BNO055_ADDRESS_B (0x29)
+#define BN_BNO055_ADDRESS (0x29)
+
 #define MAX_BUFF_LENGTH 100
 
 #define DEBUG_M

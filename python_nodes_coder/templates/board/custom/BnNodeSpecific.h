@@ -99,6 +99,11 @@ XXXXXX
 #define STATUS_CONNECTION_HMI_LED_M 0  // this is a trick that just works
 #define HAPTIC_MOTOR_PIN_P 14
 
+#define BN_BNO055_EXTERNALCRYSTAL true
+//#define BNO055_ADDRESS_A (0x28)
+//#define BNO055_ADDRESS_B (0x29)
+#define BN_BNO055_ADDRESS (0x29)
+
 #define MAX_BUFF_LENGTH 100
 
 #define DEBUG_M
