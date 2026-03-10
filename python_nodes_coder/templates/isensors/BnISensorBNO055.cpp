@@ -56,7 +56,7 @@ bool BnISensor::init(){
     } else {
          setStatus(BN_SENSOR_STATUS_NOT_ACCESSIBLE);
     }
-    s_BNO.setExtCrystalUse(true);
+    s_BNO.setExtCrystalUse(BN_BNO055_EXTERNALCRYSTAL);
     return sIsInit;
 }
 
