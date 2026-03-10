@@ -166,8 +166,8 @@
 #endif // BODYNODE_BODYPART_TAG_DEFAULT
 
 
-#define MPU6050_PIN_SDA 30
-#define MPU6050_PIN_SCL 1
+#define BN_MPU6050_PIN_SDA 30
+#define BN_MPU6050_PIN_SCL 1
 
 
 // Node Specific functions definitions
