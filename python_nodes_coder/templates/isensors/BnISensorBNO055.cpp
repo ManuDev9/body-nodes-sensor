@@ -1,7 +1,7 @@
 /**
 * MIT License
 *
-* Copyright (c) 2024-2025 Manuel Bottini
+* Copyright (c) 2024-2026 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -28,6 +28,11 @@
 #include "Adafruit_Sensor.h"
 #include "Adafruit_BNO055.h"
 
+#if defined(BN_BNO055_I2C1_SDA1) && defined(BN_BNO055_I2C1_SCL1)
+#include <Wire.h>
+TwoWire sWire(0); 
+#endif
+
 static Adafruit_BNO055 s_BNO;
 static bool sIsInit = false;
 static BnStatusLED sStatusSensorLED;
@@ -37,7 +42,14 @@ bool BnISensor::init(){
         return true;
     }
 
-    s_BNO = Adafruit_BNO055(55, BNO055_ADDRESS_B);
+#if defined(BN_BNO055_I2C1_SDA1) && defined(BN_BNO055_I2C1_SCL1)
+    s_BNO = Adafruit_BNO055(55, BN_BNO055_ADDRESS, &sWire );
+    sWire.begin(BN_BNO055_I2C1_SDA1, BN_BNO055_I2C1_SCL1);
+#else
+    s_BNO = Adafruit_BNO055(55, BN_BNO055_ADDRESS);
+#endif
+
+
     /* Initialise the sensor */
     if(s_BNO.begin(OPERATION_MODE_NDOF_FMC_OFF)) {
          setStatus(BN_SENSOR_STATUS_WORKING);

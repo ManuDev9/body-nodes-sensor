@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2024-2025 Manuel Bottini
+* Copyright (c) 2024-2026 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -32,11 +32,13 @@
 // Note: You need to set the appropriate SDA and SCL pins on the BnNodeSpecific.h file (or anywhere is your project, but there is better)
 
 #if defined(ARDUINO_ARCH_NRF52)
-    static TwoWire sMPU6050Wire(NRF_TWIM0, NRF_TWIS0, SPIM0_SPIS0_TWIM0_TWIS0_SPI0_TWI0_IRQn, MPU6050_PIN_SDA, MPU6050_PIN_SCL);
+    static TwoWire sMPU6050Wire(NRF_TWIM0, NRF_TWIS0, SPIM0_SPIS0_TWIM0_TWIS0_SPI0_TWI0_IRQn, BN_MPU6050_PIN_SDA, BN_MPU6050_PIN_SCL);
 #elif defined(BN_BOARD_REDBEAR_DUO)
     #define sMPU6050Wire Wire
 #elif defined(BN_BOARD_ESP_12E)
     #define sMPU6050Wire Wire
+#elif defined(BN_BOARD_ESP32C3_SUPERMINI)
+    static TwoWire sMPU6050Wire(0); 
 #else
     #error "Board architecture not supported"
 #endif
@@ -55,7 +57,9 @@ bool BnISensor::init(){
 #if defined(ARDUINO_ARCH_NRF52)
         sMPU6050Wire.begin();
 #elif defined(ARDUINO_ARCH_STM32F2)
-        sMPU6050Wire.begin(MPU6050_PIN_SDA, MPU6050_PIN_SCL);
+        sMPU6050Wire.begin(BN_MPU6050_PIN_SDA, BN_MPU6050_PIN_SCL);
+#elif defined(BN_BOARD_ESP32C3_SUPERMINI)
+        sMPU6050Wire.begin(BN_MPU6050_PIN_SDA, BN_MPU6050_PIN_SCL);
 #endif
     if(sMPU.begin(MPU6050_I2CADDR_DEFAULT, &sMPU6050Wire) ){
         setStatus(BN_SENSOR_STATUS_WORKING);
