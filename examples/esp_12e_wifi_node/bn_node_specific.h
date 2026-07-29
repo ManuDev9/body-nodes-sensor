@@ -180,10 +180,6 @@ extern "C" {
 // on the platform.
 // In order to debug, just take the content and put it directly on the funtion itself
 
-#define BODYNODES_WIFI_SSID_DEFAULT "VM9179260"
-#define BODYNODES_WIFI_PASS_DEFAULT "tq6Pvhfxjvgy"
-
-
 #define BN_NODE_SPECIFIC_BN_ACTUATOR_ACT_PIN_ON digitalWrite(HAPTIC_MOTOR_PIN_P, HIGH);
 #define BN_NODE_SPECIFIC_BN_ACTUATOR_ACT_PIN_OFF digitalWrite(HAPTIC_MOTOR_PIN_P, LOW);
 #define BN_NODE_SPECIFIC_BN_SENSOR_WRITE_STATUS_PIN_FUNCTION analogWrite

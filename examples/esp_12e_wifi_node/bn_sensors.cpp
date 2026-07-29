@@ -37,7 +37,7 @@ void BnSensor::init(){
   s_lastReadSensorTime=millis();
   s_sensorReconnectionTime=millis();
   /* Initialise the sensor */
-  if(s_BNO.begin(s_BNO.OPERATION_MODE_NDOF_FMC_OFF)) {
+  if(s_BNO.begin(adafruit_bno055_opmode_t::OPERATION_MODE_NDOF_FMC_OFF)) {
      s_firstZeros=true;
      setStatus(SENSOR_STATUS_WORKING);
   } else {
@@ -78,7 +78,7 @@ bool BnSensor::checkAllOk(){
     }
     DEBUG_PRINTLN("Sensor not connected");
     s_sensorReconnectionTime=millis();
-    if(s_BNO.begin(s_BNO.OPERATION_MODE_NDOF_FMC_OFF)) {
+    if(s_BNO.begin(adafruit_bno055_opmode_t::OPERATION_MODE_NDOF_FMC_OFF)) {
       setStatus(SENSOR_STATUS_WORKING);
       s_firstZeros=true;
       return true;
