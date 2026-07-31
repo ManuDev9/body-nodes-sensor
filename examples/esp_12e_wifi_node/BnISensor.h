@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2021-2025 Manuel Bottini
+* Copyright (c) 2024-2025 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -22,37 +22,18 @@
 * SOFTWARE.
 */
 
-#include "bn_actuator.h"
+#include "BnDatatypes.h"
 
-void BnActuator::init(){
-  pinMode(HAPTIC_MOTOR_PIN_P, OUTPUT); 
-  BN_NODE_SPECIFIC_BN_ACTUATOR_ACT_PIN_OFF
-  a_vibration.startTime_ms = 0;
-  a_vibration.duration_ms = 0;
-}
+#ifndef __BN_ISENSOR_H__
+#define __BN_ISENSOR_H__
 
-void BnActuator::setAction(BnAction &action){
-  if(action["type"] == ACTION_TYPE_HAPTIC_TAG){
-    uint16_t duration_ms = action["duration_ms"];
-    uint16_t strength = action["strength"];
-    DEBUG_PRINT("Haptic triggered with duration and strenght = ");
-    DEBUG_PRINTLN(duration_ms);
-    DEBUG_PRINTLN(strength);
-    a_vibration.startTime_ms = millis();
-    a_vibration.duration_ms = duration_ms;
-  }
-}
+class BnISensor {
+public:
 
-void BnActuator::performAction(){
-  if(millis()-a_vibration.startTime_ms < a_vibration.duration_ms){
-    DEBUG_PRINTLN("Doing something");
-    BN_NODE_SPECIFIC_BN_ACTUATOR_ACT_PIN_ON
-  } else {
-    BN_NODE_SPECIFIC_BN_ACTUATOR_ACT_PIN_OFF
-  }
-}
+    bool init();
+    bool isCalibrated();
+    bool getData(float values[], const int type);
+    void setStatus(int sensor_status);    
+};
 
-BnType BnActuator::getType(){
-  // It is well known for this Bodynode
-  return ACTION_TYPE_HAPTIC_TAG;
-}
+#endif // __BN_ISENSOR_H__

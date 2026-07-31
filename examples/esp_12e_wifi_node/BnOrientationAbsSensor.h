@@ -22,27 +22,43 @@
 * SOFTWARE.
 */
 
-#include "bn_node_specific.h"
-#include "bn_datatypes.h"
+#include "BnNodeSpecific.h"
 
-#ifndef __BN_ACTUATOR_H__
-#define __BN_ACTUATOR_H__
+#ifdef ORIENTATION_ABS_SENSOR
 
-//Since there is only one actuator new actions will override old ones.
-struct BnVibration_struct {
-  unsigned long startTime_ms;
-  unsigned long duration_ms;
-} ;
+#ifndef __BN_ORIENTATION_ABS_SENSOR_H__
+#define __BN_ORIENTATION_ABS_SENSOR_H__
 
-class BnActuator {
+
+#include "BnDatatypes.h"
+#include "BnArduinoUtils.h"
+#include "BnISensor.h"
+
+class BnOrientationAbsSensor {
 public:
-  void init();
-  void setAction(BnAction &action);
-  void performAction();
-  BnType getType();
+    void init();
+    bool checkAllOk();
+    bool isCalibrated();
+    BnSensorData getData();
+    String getType();
+    void setEnable(bool enable_status);
+    bool isEnabled();
 
 private:
-  BnVibration_struct a_vibration;
-};
+    void realignAxis(float values[], float revalues[]);
 
-#endif //__BN_ACTUATOR_H__
+    BnISensor s_isensor;
+    bool s_enabled;
+    bool s_sensorInit;
+    unsigned long s_lastReadSensorTime;
+    unsigned long s_sensorReconnectionTime;
+    //At the beginning of each connection with the sensor it seems it returns some 0s. The first 0s are not of my interest.
+    volatile bool s_firstZeros;
+    float s_values[4];
+
+};
+#endif /*__BN_ORIENTATION_ABS_SENSOR_H__*/
+
+#endif // ORIENTATION_ABS_SENSOR
+
+

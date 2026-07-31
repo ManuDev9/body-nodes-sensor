@@ -22,12 +22,12 @@
 * SOFTWARE.
 */
 
-#include "bn_constants.h"
-#include "bn_datatypes.h"
-#include "bn_node_specific.h"
+#include "BnConstants.h"
+#include "BnDatatypes.h"
+#include "BnNodeSpecific.h"
 
-#ifndef __BN_UTILS_H
-#define __BN_UTILS_H
+#ifndef __BN_ARDUINO_UTILS_H
+#define __BN_ARDUINO_UTILS_H
 
 class BnPersMemory {
 public:
@@ -38,7 +38,7 @@ public:
 private:
   BnPersMemory(){};
 
-  static constexpr uint8_t pm_checkkey[5] = {0x00, 0x00, 0x00, 0x00, 0x01};
+  static constexpr uint8_t pm_checkkey[5] = {0x00, 0x00, 0x00, 0x00, 0x00};
 
   static constexpr uint16_t pm_player_addr_nbytes = 50;
   static constexpr uint16_t pm_player_addr_chars = 51;
@@ -63,4 +63,4 @@ private:
 
 };
 
-#endif //__BN_UTILS_H
+#endif //__BN_ARDUINO_UTILS_H

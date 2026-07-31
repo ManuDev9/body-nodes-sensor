@@ -22,15 +22,16 @@
 * SOFTWARE.
 */
 
-#include "bn_wifi_node_communicator.h"
+#include "BnWifiNodeCommunicator.h"
+
+#ifdef __BN__WIFI_NODE_COMMUNICATOR_H__
 
 void BnWifiNodeCommunicator::init(){
-  BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_INIT_WIFI
+  BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_INIT_WIFI;
 
-  pinMode(STATUS_CONNECTION_HMI_LED_P, OUTPUT);
-  pinMode(STATUS_CONNECTION_HMI_LED_M, OUTPUT);
-  BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_WRITE_STATUS_PIN_FUNCTION(STATUS_CONNECTION_HMI_LED_P, LOW);
-  BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_WRITE_STATUS_PIN_FUNCTION(STATUS_CONNECTION_HMI_LED_M, LOW);
+  BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_HMI_SETUP;
+  BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_HMI_LED_OFF;
+    
   wnc_status_LED.on = false;
   wnc_status_LED.lastToggle = millis();
 
@@ -48,9 +49,9 @@ void BnWifiNodeCommunicator::init(){
 }
 
 void BnWifiNodeCommunicator::setConnectionParams(JsonObject &params){
-  BnPersMemory::setValue(MEMORY_WIFI_SSID_TAG, params[ACTION_SETWIFI_SSID_TAG].as<String>());
-  BnPersMemory::setValue(MEMORY_WIFI_PASSWORD_TAG, params[ACTION_SETWIFI_PASSWORD_TAG].as<String>());
-  BnPersMemory::setValue(MEMORY_WIFI_MULTICASTMESSAGE_TAG, params[ACTION_SETWIFI_MULTICASTMESSAGE_TAG].as<String>());
+  BnPersMemory::setValue(BN_MEMORY_WIFI_SSID_TAG, params[ BN_ACTION_SETWIFI_SSID_TAG].as<String>());
+  BnPersMemory::setValue(BN_MEMORY_WIFI_PASSWORD_TAG, params[ BN_ACTION_SETWIFI_PASSWORD_TAG].as<String>());
+  BnPersMemory::setValue(BN_MEMORY_WIFI_MULTICASTMESSAGE_TAG, params[ BN_ACTION_SETWIFI_MULTICASTMESSAGE_TAG].as<String>());
 }
 
 void BnWifiNodeCommunicator::receiveBytes(){
@@ -75,8 +76,8 @@ bool BnWifiNodeCommunicator::checkAllOk(){
   bool allok = false;
   checkStatus();
   if (wnc_connection_data.isDisconnected()){
-    String ssid = BnPersMemory::getValue(MEMORY_WIFI_SSID_TAG);
-    String password = BnPersMemory::getValue(MEMORY_WIFI_PASSWORD_TAG);
+    String ssid = BnPersMemory::getValue(BN_MEMORY_WIFI_SSID_TAG);
+    String password = BnPersMemory::getValue(BN_MEMORY_WIFI_PASSWORD_TAG);
     if (!tryConnectWifi(ssid, password)){
       DEBUG_PRINTLN("Not connected to the Wifi");
       wnc_connection_data.setDisconnected();
@@ -85,8 +86,8 @@ bool BnWifiNodeCommunicator::checkAllOk(){
     } else {
       DEBUG_PRINTLN("Connected to the Wifi");
       //wnc_connection_data.ip_address = WiFi.gatewayIP();
-      wnc_connector.begin(BODYNODES_PORT);
-      IPAddress multicastIP = getIPAdressFromStr(BODYNODES_MULTICASTGROUP_DEFAULT);
+      wnc_connector.begin(BN_WIFI_PORT);
+      IPAddress multicastIP = getIPAdressFromStr(BN_WIFI_MULTICASTGROUP_DEFAULT);
       BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_BEGIN_MULTICAST
       wnc_multicast_data.setConnected();
       printWifiStatus();
@@ -134,6 +135,7 @@ void BnWifiNodeCommunicator::addMessage(JsonObject &message){
     DEBUG_PRINTLN("Too many messages in list");
     return;
   }
+
   wnc_messages_list.add(message);
 }
 
@@ -141,19 +143,19 @@ void BnWifiNodeCommunicator::sendAllMessages(){
   if(wnc_messages_list.size() == 0) {
     return;
   }
-  uint16_t tot_bytes = wnc_messages_doc.memoryUsage()+1;
-  char buf_udp[tot_bytes];
 
-  uint16_t real_tot_bytes = serializeJson(wnc_messages_doc, buf_udp, tot_bytes);
-  DEBUG_PRINT("sendAllMessages wnc_messages_list tot_bytes = ");
-  DEBUG_PRINT(tot_bytes);
-  DEBUG_PRINT(" , real_tot_bytes = ");
+  String messages_str;
+  serializeJson(wnc_messages_doc, messages_str);
+
+  uint16_t real_tot_bytes = messages_str.length();
+  DEBUG_PRINT("sendAllMessages wnc_messages_list ");
+  DEBUG_PRINT("real_tot_bytes = ");
   DEBUG_PRINTLN(real_tot_bytes);
-  DEBUG_PRINT("buf_udp = ");
-  DEBUG_PRINTLN(buf_udp);
+  DEBUG_PRINT("messages_str = ");
+  DEBUG_PRINTLN(messages_str);
 
-  wnc_connector.beginPacket(wnc_connection_data.ip_address, BODYNODES_PORT);
-  wnc_connector.write(buf_udp, real_tot_bytes);
+  wnc_connector.beginPacket(wnc_connection_data.ip_address, BN_WIFI_PORT);
+  wnc_connector.write((uint8_t const *)messages_str.c_str(), real_tot_bytes);
   wnc_connector.endPacket();
   wnc_connection_data.last_sent_time = millis();
   //wnc_messages_doc.clear();
@@ -194,7 +196,7 @@ void BnWifiNodeCommunicator::checkForActions(){
 
 void BnWifiNodeCommunicator::checkStatus(){
   if(wnc_connection_data.isDisconnected()){
-    BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_WRITE_STATUS_PIN_FUNCTION(STATUS_CONNECTION_HMI_LED_P, 0);
+    BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_HMI_LED_OFF;
     wnc_status_LED.on = false;
     wnc_status_LED.lastToggle = millis();
   } else if(wnc_connection_data.isWaitingACK()) {
@@ -202,13 +204,13 @@ void BnWifiNodeCommunicator::checkStatus(){
       wnc_status_LED.lastToggle = millis();
       wnc_status_LED.on = !wnc_status_LED.on;
       if(wnc_status_LED.on){
-        BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_WRITE_STATUS_PIN_FUNCTION(STATUS_CONNECTION_HMI_LED_P, LED_DT_ON);
+        BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_HMI_LED_ON;
       } else {
-        BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_WRITE_STATUS_PIN_FUNCTION(STATUS_CONNECTION_HMI_LED_P, 0);
+        BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_HMI_LED_OFF;
       }
     }
   } else {
-    BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_WRITE_STATUS_PIN_FUNCTION(STATUS_CONNECTION_HMI_LED_P, LED_DT_ON);
+    BN_NODE_SPECIFIC_BN_WIFI_NODE_COMMUNICATOR_HMI_LED_ON;
     wnc_status_LED.on = true;
     wnc_status_LED.lastToggle = millis();
   }
@@ -222,7 +224,7 @@ void BnWifiNodeCommunicator::sendACKN(){
   DEBUG_PRINT("Sending ACKN to ");
   DEBUG_PRINTLN(wnc_connection_data.ip_address);
   byte buf_udp [5] = {'A','C','K','N', '\0'};
-  wnc_connector.beginPacket(wnc_connection_data.ip_address, BODYNODES_PORT);
+  wnc_connector.beginPacket(wnc_connection_data.ip_address, BN_WIFI_PORT);
   wnc_connector.write(buf_udp, 5);
   wnc_connector.endPacket();
   wnc_connection_data.last_sent_time = millis();
@@ -246,7 +248,7 @@ bool BnWifiNodeCommunicator::checkForACKH(){
 }
 
 bool BnWifiNodeCommunicator::checkForMulticastMessage() {
-  String multicastMessage = BnPersMemory::getValue(MEMORY_WIFI_MULTICASTMESSAGE_TAG);
+  String multicastMessage = BnPersMemory::getValue(BN_MEMORY_WIFI_MULTICASTMESSAGE_TAG);
   //DEBUG_PRINT("multicastMessage = ");
   //DEBUG_PRINTLN(multicastMessage);
   if(wnc_multicast_data.num_received_bytes >= multicastMessage.length()){
@@ -291,3 +293,5 @@ bool BnWifiNodeCommunicator::hasHostInfo(){
   //DEBUG_PRINTLN(wnc_connection_data.has_ip_address);
   return wnc_connection_data.has_ip_address;
 }
+
+#endif // __BN__WIFI_NODE_COMMUNICATOR_H__
