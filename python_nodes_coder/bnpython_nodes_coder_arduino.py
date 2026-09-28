@@ -34,7 +34,7 @@ import subprocess
 # Example of JSON Config file:
 # {
 #  "type" : "node",
-#  "board" : "esp-12e",                 # Possible values: "esp-12e", "arduino_nano_33", "redbear_duo", "mpnrf52840", "esp32c3-supermini"
+#  "board" : "esp-12e",                 # Possible values: "esp-12e", "arduino_nano_33", "mpnrf52840", "esp32c3-supermini"
 #  "fqbn" : "xxxx",                     #
 #  "node_communicator": "wifi",         # Possible values: "wifi", "ble"
 #  "actuators": {
@@ -409,7 +409,7 @@ def generate_all_configs():
         ["node"],  # type
         ["esp32c3-supermini"],  # board
         ["esp32:esp32:esp32c3:CDCOnBoot=cdc"],  # fqbn
-        ["wifi"],  # node_communicator
+        ["wifi", "ble"],  # node_communicator
         ["yes"],  # actuators->haptic
         ["mpu6050"],  # isensors
         ["yes"],  # esensors->acceleration_rel
@@ -424,7 +424,7 @@ def generate_all_configs():
         ["node"],  # type
         ["esp32c3-supermini"],  # board
         ["esp32:esp32:esp32c3:CDCOnBoot=cdc"],  # fqbn
-        ["wifi"],  # node_communicator
+        ["wifi", "ble"],  # node_communicator
         ["yes"],  # actuators->haptic
         ["bno055"],  # isensors
         ["yes"],  # esensors->acceleration_rel
@@ -439,7 +439,7 @@ def generate_all_configs():
         ["node"],  # type
         ["esp32c3-supermini"],  # board
         ["esp32:esp32:esp32c3:CDCOnBoot=cdc"],  # fqbn
-        ["wifi"],  # node_communicator
+        ["wifi", "ble"],  # node_communicator
         ["no"],  # actuators->haptic
         ["no"],  # isensors
         ["no"],  # esensors->acceleration_rel
@@ -464,53 +464,6 @@ def generate_all_configs():
         ["fusion"],  # esensors->orientation_abs
         ["onboard", "serial"],  # esensors->glove
         ["onboard"],  # esensors->shoe
-    ]
-    all_configs.extend(create_combo(flat_keys, value_lists))
-
-    ####### redbear_duo
-
-    value_lists = [
-        ["node"],  # type
-        ["redbear_duo"],  # board
-        ["RedBear:STM32F2:RedBear_Duo_native" ],
-        ["wifi", "ble"],  # node_communicator
-        ["yes"],  # actuators->haptic
-        ["mpu6050"],  # isensors
-        ["yes"],  # esensors->acceleration_rel
-        ["yes"],  # esensors->angularvelocity_rel
-        ["fusion"],  # esensors->orientation_abs
-        ["onboard", "serial"],  # esensors->glove
-        ["onboard"],  # esensors->shoe
-    ]
-    all_configs.extend(create_combo(flat_keys, value_lists))
-
-    value_lists = [
-        ["node"],  # type
-        ["redbear_duo"],  # board
-        ["RedBear:STM32F2:RedBear_Duo_native" ],
-        ["wifi", "ble"],  # node_communicator
-        ["yes"],  # actuators->haptic
-        ["bno055"],  # isensors
-        ["yes"],  # esensors->acceleration_rel
-        ["yes"],  # esensors->angularvelocity_rel
-        ["onboard", "fusion"],  # esensors->orientation_abs
-        ["no"],  # esensors->glove
-        ["no"],  # esensors->shoe
-    ]
-    all_configs.extend(create_combo(flat_keys, value_lists))
-
-    value_lists = [
-        ["node"],  # type
-        ["redbear_duo"],  # board
-        ["RedBear:STM32F2:RedBear_Duo_native" ],
-        ["wifi", "ble"],  # node_communicator
-        ["no"],  # actuators->haptic
-        ["no"],  # isensors
-        ["no"],  # esensors->acceleration_rel
-        ["no"],  # esensors->angularvelocity_rel
-        ["no"],  # esensors->orientation_abs
-        ["no"],  # esensors->glove
-        ["no"],  # esensors->shoe
     ]
     all_configs.extend(create_combo(flat_keys, value_lists))
 
@@ -601,7 +554,6 @@ def compile_arduino_cli(test_dir, config_json):
     print(f"Building {config_json}")
 
 
-    # arduino-cli compile  --fqbn  RedBear:STM32F2:RedBear_Duo_native --build-path ./build
     command = f"arduino-cli compile --fqbn {config_json["fqbn"]} --build-path ./build"
 
     # run() waits for the command to finish

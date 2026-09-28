@@ -1,9 +1,9 @@
 {
     "type" : "node",
     "board" : "esp32c3-supermini",
-    "node_communicator": "wifi",
+    "node_communicator": "ble",
     "actuators": {
-        "haptic": "no"
+        "haptic": "yes"
     },
     "isensor": "bno055",
     "esensors": {
