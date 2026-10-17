@@ -34,7 +34,7 @@ import subprocess
 # Example of JSON Config file:
 # {
 #  "type" : "node",
-#  "board" : "esp-12e",                 # Possible values: "esp-12e", "arduino_nano_33", "mpnrf52840", "esp32c3-supermini"
+#  "board" : "esp-12e",                 # Possible values: "esp-12e", "arduino_nano_33", "mpnrf52840", "esp32c3-supermini", "esp32c3-042oled"
 #  "fqbn" : "xxxx",                     #
 #  "node_communicator": "wifi",         # Possible values: "wifi", "ble"
 #  "actuators": {
@@ -438,6 +438,53 @@ def generate_all_configs():
     value_lists = [
         ["node"],  # type
         ["esp32c3-supermini"],  # board
+        ["esp32:esp32:esp32c3:CDCOnBoot=cdc"],  # fqbn
+        ["wifi", "ble"],  # node_communicator
+        ["no"],  # actuators->haptic
+        ["no"],  # isensors
+        ["no"],  # esensors->acceleration_rel
+        ["no"],  # esensors->angularvelocity_rel
+        ["no"],  # esensors->orientation_abs
+        ["no"],  # esensors->glove
+        ["no"],  # esensors->shoe
+    ]
+    all_configs.extend(create_combo(flat_keys, value_lists))
+
+    ####### esp32c3-042oled
+
+    value_lists = [
+        ["node"],  # type
+        ["esp32c3-042oled"],  # board
+        ["esp32:esp32:esp32c3:CDCOnBoot=cdc"],  # fqbn
+        ["wifi", "ble"],  # node_communicator
+        ["yes"],  # actuators->haptic
+        ["mpu6050"],  # isensors
+        ["yes"],  # esensors->acceleration_rel
+        ["yes"],  # esensors->angularvelocity_rel
+        ["fusion"],  # esensors->orientation_abs
+        ["onboard", "serial"],  # esensors->glove
+        ["onboard"],  # esensors->shoe
+    ]
+    all_configs.extend(create_combo(flat_keys, value_lists))
+
+    value_lists = [
+        ["node"],  # type
+        ["esp32c3-042oled"],  # board
+        ["esp32:esp32:esp32c3:CDCOnBoot=cdc"],  # fqbn
+        ["wifi", "ble"],  # node_communicator
+        ["yes"],  # actuators->haptic
+        ["bno055"],  # isensors
+        ["yes"],  # esensors->acceleration_rel
+        ["yes"],  # esensors->angularvelocity_rel
+        ["onboard", "fusion"],  # esensors->orientation_abs
+        ["no"],  # esensors->glove
+        ["no"],  # esensors->shoe
+    ]
+    all_configs.extend(create_combo(flat_keys, value_lists))
+
+    value_lists = [
+        ["node"],  # type
+        ["esp32c3-042oled"],  # board
         ["esp32:esp32:esp32c3:CDCOnBoot=cdc"],  # fqbn
         ["wifi", "ble"],  # node_communicator
         ["no"],  # actuators->haptic
