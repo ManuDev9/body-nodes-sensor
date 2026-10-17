@@ -1,7 +1,7 @@
 /**
 * MIT License
 *
-* Copyright (c) 2021-2025 Manuel Bottini
+* Copyright (c) 2021-2026 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -39,7 +39,8 @@
 class BnBLENodeCommunicator {
 public:
     BnBLENodeCommunicator() :
-        bnc_messages_doc(MAX_MESSAGES_LIST_LENGTH * MAX_MESSAGE_BYTES) {
+        bnc_messages_doc(MAX_MESSAGES_LIST_LENGTH * MAX_MESSAGE_BYTES),
+        bnc_actions_doc(MAX_ACTIONS_LIST_LENGTH * MAX_ACTION_BYTES) {
     }
     
     void setConnectionParams(JsonObject &params);
@@ -51,9 +52,12 @@ public:
 
 private:
     void checkStatus();
+    void checkForActions();
     
     DynamicJsonDocument bnc_messages_doc;
     JsonArray bnc_messages_list;
+    DynamicJsonDocument bnc_actions_doc;
+    JsonArray bnc_actions_list;
     
     BnBLEConnectionData bnc_connection_data;
     BnStatusLED bnc_status_LED;

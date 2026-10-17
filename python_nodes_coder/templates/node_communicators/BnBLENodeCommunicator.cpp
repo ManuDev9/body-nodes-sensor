@@ -1,7 +1,7 @@
 /**
 * MIT License
 *
-* Copyright (c) 2024-2025 Manuel Bottini
+* Copyright (c) 2024-2026 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,7 @@ void BnBLENodeCommunicator::init(){
     bnc_connection_data.last_sent_time = 0;
 
     bnc_messages_list = bnc_messages_doc.to<JsonArray>();
+    bnc_actions_list = bnc_actions_doc.to<JsonArray>();
 
     BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_HMI_SETUP;
     BN_NODE_SPECIFIC_BN_BLE_NODE_COMMUNICATOR_HMI_LED_OFF;
@@ -46,6 +47,7 @@ bool BnBLENodeCommunicator::checkAllOk(){
     if(bnc_connection_data.isWaitingACK()){
         return false;
     } else if(bnc_connection_data.isConnected()){
+        checkForActions();
         return true;
     } else { // isDisconnected()
         return false;
@@ -73,6 +75,37 @@ void BnBLENodeCommunicator::addMessage(JsonObject &message){
 }
 
 void BnBLENodeCommunicator::getActions(JsonArray &actions){
+
+    for (JsonObject action : bnc_actions_list) {
+        DEBUG_PRINTLN("Giving out an action");
+        actions.add(action);
+    }
+    uint8_t num_actions = bnc_actions_list.size();
+    /*if(num_actions > 0){
+        DEBUG_PRINT("getActions - bnc_actions_listsize = ");
+        DEBUG_PRINTLN(num_actions);
+    }*/
+    for (uint8_t index = 0; index<num_actions; ++index) {
+        bnc_actions_list.remove(0);
+    }
+    bnc_actions_doc.garbageCollect();
+}
+
+void BnBLENodeCommunicator::checkForActions(){
+    char received_bytes[MAX_ACTION_BYTES];
+    if (BnBLENodeCommunicator_checkForActions(received_bytes, sizeof(received_bytes))) {
+        DEBUG_PRINTLN("Got an action");
+        DynamicJsonDocument actionDoc(MAX_ACTION_BYTES);
+        DeserializationError error = deserializeJson(actionDoc, received_bytes);
+        if (error) {
+            DEBUG_PRINTLN("No possible to parse the json, error =");
+            DEBUG_PRINTLN(error.c_str());
+            return;
+        }
+        bool added = bnc_actions_list.add(actionDoc);
+        DEBUG_PRINT("add() returned: ");
+        DEBUG_PRINTLN(added ? "true" : "false");
+    }
 }
 
 void BnBLENodeCommunicator::checkStatus(){

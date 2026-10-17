@@ -100,7 +100,7 @@
 #define BUZZER_FREQ 1000 //Specified in Hz
 #define STATUS_SENSOR_HMI_LED_P 2
 #define STATUS_CONNECTION_HMI_LED_P 10
-#define HAPTIC_MOTOR_PIN_P 255 // NOT TESTED
+#define HAPTIC_MOTOR_PIN_P 3 
 #define SHOE_SENSOR_PIN_P  255 // NOT TESTED
 #define BN_BNO055_I2C1_SDA1 8
 #define BN_BNO055_I2C1_SCL1 9
@@ -210,6 +210,7 @@ void BnHapticActuator_turnOFF();
 void BnBLENodeCommunicator_init();
 uint8_t BnBLENodeCommunicator_checkAllOk( uint8_t current_conn_status );
 void BnBLENodeCommunicator_sendAllMessages(JsonArray &bnc_messages_list);
+bool BnBLENodeCommunicator_checkForActions(char* out_bytes, size_t out_bytes_capacity);
 
 #endif // BLE_COMMUNICATION
 
