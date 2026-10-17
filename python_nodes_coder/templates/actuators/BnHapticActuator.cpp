@@ -48,7 +48,7 @@ void BnHapticActuator::setAction(BnAction &action){
 
 void BnHapticActuator::performAction(){
     if(millis()-a_vibration.startTime_ms < a_vibration.duration_ms){
-        DEBUG_PRINTLN("Doing something");
+        //DEBUG_PRINTLN("Doing something");
         BnHapticActuator_turnON(a_vibration.strength);
     } else {
         BnHapticActuator_turnOFF();
