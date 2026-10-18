@@ -30,7 +30,7 @@
 
 #if defined(BN_BNO055_I2C1_SDA1) && defined(BN_BNO055_I2C1_SCL1)
 #include <Wire.h>
-TwoWire sWire(0); 
+TwoWire sWire(0);
 #endif
 
 static Adafruit_BNO055 s_BNO;
@@ -44,22 +44,22 @@ bool BnISensor::init(){
 
 #if defined(BN_BNO055_I2C1_SDA1) && defined(BN_BNO055_I2C1_SCL1)
     s_BNO = Adafruit_BNO055(55, BN_BNO055_ADDRESS, &sWire );
-    sWire.end();                                   // release the bus first
+    //sWire.end(); // release the bus first. Removed for now because not all Wire objects have end()
     sWire.begin(BN_BNO055_I2C1_SDA1, BN_BNO055_I2C1_SCL1);
     sWire.setClock(100000);   // slow down for clock stretching
     sWire.setTimeOut(100);    // ms, avoids bus lockups
 #else
     s_BNO = Adafruit_BNO055(55, BN_BNO055_ADDRESS);
-    Wire.end();                                   // release the bus first
+    //Wire.end(); // release the bus first. Removed for now because not all Wire objects have end()
     Wire.setClock(100000);   // slow down for clock stretching
-    Wire.setTimeOut(100);    // ms, avoids bus lockups
+    Wire.setTimeout(100);    // ms, avoids bus lockups
 #endif
 
-    delay(800);               // let the BNO055 finish its power-on reset
+    delay(800); // let the BNO055 finish its power-on reset
 
     /* Initialise the sensor */
     if(s_BNO.begin(OPERATION_MODE_NDOF_FMC_OFF)) {
-        delay(500);             // give fusion time to produce output
+        delay(500); // give fusion time to produce output
         setStatus(BN_SENSOR_STATUS_WORKING);
     } else {
         setStatus(BN_SENSOR_STATUS_NOT_ACCESSIBLE);
@@ -97,6 +97,8 @@ bool BnISensor::isCalibrated(){
 bool bnoProbe() {
   uint8_t id = 0, mode = 0, stat = 0;
 
+#if defined(BN_BNO055_I2C1_SDA1) && defined(BN_BNO055_I2C1_SCL1)
+
   sWire.beginTransmission(BN_BNO055_ADDRESS);
   sWire.write(0x00);                       // CHIP_ID register
   uint8_t err = sWire.endTransmission(true);
@@ -113,13 +115,33 @@ bool bnoProbe() {
   sWire.endTransmission(true);
   if (sWire.requestFrom((int)BN_BNO055_ADDRESS, 1) == 1) stat = sWire.read();
 
-  Serial.printf("txErr=%u bytes=%d id=0x%02X mode=%u sysStatus=%u\n",
+#else
+
+  Wire.beginTransmission(BN_BNO055_ADDRESS);
+  Wire.write(0x00);                       // CHIP_ID register
+  uint8_t err = Wire.endTransmission(true);
+  int n = Wire.requestFrom((int)BN_BNO055_ADDRESS, 1);
+  if (n == 1) id = Wire.read();
+
+  Wire.beginTransmission(BN_BNO055_ADDRESS);
+  Wire.write(0x3D);                       // OPR_MODE register
+  Wire.endTransmission(true);
+  if (Wire.requestFrom((int)BN_BNO055_ADDRESS, 1) == 1) mode = Wire.read();
+
+  Wire.beginTransmission(BN_BNO055_ADDRESS);
+  Wire.write(0x39);                       // SYS_STATUS register
+  Wire.endTransmission(true);
+  if (Wire.requestFrom((int)BN_BNO055_ADDRESS, 1) == 1) stat = Wire.read();
+
+#endif
+
+  DEBUG_PRINTF("bnoProbe txErr=%u bytes=%d id=0x%02X mode=%u sysStatus=%u\n",
                 err, n, id, mode, stat);
+
   return id == 0xA0;
 }
 
 bool BnISensor::getData(float values[], const int type){
-
 
     if( type == BN_ISENSOR_DATATYPE_ACCELEROMETER ){
         imu::Vector<3> vector_acc = s_BNO.getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
@@ -166,9 +188,6 @@ bool BnISensor::getData(float values[], const int type){
     }
 
 }
-
-
-
 
 void BnISensor::setStatus(int BN_SENSOR_status){
     if(BN_SENSOR_status == BN_SENSOR_STATUS_NOT_ACCESSIBLE){
