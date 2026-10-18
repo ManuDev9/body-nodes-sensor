@@ -497,7 +497,7 @@ def generate_all_configs():
     ]
     all_configs.extend(create_combo(flat_keys, value_lists))
 
-    ####### arduino_nano_33
+    ####### arduino_nano_33 TEMPORARILY DISABLED - BLE Actions support to do
 
     value_lists = [
         ["node"],  # type
@@ -512,7 +512,7 @@ def generate_all_configs():
         ["onboard", "serial"],  # esensors->glove
         ["onboard"],  # esensors->shoe
     ]
-    all_configs.extend(create_combo(flat_keys, value_lists))
+    #all_configs.extend(create_combo(flat_keys, value_lists))
 
     ####### mpnrf52840
 
