@@ -1,7 +1,7 @@
 /**
 * MIT License
 *
-* Copyright (c) 2021-2025 Manuel Bottini
+* Copyright (c) 2021-2026 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -39,7 +39,6 @@ void BnOrientationAbsSensor::init(){
     }
 }
 
-
 bool BnOrientationAbsSensor::checkAllOk(){
     if(!s_sensorInit){
         if(millis()-s_sensorReconnectionTime<5000){
@@ -59,7 +58,6 @@ bool BnOrientationAbsSensor::checkAllOk(){
         return false;
     }
 
-
     float svalues[4];
     if( !s_isensor.getData(svalues, BN_ISENSOR_DATATYPE_ABSOLUTEORIENTATION) ) {
         return false;
@@ -68,16 +66,12 @@ bool BnOrientationAbsSensor::checkAllOk(){
     float tvalues[4];
     realignAxis(svalues, tvalues);
 
-    //I noticed that just before after a disconnection the getEvent returns 0 0 0 and THEN blocks. So I just check before the next call to getEvent blocks everything
-    if (tvalues[0] != 0 || tvalues[1]!=0 || tvalues[2]!=0 || tvalues[3]!=0) {
-        s_firstZeros=false;
-    }
-
-    if (tvalues[0] == 0 && tvalues[1]==0 && tvalues[2]==0 && tvalues[3]==0 && !s_firstZeros){
-        DEBUG_PRINTLN("Sensor might have gotten disconnected!");
-        s_isensor.setStatus(BN_SENSOR_STATUS_NOT_ACCESSIBLE);
+    if (tvalues[0] == 0 && tvalues[1]==0 && tvalues[2]==0 && tvalues[3]==0){
+        DEBUG_PRINTLN("Sensor returned 0 0 0 0. Let's reinit!");
+        delay(1000);
+        s_isensor.init();
         return false;
-    }
+    } 
 
     s_values[0] = tvalues[0];
     s_values[1] = tvalues[1];
@@ -86,6 +80,9 @@ bool BnOrientationAbsSensor::checkAllOk(){
 
     return true;
 }
+
+
+
 
 bool BnOrientationAbsSensor::isCalibrated(){
     return s_isensor.isCalibrated();

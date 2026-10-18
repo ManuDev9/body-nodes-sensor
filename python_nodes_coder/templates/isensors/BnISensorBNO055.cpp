@@ -44,17 +44,25 @@ bool BnISensor::init(){
 
 #if defined(BN_BNO055_I2C1_SDA1) && defined(BN_BNO055_I2C1_SCL1)
     s_BNO = Adafruit_BNO055(55, BN_BNO055_ADDRESS, &sWire );
+    sWire.end();                                   // release the bus first
     sWire.begin(BN_BNO055_I2C1_SDA1, BN_BNO055_I2C1_SCL1);
+    sWire.setClock(100000);   // slow down for clock stretching
+    sWire.setTimeOut(100);    // ms, avoids bus lockups
 #else
     s_BNO = Adafruit_BNO055(55, BN_BNO055_ADDRESS);
+    Wire.end();                                   // release the bus first
+    Wire.setClock(100000);   // slow down for clock stretching
+    Wire.setTimeOut(100);    // ms, avoids bus lockups
 #endif
 
+    delay(800);               // let the BNO055 finish its power-on reset
 
     /* Initialise the sensor */
     if(s_BNO.begin(OPERATION_MODE_NDOF_FMC_OFF)) {
-         setStatus(BN_SENSOR_STATUS_WORKING);
+        delay(500);             // give fusion time to produce output
+        setStatus(BN_SENSOR_STATUS_WORKING);
     } else {
-         setStatus(BN_SENSOR_STATUS_NOT_ACCESSIBLE);
+        setStatus(BN_SENSOR_STATUS_NOT_ACCESSIBLE);
     }
     s_BNO.setExtCrystalUse(BN_BNO055_EXTERNALCRYSTAL);
     return sIsInit;
@@ -86,6 +94,30 @@ bool BnISensor::isCalibrated(){
     }
 }
 
+bool bnoProbe() {
+  uint8_t id = 0, mode = 0, stat = 0;
+
+  sWire.beginTransmission(BN_BNO055_ADDRESS);
+  sWire.write(0x00);                       // CHIP_ID register
+  uint8_t err = sWire.endTransmission(true);
+  int n = sWire.requestFrom((int)BN_BNO055_ADDRESS, 1);
+  if (n == 1) id = sWire.read();
+
+  sWire.beginTransmission(BN_BNO055_ADDRESS);
+  sWire.write(0x3D);                       // OPR_MODE register
+  sWire.endTransmission(true);
+  if (sWire.requestFrom((int)BN_BNO055_ADDRESS, 1) == 1) mode = sWire.read();
+
+  sWire.beginTransmission(BN_BNO055_ADDRESS);
+  sWire.write(0x39);                       // SYS_STATUS register
+  sWire.endTransmission(true);
+  if (sWire.requestFrom((int)BN_BNO055_ADDRESS, 1) == 1) stat = sWire.read();
+
+  Serial.printf("txErr=%u bytes=%d id=0x%02X mode=%u sysStatus=%u\n",
+                err, n, id, mode, stat);
+  return id == 0xA0;
+}
+
 bool BnISensor::getData(float values[], const int type){
 
 
@@ -114,6 +146,9 @@ bool BnISensor::getData(float values[], const int type){
         values[2] =  static_cast<float>( sensor_quat.y() );
         values[3] =  static_cast<float>( sensor_quat.z() );
 
+        if(values[0] == 0 && values[1] == 0 && values[2] == 0 && values[3] == 0 ) {
+            bnoProbe();
+        } 
         /*
         DEBUG_PRINT("values = ");
         DEBUG_PRINT(values[0]);
@@ -131,6 +166,9 @@ bool BnISensor::getData(float values[], const int type){
     }
 
 }
+
+
+
 
 void BnISensor::setStatus(int BN_SENSOR_status){
     if(BN_SENSOR_status == BN_SENSOR_STATUS_NOT_ACCESSIBLE){

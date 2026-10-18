@@ -76,8 +76,8 @@ static void convertStringArrayToFloatBytes(char const *message_str, uint8_t slen
     char message_tmp[slength-1];
     memcpy(message_tmp, message_str+1, slength-1); // removing the [ and ] at the beginning and the end
     message_tmp[slength-2] = '\0';
-    DEBUG_PRINT("convertStringArrayToFloatBytes message_tmp = ");
-    DEBUG_PRINTLN(message_tmp);
+    //DEBUG_PRINT("convertStringArrayToFloatBytes message_tmp = ");
+    //DEBUG_PRINTLN(message_tmp);
 
     float fl_array[num_floats];
     int idl = 0;
