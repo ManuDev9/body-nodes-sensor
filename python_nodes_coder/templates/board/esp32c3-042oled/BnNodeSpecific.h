@@ -116,19 +116,13 @@
 
 #define DEBUG_M
 #ifdef DEBUG_M
- #define DEBUG_PRINT(x)  Serial.print (x)
- #define DEBUG_PRINT_HEX(x)  Serial.print (x,HEX)
- #define DEBUG_PRINT_DEC(x)  Serial.print (x,DEC)
- #define DEBUG_PRINTLN(x)  Serial.println (x)
- #define DEBUG_PRINTLN_HEX(x)  Serial.println (x,HEX)
- #define DEBUG_PRINTLN_DEC(x)  Serial.println (x,DEC)
+ #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
+ #define DEBUG_PRINTF(...) Serial.printf(__VA_ARGS__)
+ #define DEBUG_PRINTLN(...)  Serial.println(__VA_ARGS__)
 #else
- #define DEBUG_PRINT(x)
- #define DEBUG_PRINT_HEX(x)
- #define DEBUG_PRINT_DEC(x)
- #define DEBUG_PRINTLN(x)
- #define DEBUG_PRINTLN_HEX(x)
- #define DEBUG_PRINTLN_DEC(x)
+ #define DEBUG_PRINT(...)
+ #define DEBUG_PRINTF(...)
+ #define DEBUG_PRINTLN(...)
 #endif
 
 // Set BODYNODE_BODYPART_TAG_DEFAULT
