@@ -144,7 +144,7 @@ bool bnoProbe() {
 bool BnISensor::getData(float values[], const int type){
 
     if( type == BN_ISENSOR_DATATYPE_ACCELEROMETER ){
-        imu::Vector<3> vector_acc = s_BNO.getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
+        imu::Vector<3> vector_acc = s_BNO.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL); // NO GRAVITY
         values[0] = static_cast<float>( vector_acc[0] );
         values[1] = static_cast<float>( vector_acc[1] );
         values[2] = static_cast<float>( vector_acc[2] );

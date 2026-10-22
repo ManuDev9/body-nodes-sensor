@@ -1,7 +1,7 @@
 /**
 * MIT License
 * 
-* Copyright (c) 2023-2025 Manuel Bottini
+* Copyright (c) 2023-2026 Manuel Bottini
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -208,7 +208,7 @@ void loop() {
                 message["player"] = mPlayerName;
                 message["bodypart"] = mBodypartName;
                 message["sensortype"] = mARSensor.getType();
-                for(uint8_t count=0; count<4;++count){
+                for(uint8_t count=0; count<3;++count){
                     message["value"].add(values[count]);
                     mLastSensorData_AR[count] = values[count];
                 }
@@ -287,6 +287,7 @@ void loop() {
         for (JsonObject action : actions) {
             String actionPlayer = action[BN_ACTION_PLAYER_TAG].as<String>();
             String actionBodypart = action[BN_ACTION_BODYPART_TAG].as<String>();
+
             if(actionPlayer != mPlayerName) {
                 DEBUG_PRINTLN("Wrong player in the action");
                 continue;
@@ -302,19 +303,24 @@ void loop() {
 #endif // HAPTIC_ACTUATOR_ON_BOARD
             } else if(actionType == BN_ACTION_TYPE_ENABLESENSOR_TAG) {
                 String actionSensorType = action[BN_ACTION_ENABLESENSOR_SENSORTYPE_TAG].as<String>();
+                String actionEnabled = action[BN_ACTION_ENABLESENSOR_ENABLE_TAG].as<String>();
+                bool enabled = actionEnabled == "true";
+
                 if(actionSensorType == BN_SENSORTYPE_ORIENTATION_ABS_TAG) {
-                    //DEBUG_PRINT("Setting enabled = ");
-                    //DEBUG_PRINTLN(action[BN_ACTION_ENABLESENSOR_ENABLE_TAG].as<bool>());
 #ifdef ORIENTATION_ABS_SENSOR
-                    mOASensor.setEnable(action[BN_ACTION_ENABLESENSOR_ENABLE_TAG].as<bool>());
+                    mOASensor.setEnable(enabled);
 #endif /*ORIENTATION_ABS_SENSOR*/
+                } else if(actionSensorType == BN_SENSORTYPE_ACCELERATION_REL_TAG) {
+#ifdef ACCELERATION_REL_SENSOR
+                    mARSensor.setEnable(enabled);
+#endif /*ACCELERATION_REL_SENSOR*/
                 } else if(actionSensorType == BN_SENSORTYPE_GLOVE_TAG) {
 #if defined(GLOVE_SENSOR_ON_SERIAL) || defined(GLOVE_SENSOR_ON_BOARD) 
-                    mGloveSensor.setEnable(action[BN_ACTION_ENABLESENSOR_ENABLE_TAG].as<bool>());
+                    mGloveSensor.setEnable(enabled);
 #endif /*GLOVE_SENSOR_ON_SERIAL || GLOVE_SENSOR_ON_BOARD */
                 } else if(actionSensorType == BN_SENSORTYPE_SHOE_TAG) {
 #ifdef SHOE_SENSOR_ON_BOARD
-                    mShoeSensor.setEnable(action[BN_ACTION_ENABLESENSOR_ENABLE_TAG].as<bool>());
+                    mShoeSensor.setEnable(enabled);
 #endif /*SHOE_SENSOR_ON_BOARD*/
                 }
             } else if(actionType == BN_ACTION_TYPE_SETPLAYER_TAG) {

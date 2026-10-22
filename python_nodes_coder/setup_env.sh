@@ -25,4 +25,4 @@ arduino-cli lib install "NimBLE-Arduino@2.5.1"
 arduino-cli core install esp8266:esp8266@3.1.2
 arduino-cli core install arduino:mbed_nano@4.5.0
 arduino-cli core install adafruit:nrf52@1.7.0
-arduino-cli core install esp32:esp32@3.3.7
+arduino-cli core install esp32:esp32@3.3.12 # BLE LED bis when connected with this version
